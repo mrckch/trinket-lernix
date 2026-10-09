@@ -126,27 +126,38 @@ async function fetchAll() {
   console.log('[vendor] ' + loaded + ' geladen, ' + skipped + ' vorhanden');
 }
 
-/** Alle /vendor/…-Verweise in Konfiguration, Templates und Skripten gegen public/vendor prüfen */
+/** Alle /vendor/…-Verweise in Konfiguration, Templates, Skripten und Stylesheets gegen public/vendor
+ *  prüfen und verbliebene CDN-Verweise melden (Std 8: keine externen CDNs). */
+var CDN_RE = /\/\/(cdnjs\.cloudflare\.com|ajax\.googleapis\.com|code\.jquery\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|unpkg\.com)\//g;
+
 function check() {
-  var files = [], missing = [], refs = {};
+  var files = [], missing = [], refs = {}, cdn = [];
   function walk(dir) {
     fs.readdirSync(dir, { withFileTypes : true }).forEach(function(d) {
       var p = path.join(dir, d.name);
       if (d.isDirectory()) { if (d.name !== 'node_modules' && d.name !== 'vendor' && d.name !== 'components') walk(p); }
-      else if (/\.(yaml|html|js)$/.test(d.name) && !/\.min\.js$/.test(d.name)) files.push(p);
+      else if (/\.(yaml|html|js|scss|css)$/.test(d.name) && !/\.min\.(js|css)$/.test(d.name)) files.push(p);
     });
   }
-  walk(path.join(ROOT, 'config')); walk(path.join(ROOT, 'lib')); walk(path.join(ROOT, 'public'));
+  walk(path.join(ROOT, 'config')); walk(path.join(ROOT, 'lib')); walk(path.join(ROOT, 'public')); walk(path.join(ROOT, 'static'));
 
   files.forEach(function(file) {
     var text = fs.readFileSync(file, 'utf8'), re = /\/vendor\/[A-Za-z0-9_.\-\/]+/g, m;
     while ((m = re.exec(text)) !== null) refs[m[0]] = file;
+    text.split('\n').forEach(function(line, i) {
+      CDN_RE.lastIndex = 0;
+      if (CDN_RE.test(line)) cdn.push(path.relative(ROOT, file) + ':' + (i + 1) + '  ' + line.trim().substring(0, 120));
+    });
   });
 
   Object.keys(refs).forEach(function(ref) {
     if (!fs.existsSync(path.join(PUBLIC, ref))) missing.push(ref + '  (' + path.relative(ROOT, refs[ref]) + ')');
   });
 
+  if (cdn.length) {
+    console.error('[vendor] externe CDN-Verweise:\n  ' + cdn.join('\n  '));
+    process.exitCode = 1;
+  }
   if (missing.length) {
     console.error('[vendor] fehlende Dateien:\n  ' + missing.join('\n  '));
     process.exitCode = 1;

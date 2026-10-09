@@ -42,6 +42,7 @@
     "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js",

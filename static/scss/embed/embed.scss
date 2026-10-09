@@ -8,7 +8,7 @@
 @import "settings";
 @import "../environment";
 @import "public/components/foundation/scss/foundation";
-@import "//cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.css";
+@import url('/vendor/cdnjs/dropzone/4.0.1/min/dropzone.min.css');
 
 @import "../mixins";
 @import "../type";

@@ -40,8 +40,10 @@ RUN curl -fsSL -o /tmp/public-components.tgz "$COMPONENTS_URL" \
 # Frontend-Bibliotheken selbst hosten (statt cdnjs/googleapis, Std 8): public/vendor/
 RUN node scripts/vendor-fetch.js
 
-# SCSS → public/css/*.css (Schriften aus public/vendor/fonts landen in public/assets/)
+# SCSS → public/css/*.css (Schriften aus public/vendor/fonts landen in public/assets/);
+# danach erneut prüfen, dass auch das gebaute CSS keine CDN-Verweise enthält
 RUN npm run build:css \
+    && node scripts/vendor-fetch.js --check \
     && chmod +x docker/entrypoint.sh
 
 ENV NODE_ENV=production \
