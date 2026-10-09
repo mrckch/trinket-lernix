@@ -4,7 +4,7 @@
     <section class="options-right">
       <a class="button small" ng-if="isAdmin" ng-click="smile()"><i ng-class="{'fa fa-spinner fa-spin':isSnapping, 'fa fa-camera':!isSnapping}"></i></a>
       <a class="button small" ng-if="isOwner" data-reveal-id="addToFolderModal"><i class='fa fa-folder'></i></a>
-      <a class="button small" ng-if="isOwner && canCopy" ng-click="copy()"><span class="label-container"><i class='fa fa-files-o label-icon'></i> <span class='show-for-large-up label-text'>kopieren</span></span></a>
+      <a class="button small" ng-if="isOwner && canCopy" ng-click="copy()"><span class="label-container"><i class='fa fa-files-o label-icon'></i> <span class='show-for-large-up label-text'>Kopieren</span></span></a>
 
       <a data-dropdown="shareDropdown" aria-controls="shareDropdown" aria-expanded="false" class="button small"><span class="label-container"><i class='fa fa-share-alt label-icon'></i> <span class='show-for-large-up label-text'>Teilen</span></span></a>
       <ul id="shareDropdown" data-dropdown-content class="f-dropdown" aria-hidden="true">

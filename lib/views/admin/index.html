@@ -13,20 +13,27 @@
   <div class="large-3 small-12 columns">
     <ul class="side-nav">
       <li class="side-nav-heading">
-        <h4>Pages</h4>
+        <h4>Bereiche</h4>
       </li>
-    {% for link in ['Users', 'Featured-Courses'] %}
+    {# Anzeigenamen der Admin-Seiten; die Schlüssel sind die URL-Slugs (/admin/<slug>) #}
+    {% set pageTitles = {
+      'users'            : 'Nutzerkonten',
+      'featured-courses' : 'Empfohlene Kurse',
+      'serverside'       : 'Server-Sprachen',
+      'upload'           : 'Konten-Import (CSV)'
+    } %}
+    {% for link in ['users', 'featured-courses'] %}
       <li>
-        <a {% if page == link.toLowerCase() %}class="active"{% endif %} href="/admin/{{ link | lower }}">{{ link | replace('-', ' ') }}</a>
+        <a {% if page == link %}class="active"{% endif %} href="/admin/{{ link }}">{{ pageTitles[link] }}</a>
       </li>
     {% endfor %}
     {% if config.features.trinkets.python3 or config.features.trinkets.java or config.features.trinkets.R or config.features.trinkets.pygame %}
       <li>
-        <a {% if page == 'serverside' %}class="active"{% endif %} href="/admin/serverside">Server Side</a>
+        <a {% if page == 'serverside' %}class="active"{% endif %} href="/admin/serverside">{{ pageTitles['serverside'] }}</a>
       </li>
     {% endif %}
       <li>
-        <a {% if page == 'upload' %}class="active"{% endif %} href="/admin/upload">Batch User Upload</a>
+        <a {% if page == 'upload' %}class="active"{% endif %} href="/admin/upload">{{ pageTitles['upload'] }}</a>
       </li>
     </ul>
   </div>
@@ -36,8 +43,12 @@
       <div class="row">
         <div class="small-12 columns">
           <div class="content-heading">
+            {% if pageTitles[page] %}
+            <h4>{{ pageTitles[page] }}</h4>
+            {% else %}
             {% set title = page.split('-') %}
             <h4>{% for word in title %} {{ word | capitalize }} {% endfor %}</h4>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -81,7 +92,7 @@ $('.update-roles').click(function(event) {
     try {
       rolesData = JSON.parse($('#rolesJSON').val());
     } catch(e) {
-      showRolesMessage('Error parsing data: ' + e);
+      showRolesMessage('Fehler beim Lesen der Daten: ' + e);
     }
   }
   else {
@@ -97,10 +108,10 @@ $('.update-roles').click(function(event) {
         if (location.search.indexOf('active=roles') < 0) {
           reloadUrl += '&active=roles';
         }
-        showRolesMessage('Yay! <a href="' + reloadUrl + '">Reload user roles</a>.');
+        showRolesMessage('Gespeichert. <a href="' + reloadUrl + '">Rollen neu laden</a>.');
       }
       else {
-        showRolesMessage('Something went wrong. ' + result);
+        showRolesMessage('Etwas ist schiefgelaufen. ' + result);
       }
     }).fail(function(err) {
       showRolesMessage(err);

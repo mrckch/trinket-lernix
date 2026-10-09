@@ -632,7 +632,7 @@ window.TrinketAPI = {
   resetUpload : function() {
     this.upload_xml = "";
 
-    $('#blocks-upload-filename').text('[No file selected]');
+    $('#blocks-upload-filename').text('[keine Datei ausgewählt]');
     $('.blocks-button').addClass('disabled');
 
     $('#uploadMessage').empty();

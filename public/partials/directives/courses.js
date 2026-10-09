@@ -18,6 +18,15 @@
 
     $scope.coursesById = {};
 
+    // Anzeigetexte für die Kursrollen-Badges (nur Anzeige, course.role bleibt der technische Wert)
+    $scope.courseRoleLabels = {
+        owner        : 'Kursleitung'
+      , admin        : 'Kursadmin'
+      , collaborator : 'Mitarbeitend'
+      , associate    : 'Gast'
+      , student      : 'Schüler:in'
+    };
+
     $scope.canCreateCourse = roles.hasPermission("create-public-course") ? true : false;
     $scope.courses;
     $scope.archived;

@@ -435,7 +435,7 @@ window.TrinketAPI = {
       $('#createPythonLink').removeClass('hide');
 
     } catch(e) {
-      $('#blocklyPythonCode').html('<p class="blocks-codeview-message">We had a problem translating your blocks to python. Please check your code and try again.</p>');
+      $('#blocklyPythonCode').html('<p class="blocks-codeview-message">Deine Blöcke konnten nicht in Python-Code umgewandelt werden. Prüfe deine Blöcke und versuche es noch einmal.</p>');
       $('#createPythonLink').addClass('hide');
     }
   },
@@ -535,7 +535,7 @@ window.TrinketAPI = {
   resetUpload : function() {
     this.upload_xml = "";
 
-    $('#blocks-upload-filename').text('[No file selected]');
+    $('#blocks-upload-filename').text('[keine Datei ausgewählt]');
     $('.blocks-button').addClass('disabled');
 
     $('#uploadMessage').empty();

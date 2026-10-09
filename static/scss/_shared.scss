@@ -2,7 +2,8 @@
   color: $primary-color;
   border: 1px solid $primary-color;
   background: #FFF;
-  text-transform: capitalize;
+  // kein capitalize: deutsche Beschriftungen („Kurs beitreten“) sollen nicht zu „Kurs Beitreten“ werden
+  text-transform: none;
 
   &:hover {
     color: darken($primary-color, 10%);

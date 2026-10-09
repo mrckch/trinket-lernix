@@ -1,11 +1,11 @@
 {% if q and not data %}
-<p>No matches found for <strong>{{ q }}</strong>.</p>
+<p>Keine Treffer für <strong>{{ q }}</strong>.</p>
 {% elif data %}
 <div class="row">
   <div class="small-12 columns">
     <ul class="tabs" data-tab>
-      <li class="tab-title {% if active == 'profile' %}active{% endif %}"><a href="#profile">Profile</a></li>
-      <li class="tab-title {% if active == 'roles' %}active{% endif %}"><a href="#roles">Roles</a></li>
+      <li class="tab-title {% if active == 'profile' %}active{% endif %}"><a href="#profile">Profil</a></li>
+      <li class="tab-title {% if active == 'roles' %}active{% endif %}"><a href="#roles">Rollen</a></li>
       <li class="tab-title {% if active == 'json' %}active{% endif %}"><a href="#json">JSON</a></li>
     </ul>
     <ul class="tabs-content">
@@ -20,7 +20,7 @@
         </div>
         <div class="row">
           <div class="small-2 columns">
-            <strong>Username</strong>
+            <strong>Benutzername</strong>
           </div>
           <div class="small-10 columns">
             {{ data.username }}
@@ -28,7 +28,7 @@
         </div>
         <div class="row">
           <div class="small-2 columns">
-            <strong>Email</strong>
+            <strong>E-Mail</strong>
           </div>
           <div class="small-10 columns">
             <a href="mailto:{{ data.email }}">{{ data.email }}</a>
@@ -36,7 +36,7 @@
         </div>
         <div class="row">
           <div class="small-2 columns">
-            <strong>Avatar</strong>
+            <strong>Profilbild</strong>
           </div>
           <div class="small-10 columns">
             <img class="avatar-medium" src="{{ data.avatar | userAvatar }}" />
@@ -53,7 +53,7 @@
         </div>
         <div class="row">
           <div class="small-2 columns">
-            <strong>Courses</strong>
+            <strong>Kurse</strong>
           </div>
           <div class="small-10 columns">
             {{ data.coursesOwned }}
@@ -63,7 +63,7 @@
         <hr>
         <div class="row">
           <div class="small-12 columns">
-            <a href="/admin/users?loginAs={{ data._id }}">Login as {{ data.username }}</a> <i class="fa fa-sign-in"></i>
+            <a href="/admin/users?loginAs={{ data._id }}">Als {{ data.username }} anmelden</a> <i class="fa fa-sign-in"></i>
           </div>
         </div>
         {% endif %}
@@ -72,8 +72,8 @@
         <table class="rolesData">
           <thead>
             <tr>
-              <th>Context</th>
-              <th>Roles</th>
+              <th>Kontext</th>
+              <th>Rollen</th>
             </tr>
           </thead>
           <tbody>
@@ -88,7 +88,7 @@
                   <li>
                     {{ role }}
                     {% if roleData.thru[role] %}
-                    &mdash; {{ moment(roleData.thru[role]).format('MMM Do YYYY') }}
+                    &mdash; {{ moment(roleData.thru[role]).format('DD.MM.YYYY') }}
                     {% endif %}
                   </li>
                 {% endfor %}
@@ -98,7 +98,7 @@
           {% endfor %}
           </tbody>
         </table>
-        <a id="admin-roles" class="button small" data-userid="{{ data._id }}" data-username="{{ data.username }}">Change Roles</a>
+        <a id="admin-roles" class="button small" data-userid="{{ data._id }}" data-username="{{ data.username }}">Rollen ändern</a>
       </li>
       <li class="content {% if active == 'json' %}active{% endif %}" id="json">
         <pre>{{ data | json("pretty") | safe }}</pre>
@@ -111,24 +111,24 @@
   <h4 id="rolesHeading"></h4>
   <textarea id="rolesJSON"></textarea>
   <div id="modalFooter">
-    <a class="button success small update-roles">Update Roles</a>
-    <a class="button caution small cancel-change">Cancel</a>
-    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    <a class="button success small update-roles">Rollen speichern</a>
+    <a class="button caution small cancel-change">Abbrechen</a>
+    <a class="close-reveal-modal" aria-label="Schließen">&#215;</a>
     <p id="rolesMessage" class="hide"></p>
     <section id="roles-examples">
       <div class="row">
         <div class="small-12 columns">
-          <strong>Examples</strong><br />
+          <strong>Beispiele</strong><br />
         </div>
       </div>
       <div class="row">
         <div class="small-12 columns">
-          Make user admin: <pre>{ "context" : "site", "roles" : [ "admin" ] }</pre>
+          Konto zum Admin machen: <pre>{ "context" : "site", "roles" : [ "admin" ] }</pre>
         </div>
       </div>
       <div class="row">
         <div class="small-12 columns">
-          Disable user: <pre>{ "context" : "site", "roles" : [ "disabled" ] }</pre>
+          Konto sperren: <pre>{ "context" : "site", "roles" : [ "disabled" ] }</pre>
         </div>
       </div>
     </section>
@@ -137,7 +137,7 @@
 
 {% raw %}
 <script id="role-user" type="text/template">
-Roles for {{username}}
+Rollen von {{username}}
 </script>
 {% endraw %}
 

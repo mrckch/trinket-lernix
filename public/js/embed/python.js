@@ -1457,12 +1457,12 @@ window.TrinketAPI = {
     var titles = {
         run     : 'Programm ausführen und Ergebnis anzeigen.'
       , console : 'Code interaktiv in der Konsole ausführen.'
-      , stop    : 'Stop program.'
+      , stop    : 'Programm anhalten.'
     };
     var labels = {
-        run     : 'Run'
-      , console : 'Console'
-      , stop    : 'Stop'
+        run     : 'Ausführen'
+      , console : 'Konsole'
+      , stop    : 'Stopp'
     };
     $('.run-it').data('action', 'code.' + option);
     $('.run-it').attr('title', titles[option]);

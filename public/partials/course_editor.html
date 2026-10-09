@@ -77,7 +77,7 @@
     </div>
     <div class="small-6 columns">
       <a ng-show="!editingOutline" id="edit-outline-button" class="button small" ng-click="editOutline()"><i class="fa fa-pencil"></i> Gliederung</a>
-      <a ng-show="editingOutline" id="edit-outline-button" class="button small" ng-click="haveContent && doneOutline()" ng-class="{disabled:!haveContent}">fertig</a>
+      <a ng-show="editingOutline" id="edit-outline-button" class="button small" ng-click="haveContent && doneOutline()" ng-class="{disabled:!haveContent}">Fertig</a>
     </div>
   </div>
 
@@ -511,10 +511,10 @@
 
             <div class="small-6 columns text-right" ng-show="canManageAccess">
               <!--normal button-->
-              <a class="button tiny dropdown text-left user-role-button" ng-class="{'disabled':undo[user.userId]}" data-dropdown="user-role-{{ user.userId }}" ng-show="!user.isSelf && !user.isOwner">{{ user.role }}</a>
+              <a class="button tiny dropdown text-left user-role-button" ng-class="{'disabled':undo[user.userId]}" data-dropdown="user-role-{{ user.userId }}" ng-show="!user.isSelf && !user.isOwner">{{ courseRoleLabels[user.role] || user.role }}</a>
 
               <!--owner or self button-->
-              <a class="button tiny text-left user-role-button owner" ng-class="{'disabled':undo[user.userId]}" data-dropdown="user-role-{{ user.userId }}" ng-show="user.isSelf || user.isOwner">{{ user.role }}</a>
+              <a class="button tiny text-left user-role-button owner" ng-class="{'disabled':undo[user.userId]}" data-dropdown="user-role-{{ user.userId }}" ng-show="user.isSelf || user.isOwner">{{ courseRoleLabels[user.role] || user.role }}</a>
 
               <ul id="user-role-{{ user.userId }}" class="f-dropdown content text-left user-role-list" ng-show="!user.isSelf && !user.isOwner" data-dropdown-content>
                 <li ng-click="updateUserRole(user, 'student')">

@@ -1033,12 +1033,12 @@ window.TrinketAPI = {
       , stop    : 'fa fa-stop'
     };
     var titles = {
-        run     : 'View the result.'
-      , stop    : 'Stop program.'
+        run     : 'Programm ausführen und Ergebnis anzeigen.'
+      , stop    : 'Programm anhalten.'
     };
     var labels = {
-        run     : 'Run'
-      , stop    : 'Stop'
+        run     : 'Ausführen'
+      , stop    : 'Stopp'
     };
 
     $('.run-it').data('action', 'code.' + option);

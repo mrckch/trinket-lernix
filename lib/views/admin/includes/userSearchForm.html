@@ -1,21 +1,21 @@
 {% if user.loggedInAs() %}
 <div class="row">
   <div class="small-12 columns">
-    <i class="fa fa-sign-out"></i> <a href="/admin/users?logoutAs={{ user.id }}">Logout as {{ user.username }}</a>
+    <i class="fa fa-sign-out"></i> <a href="/admin/users?logoutAs={{ user.id }}">Anmeldung als {{ user.username }} beenden</a>
   </div>
 </div>
 {% else %}
 <form id="user-search" action="/admin/users" method="get">
   <div class="row">
     <div class="medium-6 small-10 columns">
-      <label for="user-field"> Search by Email, Username, or Role (e.g. role:admin)
+      <label for="user-field"> Suche nach E-Mail, Benutzername oder Rolle (z. B. role:admin)
         <input id="user-field" type="text" name="q" value="{{ q if q.length else '' }}" />
       </label>
     </div>
   </div>
   <div class="row">
     <div class="medium-6 small-10 columns">
-      <input type="submit" class="button primary small" value="Search" />
+      <input type="submit" class="button primary small" value="Suchen" />
     </div>
   </div>
 </form>

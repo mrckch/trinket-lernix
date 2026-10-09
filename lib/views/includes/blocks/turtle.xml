@@ -57,14 +57,14 @@
       </value>
     </block>
   </category>
-  <category name="Colors">
+  <category name="Farben">
     <block type="colour_picker"></block>
     <block type="colour_random"></block>
     <block type="colour_rgb"></block>
     <block type="colour_blend"></block>
   </category>
-  <category name="Variables" custom="VARIABLE"></category>
-  <category name="Lists">
+  <category name="Variablen" custom="VARIABLE"></category>
+  <category name="Listen">
     <block type="lists_create_empty"></block>
     <block type="lists_create_with"></block>
     <block type="lists_repeat"></block>
@@ -76,7 +76,7 @@
     <block type="lists_getSublist"></block>
     <block type="lists_isIn"></block>
   </category>
-  <category name="Loops">
+  <category name="Schleifen">
     <block type="controls_repeat"></block>
     <block type="controls_repeat_ext"></block>
     <block type="controls_whileUntil"></block>
@@ -84,7 +84,7 @@
     <block type="controls_forEach"></block>
     <block type="controls_flow_statements"></block>
   </category>
-  <category name="Numbers">
+  <category name="Zahlen">
     <block type="math_number"></block>
     <block type="math_arithmetic"></block>
     <block type="math_single"></block>
@@ -116,7 +116,7 @@
     <block type="text_prompt"></block>
     <block type="text_prompt_ext"></block>
   </category>
-  <category name="Logic">
+  <category name="Logik">
     <block type="controls_if"></block>
     <block type="logic_compare"></block>
     <block type="logic_operation"></block>
@@ -125,8 +125,8 @@
     <block type="logic_null"></block>
     <block type="lists_isIn"></block>
   </category>
-  <category name="Functions" custom="PROCEDURE"></category>
-  <category name="Plotting">
+  <category name="Funktionen" custom="PROCEDURE"></category>
+  <category name="Diagramme">
     <block type="pyplot_plot"></block>
     <block type="pyplot_title">
       <value name="STRING">

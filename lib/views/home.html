@@ -80,7 +80,7 @@
         <div class="small-12 columns">
           <ul class="no-bullet course-list">
             <li ng-repeat="course in courses | orderBy:'name'" ng-click="gotoCourse(course); $event.stopPropagation()">
-              {{ course.name }} <span ng-show="course.role" class="secondary-label label round">{{ course.role }}</span>
+              {{ course.name }} <span ng-show="course.role" class="secondary-label label round">{{ courseRoleLabels[course.role] || course.role }}</span>
             </li>
           </ul>
         </div>
@@ -93,7 +93,7 @@
           </a>
           <ul ng-show="showArchived" class="no-bullet course-list">
             <li ng-repeat="course in archived | orderBy:'name'" ng-click="gotoCourse(course); $event.stopPropagation()">
-              {{ course.name }} <span ng-show="course.role" class="secondary-label label round">{{ course.role }}</span>
+              {{ course.name }} <span ng-show="course.role" class="secondary-label label round">{{ courseRoleLabels[course.role] || course.role }}</span>
             </li>
           </ul>
         </div>

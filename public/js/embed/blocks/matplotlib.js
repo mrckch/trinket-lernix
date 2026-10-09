@@ -3,10 +3,10 @@ Blockly.Blocks['pyplot_plot'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('plot');
+      .appendField('zeichne Diagramm mit x:');
     this.appendValueInput('X');
     this.appendValueInput('Y')
-      .appendField(',');
+      .appendField('y:');
     this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -24,7 +24,7 @@ Blockly.Blocks['pyplot_show'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('show');
+      .appendField('zeige Diagramm');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -38,7 +38,7 @@ Blockly.Python['pyplot_show'] = function(block) {
 Blockly.Blocks['pyplot_title'] = {
   init : function() {
     this.setColour(160);
-    this.appendValueInput('STRING').appendField('title');
+    this.appendValueInput('STRING').appendField('Titel');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -53,7 +53,7 @@ Blockly.Python['pyplot_title'] = function(block) {
 Blockly.Blocks['pyplot_xlabel'] = {
   init : function() {
     this.setColour(160);
-    this.appendValueInput('STRING').appendField('xlabel');
+    this.appendValueInput('STRING').appendField('Beschriftung x-Achse');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -68,7 +68,7 @@ Blockly.Python['pyplot_xlabel'] = function(block) {
 Blockly.Blocks['pyplot_ylabel'] = {
   init : function() {
     this.setColour(160);
-    this.appendValueInput('STRING').appendField('ylabel');
+    this.appendValueInput('STRING').appendField('Beschriftung y-Achse');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -87,16 +87,16 @@ Blockly.Blocks['numpy_linspace'] = {
     this.appendValueInput('START')
       .setAlign(Blockly.ALIGN_RIGHT)
       .appendField('numpy.linspace')
-      .appendField('start');
+      .appendField('Start');
 
     this.appendValueInput('STOP')
       .setAlign(Blockly.ALIGN_RIGHT)
-      .appendField('stop');
+      .appendField('Ende');
 
     this.appendValueInput('VALUE')
       .setCheck('Number')
       .setAlign(Blockly.ALIGN_RIGHT)
-      .appendField('num');
+      .appendField('Anzahl');
 
     this.setOutput(true);
   }
@@ -213,17 +213,17 @@ Blockly.Blocks['numpy_arange'] = {
       .setCheck('Number')
       .setAlign(Blockly.ALIGN_RIGHT)
       .appendField('numpy.arange')
-      .appendField('start');
+      .appendField('Start');
 
     this.appendValueInput('STOP')
       .setCheck('Number')
       .setAlign(Blockly.ALIGN_RIGHT)
-      .appendField('stop');
+      .appendField('Ende');
 
     this.appendValueInput('STEP')
       .setCheck('Number')
       .setAlign(Blockly.ALIGN_RIGHT)
-      .appendField('step');
+      .appendField('Schrittweite');
 
     this.setOutput(true);
   }

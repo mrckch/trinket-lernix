@@ -1,16 +1,16 @@
 <form method="post" action="/admin/upload">
   <div class="row">
     <div class="small-12 columns">
-      <label>Paste info in CSV format. Required fields: Email, Password. Optional fields: Username, Name
+      <label>Füge die Konten im CSV-Format ein (eine Zeile pro Konto). Die Kopfzeile muss genau so lauten wie im Beispiel. Pflichtspalten: Email, Password. Optional: Username (Benutzername), Name (vollständiger Name)
         <textarea name="userList" rows="10" placeholder="Email,Password,Username,Name
-user1@example.com,password123,user1,User One
-user2@example.com,password456,user2,User Two"></textarea>
+max.muster@example.com,Passwort123,max.muster,Max Muster
+erika.beispiel@example.com,Passwort456,erika.beispiel,Erika Beispiel"></textarea>
       </label>
     </div>
   </div>
   <div class="row">
     <div class="small-12 columns">
-      <input class="button primary" type="submit" value="Upload Users" />
+      <input class="button primary" type="submit" value="Konten anlegen" />
     </div>
   </div>
 </form>
@@ -20,11 +20,11 @@ user2@example.com,password456,user2,User Two"></textarea>
 <div class="row">
   <div class="small-12 columns">
     <div class="alert-box success">
-      Successfully created: {{ success }} users
+      Erfolgreich angelegte Konten: {{ success }}
     </div>
     {% if errors > 0 %}
     <div class="alert-box warning">
-      Errors: {{ errors }} (duplicate emails or invalid data)
+      Fehler: {{ errors }} (doppelte E-Mail-Adressen oder ungültige Daten)
     </div>
     {% endif %}
   </div>

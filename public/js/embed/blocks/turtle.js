@@ -2,8 +2,8 @@
 Blockly.Blocks['draw_move'] = {
   init : function() {
     var DIRECTIONS =
-      [['move forward by', 'forward'],
-       ['move backward by', 'backward']];
+      [['gehe vorwärts um', 'forward'],
+       ['gehe rückwärts um', 'backward']];
     this.setColour(160);
     this.appendValueInput('VALUE')
       .setCheck('Number')
@@ -24,8 +24,8 @@ Blockly.Blocks['draw_turn'] = {
   // Block for turning left or right.
   init: function() {
     var DIRECTIONS =
-      [['turn right by', 'right'],
-       ['turn left by', 'left']];
+      [['drehe nach rechts um', 'right'],
+       ['drehe nach links um', 'left']];
     // Append arrows to direction messages.
     DIRECTIONS[0][0] += ' \u21BB';
     DIRECTIONS[1][0] += ' \u21BA';
@@ -50,11 +50,11 @@ Blockly.Blocks['draw_shape'] = {
   init: function() {
     // circle, classic, square, triangle, turtle
     var SHAPES =
-      [['shape turtle', 'turtle'],
-       ['shape circle', 'circle'],
-       ['shape classic', 'classic'],
-       ['shape square', 'square'],
-       ['shape triangle', 'triangle']];
+      [['Form: Schildkröte', 'turtle'],
+       ['Form: Kreis', 'circle'],
+       ['Form: Pfeil', 'classic'],
+       ['Form: Quadrat', 'square'],
+       ['Form: Dreieck', 'triangle']];
     this.setColour(160);
     this.appendDummyInput()
       .appendField(new Blockly.FieldDropdown(SHAPES), 'SHAPE');
@@ -72,8 +72,8 @@ Blockly.Blocks['draw_pen'] = {
   // Block for choosing the turtle shape
   init: function() {
     var STATE =
-      [['pen up', 'penup'],
-       ['pen down', 'pendown']];
+      [['Stift anheben', 'penup'],
+       ['Stift absetzen', 'pendown']];
     this.setColour(160);
     this.appendDummyInput()
       .appendField(new Blockly.FieldDropdown(STATE), 'PEN');
@@ -91,7 +91,7 @@ Blockly.Blocks['draw_color'] = {
   init : function() {
     this.setColour(160);
     this.appendValueInput('COLOR')
-      .appendField('set color to');
+      .appendField('setze Farbe auf');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -107,11 +107,11 @@ Blockly.Blocks['draw_write'] = {
   init : function() {
     this.setColour(160);
     this.appendValueInput('STRING')
-      .appendField('write');
+      .appendField('schreibe');
     var sizeInput = new Blockly.FieldTextInput('14',
       Blockly.FieldTextInput.nonnegativeIntegerValidator);
     this.appendDummyInput()
-      .appendField('font size')
+      .appendField('Schriftgröße')
       .appendField(sizeInput, 'FONTSIZE');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -129,7 +129,7 @@ Blockly.Blocks['draw_circle'] = {
   init : function() {
     this.setColour(160);
     this.appendValueInput('VALUE')
-      .appendField('circle');
+      .appendField('zeichne Kreis mit Radius');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -145,7 +145,7 @@ Blockly.Blocks['draw_stamp'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('stamp');
+      .appendField('stemple Abdruck');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -160,7 +160,7 @@ Blockly.Blocks['begin_fill'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('begin fill');
+      .appendField('starte Ausfüllen');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -175,7 +175,7 @@ Blockly.Blocks['end_fill'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('end fill');
+      .appendField('beende Ausfüllen');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -190,10 +190,10 @@ Blockly.Blocks['goto'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('goto');
+      .appendField('gehe zu x:');
     this.appendValueInput('X');
     this.appendValueInput('Y')
-      .appendField(',');
+      .appendField('y:');
     this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -211,7 +211,7 @@ Blockly.Blocks['draw_speed'] = {
   init : function() {
     this.setColour(160);
     this.appendValueInput('VALUE')
-      .appendField('speed');
+      .appendField('setze Tempo auf');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
   }
@@ -227,7 +227,7 @@ Blockly.Blocks['draw_pos'] = {
   init : function() {
     this.setColour(160);
     this.appendDummyInput()
-      .appendField('pos');
+      .appendField('Position');
     this.setOutput(true);
   }
 };

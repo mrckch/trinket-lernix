@@ -15,6 +15,15 @@
       $scope.working  = {};
       $scope.showInfo = false;
 
+      // Anzeigetexte für die Rollen-Buttons (nur Anzeige, user.role bleibt der technische Wert)
+      $scope.courseRoleLabels = {
+          owner        : 'Kursleitung'
+        , admin        : 'Kursadmin'
+        , collaborator : 'Mitarbeitend'
+        , associate    : 'Gast'
+        , student      : 'Schüler:in'
+      };
+
       var viewMethods = {
         hide : {
           dashboard : function(user) {

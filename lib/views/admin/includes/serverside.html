@@ -1,6 +1,6 @@
 <div class="row">
   <div class="small-12 columns">
-    <p>Server-side trinket backends provide Python 3, Java, R, and Pygame execution.</p>
+    <p>Die Server-Backends führen Trinkets in Python 3, Java, R und Pygame aus.</p>
   </div>
 </div>
 
@@ -11,7 +11,7 @@
 <div class="row">
   <div class="small-12 columns">
     <div class="alert-box info">
-      No server-side languages are currently enabled. Enable them in your configuration under <code>features.trinkets</code>.
+      Zurzeit ist keine serverseitige Sprache aktiviert. Du kannst sie in der Konfiguration unter <code>features.trinkets</code> einschalten.
     </div>
   </div>
 </div>
@@ -22,18 +22,18 @@
     <table id="serverside-stats">
       <thead>
         <tr>
-          <th>Language</th>
+          <th>Sprache</th>
           <th>Status</th>
-          <th>Active Connections</th>
-          <th>Available Workers</th>
-          <th>Mode</th>
+          <th>Aktive Verbindungen</th>
+          <th>Freie Worker</th>
+          <th>Modus</th>
         </tr>
       </thead>
       <tbody>
         {% if config.features.trinkets.python3 %}
         <tr data-lang="python3" data-api="{{ serversideConfig.python3.api.default }}">
           <td>Python 3</td>
-          <td class="status"><i class="fa fa-spinner fa-spin"></i> Checking...</td>
+          <td class="status"><i class="fa fa-spinner fa-spin"></i> Wird geprüft …</td>
           <td class="active">-</td>
           <td class="available">-</td>
           <td class="mode">-</td>
@@ -42,7 +42,7 @@
         {% if config.features.trinkets.java %}
         <tr data-lang="java" data-api="{{ serversideConfig.java8.api.default }}">
           <td>Java</td>
-          <td class="status"><i class="fa fa-spinner fa-spin"></i> Checking...</td>
+          <td class="status"><i class="fa fa-spinner fa-spin"></i> Wird geprüft …</td>
           <td class="active">-</td>
           <td class="available">-</td>
           <td class="mode">-</td>
@@ -51,7 +51,7 @@
         {% if config.features.trinkets.R %}
         <tr data-lang="r" data-api="{{ serversideConfig.r3.api.default }}">
           <td>R</td>
-          <td class="status"><i class="fa fa-spinner fa-spin"></i> Checking...</td>
+          <td class="status"><i class="fa fa-spinner fa-spin"></i> Wird geprüft …</td>
           <td class="active">-</td>
           <td class="available">-</td>
           <td class="mode">-</td>
@@ -60,7 +60,7 @@
         {% if config.features.trinkets.pygame %}
         <tr data-lang="pygame" data-api="{{ serversideConfig.pygame.api.default }}">
           <td>Pygame</td>
-          <td class="status"><i class="fa fa-spinner fa-spin"></i> Checking...</td>
+          <td class="status"><i class="fa fa-spinner fa-spin"></i> Wird geprüft …</td>
           <td class="active">-</td>
           <td class="available">-</td>
           <td class="mode">-</td>
@@ -73,8 +73,8 @@
 
 <div class="row">
   <div class="small-12 columns">
-    <h5>Configuration</h5>
-    <p>Stats are fetched from the configured API endpoints. For local development, ensure the serverside containers are running.</p>
+    <h5>Konfiguration</h5>
+    <p>Die Werte kommen von den konfigurierten API-Endpunkten. Für die lokale Entwicklung müssen die Serverside-Container laufen:</p>
     <pre><code>cd serverside && docker compose --profile python3 --profile java --profile r --profile pygame up -d</code></pre>
   </div>
 </div>
@@ -112,7 +112,7 @@ $(function() {
         $row.find('.status').html('<span class="label success">Online</span>');
         $row.find('.active').text(data.active || 0);
         $row.find('.available').text(data.available || 1);
-        $row.find('.mode').text(data.mode || 'unknown');
+        $row.find('.mode').text(data.mode || 'unbekannt');
       })
       .fail(function(xhr, status, error) {
         $row.find('.status').html('<span class="label alert">Offline</span>');

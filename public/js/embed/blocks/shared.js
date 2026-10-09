@@ -32,7 +32,7 @@
             api.upload_xml = "";
             $('.blocks-button').addClass('disabled');
 
-            $('#uploadMessage').html('<i class="fa fa-exclamation-circle alert"></i> We had a problem uploading your file. Please check that your file is properly formatted XML and try again.');
+            $('#uploadMessage').html('<i class="fa fa-exclamation-circle alert"></i> Beim Hochladen deiner Datei ist ein Fehler aufgetreten. Prüfe, ob es eine gültige XML-Datei ist, und versuche es noch einmal.');
             $('#uploadMessage').removeClass('hide');
           }
         }

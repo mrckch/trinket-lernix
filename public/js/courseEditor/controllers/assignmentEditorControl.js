@@ -325,7 +325,7 @@
       $scope.addBlankTrinket = function(type) {
         $scope.trinket = {
             lang : type.lang
-          , name : "[Blank " + type.label + " Trinket]"
+          , name : "[Leeres " + type.label + "-Trinket]"
         };
       }
 

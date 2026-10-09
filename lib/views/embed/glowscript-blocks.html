@@ -40,7 +40,7 @@
 
     {% if outputOnly %}
     <div id="outputTabs" class="{{ outputTabs }} {% if hideGeneratedCode %}hideGeneratedCode{% endif %}">
-      <div class="active menu-button {{ outputTabs }}" id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Run</div>
+      <div class="active menu-button {{ outputTabs }}" id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Ausführen</div>
       <div class="menu-button {% if hideGeneratedCode %}hideGeneratedCode{% endif %} {{ outputTabs }}" id="codeViewTab" data-action="code.view"><i class="fa fa-terminal"></i> View Code</div>
     </div>
 
@@ -57,7 +57,7 @@
 
     <div id="outputTabs" class="{{ outputTabs }} {% if outputTabs == 'noTabs' %}withoutTabs{% else %}withTabs{% endif %}">
       <div class="{% if not showInstructions %}active {% endif %}menu-button {{ outputTabs }}"
-        id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Run</div>
+        id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Ausführen</div>
       <div class="menu-button {% if hideGeneratedCode %}hideGeneratedCode{% endif %} {{ outputTabs }}"
         id="codeViewTab" data-action="code.view"><i class="fa fa-terminal"></i> View Code</div>
       <div class="{% if showInstructions %}active {% endif %}menu-button {% if hideInstructions or (not isOwner and not trinket.description) %}hideInstructions{% endif %} {{ outputTabs }}"

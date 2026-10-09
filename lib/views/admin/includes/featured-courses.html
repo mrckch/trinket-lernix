@@ -1,6 +1,6 @@
 <form name="featured" class="featured-course-form">
   <fieldset class="featured-course-list">
-    <legend>Featured Courses</legend>
+    <legend>Empfohlene Kurse</legend>
     <section id="featured">
     {% for course in data.courses %}
       <div id="featured-{{ course.id }}" class="row course-row-container" data-id="{{ course.id }}" data-page="{{ course.page }}">
@@ -10,7 +10,7 @@
               <a href="/{{ course.ownerSlug }}/courses/{{ course.slug }}{% if course.page %}#/{{ course.page }}{% endif %}" target="_blank">{{ course.name }}{% if course.page %} {{ course.page }}{% endif %}</a>
             </div>
             <div class="small-3 columns">
-             <a data-course-id="{{ course.id }}" data-page="{{ course.page }}" class="right remove-featured-course"><i class="fa fa-times-circle caution"></i></a>
+             <a data-course-id="{{ course.id }}" data-page="{{ course.page }}" class="right remove-featured-course" title="Entfernen"><i class="fa fa-times-circle caution"></i></a>
             </div>
           </div>
         </div>
@@ -19,16 +19,16 @@
     </section>
     <div id="new-course-featured" class="row new-featured-course-inputs">
       <div class="small-2 columns">
-        <input type="text" name="ownerSlug" placeholder="owner slug" />
+        <input type="text" name="ownerSlug" placeholder="Benutzername der Kursleitung" />
       </div>
       <div class="small-2 columns">
-        <input type="text" name="slug" placeholder="course slug" />
+        <input type="text" name="slug" placeholder="Kurs-Kürzel (Slug)" />
       </div>
       <div class="small-3 columns">
-        <input type="text" name="page" placeholder="course page (optional)" />
+        <input type="text" name="page" placeholder="Kursseite (optional)" />
       </div>
       <div class="small-3 columns end">
-        <button type="submit" class="button tiny secondary">Add Course</button>
+        <button type="submit" class="button tiny secondary">Kurs hinzufügen</button>
       </div>
     </div>
   </fieldset>
@@ -43,7 +43,7 @@
         <a href="{{courseUrl}}" target="_blank">{{courseName}}</a>
       </div>
       <div class="small-3 columns ">
-       <a data-course-id="{{courseId}}" data-page="{{coursePage}}" class="right remove-featured-course"><i class="fa fa-times-circle caution"></i></a>
+       <a data-course-id="{{courseId}}" data-page="{{coursePage}}" class="right remove-featured-course" title="Entfernen"><i class="fa fa-times-circle caution"></i></a>
       </div>
     </div>
   </div>
