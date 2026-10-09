@@ -173,6 +173,14 @@ routes = [
     }
   },
   {
+    // Lernix: alle Abgaben des Kurses als ZIP (Dashboard)
+    route  : 'GET /{userSlug}/courses/{courseSlug}/abgaben.zip kursexport.download',
+    config : {
+      auth: 'session',
+      pre  : [helpers.coursesEnabled, 'user(params.userSlug)', {method:helpers.courseBySlug, assign:'course'}]
+    }
+  },
+  {
     route  : 'GET /{userSlug}/courses/{courseSlug} courses.coursePage',
     html   : 'courses/view.html',
     config : {

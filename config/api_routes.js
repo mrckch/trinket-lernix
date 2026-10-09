@@ -176,6 +176,11 @@ module.exports = [
     config : v1({ pre : ['course(params.courseId)'] })
   },
   {
+    // Lernix: Kurs-Export als ZIP (submissions:read)
+    route : 'GET /api/v1/courses/{courseId}/export.zip kursexport.api',
+    config : v1()
+  },
+  {
     route : 'GET /api/v1/courses/{courseId}/students/{userId}/submissions apiv1.studentSubmissions',
     config : v1({ pre : ['course(params.courseId)'] })
   },

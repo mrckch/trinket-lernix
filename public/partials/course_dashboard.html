@@ -16,6 +16,8 @@
               <a ng-click="changeView(key)"><i class="{{ option.class }}"></i> <span class="show-for-large-up">{{ option.label }}</span></a>
             </li>
           </ul>
+          <a class="button small" ng-href="/{{ userSlug }}/courses/{{ courseSlug }}/abgaben.zip" target="_self"
+             title="Alle Abgaben mit Code, Rückmeldungen und Lernstand-Tabelle als ZIP herunterladen"><i class="fa fa-download"></i> <span class="show-for-large-up">Abgaben exportieren</span></a>
         </section>
       </section>
     </section>
