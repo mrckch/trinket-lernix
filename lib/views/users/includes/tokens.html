@@ -1,0 +1,101 @@
+{# API-Token für die Lernstand-API (/api/v1) – nur Lehrkräfte/Admins, siehe docs/lernix/openapi.yaml #}
+<p>
+  Mit einem API-Token können externe Programme (zum Beispiel der SchulAssistent) den Lernstand deiner
+  Kurse <strong>lesen</strong>. Das Token wird nur <strong>einmal</strong> angezeigt – bitte sofort
+  sicher ablegen. Aufruf: <code>Authorization: Bearer &lt;Token&gt;</code> gegen <code>/api/v1/…</code>.
+</p>
+
+<div id="token-secret" class="panel callout radius" style="display:none">
+  <h5>Neues Token</h5>
+  <p>Kopiere es jetzt, später ist es nicht mehr einsehbar:</p>
+  <pre id="token-secret-value" style="white-space:pre-wrap; word-break:break-all"></pre>
+</div>
+
+<form id="token-form" class="panel radius">
+  <div class="row">
+    <div class="medium-6 small-12 columns">
+      <label>Bezeichnung
+        <input type="text" id="token-name" maxlength="80" placeholder="z. B. SchulAssistent" required />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-12 columns">
+      <label>Rechte</label>
+      {% for scope, description in data.scopes %}
+      <label><input type="checkbox" class="token-scope" value="{{ scope }}" checked /> <code>{{ scope }}</code> – {{ description }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-12 columns">
+      <button type="submit" class="button small primary"><i class="fa fa-key"></i> Token anlegen</button>
+      <small id="token-error" class="error" style="display:none"></small>
+    </div>
+  </div>
+</form>
+
+<h5>Vorhandene Token</h5>
+{% if data.tokens and data.tokens.length %}
+<table style="width:100%">
+  <thead>
+    <tr><th>Bezeichnung</th><th>Anfang</th><th>Rechte</th><th>Angelegt</th><th>Zuletzt benutzt</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for token in data.tokens %}
+    <tr>
+      <td>{{ token.name }}</td>
+      <td><code>{{ token.prefix }}…</code></td>
+      <td>{{ token.scopes | join(', ') }}</td>
+      <td>{{ token.createdText }}</td>
+      <td>{{ token.lastUsedText }}</td>
+      <td>{% if token.active %}aktiv{% else %}widerrufen{% endif %}</td>
+      <td>{% if token.active %}<a href="#" class="button tiny alert token-revoke" data-id="{{ token.id }}">widerrufen</a>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Noch keine Token.</p>
+{% endif %}
+
+<script>
+(function() {
+  var form = document.getElementById('token-form');
+  if (!form) return;
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    var name   = document.getElementById('token-name').value.trim();
+    var scopes = Array.prototype.slice.call(document.querySelectorAll('.token-scope:checked')).map(function(el) { return el.value; });
+    var error  = document.getElementById('token-error');
+    error.style.display = 'none';
+
+    fetch('/api/tokens', {
+      method  : 'POST',
+      headers : { 'Content-Type' : 'application/json', 'Accept' : 'application/json' },
+      credentials : 'same-origin',
+      body    : JSON.stringify({ name : name, scopes : scopes })
+    }).then(function(res) { return res.json().then(function(json) { return { ok : res.ok, json : json }; }); })
+      .then(function(result) {
+        if (!result.ok) {
+          error.textContent = result.json.message || 'Token konnte nicht angelegt werden.';
+          error.style.display = 'inline';
+          return;
+        }
+        document.getElementById('token-secret-value').textContent = result.json.secret;
+        document.getElementById('token-secret').style.display = 'block';
+        form.style.display = 'none';
+      });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.token-revoke'), function(link) {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      if (!window.confirm('Token widerrufen? Programme, die es benutzen, verlieren sofort den Zugriff.')) return;
+      fetch('/api/tokens/' + link.getAttribute('data-id'), { method : 'DELETE', headers : { 'Accept' : 'application/json' }, credentials : 'same-origin' })
+        .then(function() { window.location.reload(); });
+    });
+  });
+})();
+</script>

@@ -13,6 +13,17 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 - Nach `npm install` im Container (`docker compose … exec app npm install --legacy-peer-deps <paket>`)
   ändern sich `package.json`/`package-lock.json` im Repo; für Produktion das Image neu bauen.
 
+## Lernstand-API ausprobieren (ADR 0004)
+
+Als Lehrkraft unter `/account/tokens` ein Token anlegen, dann:
+
+```bash
+curl -H "Authorization: Bearer tl_…" http://127.0.0.1:8075/api/v1/courses
+curl -H "Authorization: Bearer tl_…" http://127.0.0.1:8075/api/v1/courses/<id>/lernstand
+```
+
+Beschreibung aller Endpunkte: `docs/lernix/openapi.yaml`.
+
 ## Wartungslauf (Aufbewahrung, ADR 0003)
 
 ```bash

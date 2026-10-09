@@ -1,0 +1,302 @@
+openapi: 3.0.3
+info:
+  title: Trinket Lernix – Lernstand-API
+  version: "1.0"
+  description: |
+    Lesender Zugriff auf Kurse, Aufgaben, Teilnehmende und Abgaben für externe Programme
+    (z. B. SchulAssistent). Authentifizierung ausschließlich per Bearer-Token, das eine Lehrkraft
+    unter `/account/tokens` anlegt. Wirksame Rechte = Scopes des Tokens ∩ Rechte der Rolle.
+    Fehler kommen im Hapi/Boom-Format `{ statusCode, error, message }`.
+servers:
+  - url: https://trinket.lernix.site
+security:
+  - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      description: "Authorization: Bearer tl_… (Scopes courses:read, submissions:read, trinkets:read)"
+  schemas:
+    Error:
+      type: object
+      properties:
+        statusCode: { type: integer }
+        error: { type: string }
+        message: { type: string }
+    DateFlag:
+      type: object
+      properties:
+        enabled: { type: boolean }
+        at: { type: string, format: date-time, nullable: true }
+    CourseSummary:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        slug: { type: string }
+        description: { type: string }
+        owner: { type: string, description: Benutzername der Kursleitung }
+        archived: { type: boolean }
+        courseType: { type: string, enum: [public, private, open, demo] }
+        iservGroup:
+          type: object
+          nullable: true
+          properties:
+            act: { type: string, description: IServ-Gruppenkennung }
+            name: { type: string }
+        studentCount: { type: integer }
+        created: { type: string, format: date-time }
+        lastUpdated: { type: string, format: date-time }
+    Material:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        slug: { type: string }
+        type: { type: string, enum: [page, assignment] }
+        isDraft: { type: boolean }
+        lessonId: { type: string }
+        lessonName: { type: string }
+        assignment:
+          type: object
+          nullable: true
+          properties:
+            trinketId: { type: string, nullable: true, description: Vorlage (Trinket der Lehrkraft) }
+            lang: { type: string, nullable: true }
+            shortCode: { type: string, nullable: true }
+            submissionsDue: { $ref: '#/components/schemas/DateFlag' }
+            submissionsCutoff: { $ref: '#/components/schemas/DateFlag' }
+            availableOn: { $ref: '#/components/schemas/DateFlag' }
+            hideAfter: { $ref: '#/components/schemas/DateFlag' }
+    Lesson:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        isDraft: { type: boolean }
+        materials:
+          type: array
+          items: { $ref: '#/components/schemas/Material' }
+    Student:
+      type: object
+      properties:
+        id: { type: string }
+        username: { type: string }
+        name: { type: string }
+        email: { type: string }
+        joinedVia: { type: string, nullable: true, enum: [owner, iserv, code, invite, manual] }
+        onDashboard: { type: boolean }
+    Submission:
+      type: object
+      description: Zustand einer SuS zu einer Aufgabe (zusammengefasst über alle Versuche)
+      properties:
+        studentId: { type: string }
+        assignmentId: { type: string }
+        state: { type: string, enum: [not-started, started, submitted, completed] }
+        late: { type: boolean, description: nach Fälligkeit abgegeben }
+        trinketId: { type: string, description: jüngstes Trinket dieser Abgabe }
+        startedOn: { type: string, format: date-time, nullable: true }
+        submittedOn: { type: string, format: date-time, nullable: true }
+        lastUpdated: { type: string, format: date-time, nullable: true }
+    Counts:
+      type: object
+      properties:
+        notStarted: { type: integer }
+        started: { type: integer }
+        submitted: { type: integer }
+        completed: { type: integer }
+    TrinketSummary:
+      type: object
+      properties:
+        id: { type: string }
+        shortCode: { type: string }
+        name: { type: string }
+        lang: { type: string }
+        courseId: { type: string, nullable: true }
+        assignmentId: { type: string, nullable: true }
+        creatorId: { type: string, nullable: true }
+        state: { type: string, enum: [not-started, started, submitted, completed] }
+        rawState: { type: string, nullable: true, description: Originalwert (started, modified, submitted, submittedLate, completed) }
+        late: { type: boolean }
+        startedOn: { type: string, format: date-time, nullable: true }
+        submittedOn: { type: string, format: date-time, nullable: true }
+        created: { type: string, format: date-time }
+        lastUpdated: { type: string, format: date-time }
+        feedbackCount: { type: integer }
+    Trinket:
+      allOf:
+        - $ref: '#/components/schemas/TrinketSummary'
+        - type: object
+          properties:
+            code: { type: string, description: Quelltext der Hauptdatei }
+            comments:
+              type: array
+              items:
+                type: object
+                properties:
+                  author: { type: string, nullable: true }
+                  type: { type: string, nullable: true, description: feedback (Lehrkraft) oder Kommentar der SuS }
+                  text: { type: string }
+                  at: { type: string, format: date-time, nullable: true }
+  responses:
+    Unauthorized:
+      description: Token fehlt, ist ungültig oder widerrufen
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    Forbidden:
+      description: Scope fehlt oder kein Zugriff auf den Kurs
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    NotFound:
+      description: Kurs, Person oder Trinket nicht gefunden
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+paths:
+  /api/v1/me:
+    get:
+      summary: Identität und wirksame Scopes des Tokens
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string }
+                  username: { type: string }
+                  name: { type: string }
+                  email: { type: string }
+                  roles: { type: array, items: { type: string } }
+                  token:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      name: { type: string }
+                      scopes: { type: array, items: { type: string } }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/courses:
+    get:
+      summary: Kurse, deren Abgaben die Lehrkraft sehen darf (Scope courses:read)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courses: { type: array, items: { $ref: '#/components/schemas/CourseSummary' } }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+  /api/v1/courses/{courseId}:
+    get:
+      summary: Kurs mit Gliederung (Lektionen, Seiten, Aufgaben) (Scope courses:read)
+      parameters:
+        - { name: courseId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course: { $ref: '#/components/schemas/CourseSummary' }
+                  lessons: { type: array, items: { $ref: '#/components/schemas/Lesson' } }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/students:
+    get:
+      summary: Teilnehmende mit Rolle course-student (Scope courses:read)
+      parameters:
+        - { name: courseId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course: { $ref: '#/components/schemas/CourseSummary' }
+                  students: { type: array, items: { $ref: '#/components/schemas/Student' } }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/lernstand:
+    get:
+      summary: Lernstand-Matrix SuS × Aufgabe mit Zusammenfassungen (Scope submissions:read)
+      parameters:
+        - { name: courseId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course: { $ref: '#/components/schemas/CourseSummary' }
+                  generatedAt: { type: string, format: date-time }
+                  assignments: { type: array, items: { $ref: '#/components/schemas/Material' } }
+                  students: { type: array, items: { $ref: '#/components/schemas/Student' } }
+                  submissions: { type: array, items: { $ref: '#/components/schemas/Submission' } }
+                  byAssignment:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Counts'
+                        - type: object
+                          properties:
+                            assignmentId: { type: string }
+                            name: { type: string }
+                  byStudent:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Counts'
+                        - type: object
+                          properties:
+                            studentId: { type: string }
+                            username: { type: string }
+                            name: { type: string }
+                            assignmentCount: { type: integer }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/students/{userId}/submissions:
+    get:
+      summary: Alle Abgabe-Trinkets einer SuS im Kurs (Scope submissions:read)
+      parameters:
+        - { name: courseId, in: path, required: true, schema: { type: string } }
+        - { name: userId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  student: { $ref: '#/components/schemas/Student' }
+                  submissions: { type: array, items: { $ref: '#/components/schemas/TrinketSummary' } }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/trinkets/{trinketId}:
+    get:
+      summary: Ein Trinket mit Code und Rückmeldungen (Scope trinkets:read; eigene oder aus eigenen Kursen)
+      parameters:
+        - { name: trinketId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trinket: { $ref: '#/components/schemas/Trinket' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }

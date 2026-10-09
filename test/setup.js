@@ -29,5 +29,6 @@ global.Trinket          = require('../lib/models/trinket');
 global.Interaction      = require('../lib/models/interaction');
 global.Folder           = require('../lib/models/folder');
 global.CourseInvitation = require('../lib/models/courseInvitation');
+global.ApiToken         = require('../lib/models/apiToken');
 
 module.exports = {};

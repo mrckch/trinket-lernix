@@ -10,6 +10,7 @@
         <h4>Settings</h4>
       </li>
     {% set pages = ['Profile', 'Email', 'Password', 'Trinket-Editor', 'Data', 'Import', 'Delete-Account'] %}
+    {% if user.hasRole('teacher') or user.hasRole('admin') %}{% set pages = pages.concat(['Tokens']) %}{% endif %}
     {% for link in pages %}
       <li><a {% if page == link.toLowerCase() %}class="active"{% endif %} href="/account/{{ link | lower }}">{{ link | replace('-', ' ') }}</a></li>
     {% endfor %}

@@ -200,7 +200,14 @@ Ursprünglicher Umfang:
 - Schuljahreswechsel: Kurse archivieren, keine automatische Löschung (Std 15,
   Frist festlegen).
 
-### Phase 3 – Token-API für den Lernstand (1 Tag)
+### Phase 3 – Token-API für den Lernstand (1 Tag) — **erledigt 2026-10-09** (ADR 0004)
+
+Ergebnis: Modell `ApiToken`, `lib/auth/bearer.js` (Strategie `bearer`, Scopes ∩ Rolle),
+`lib/services/lernstand.js`, Controller `apiv1`/`tokens`, Seite `/account/tokens`,
+`docs/lernix/openapi.yaml`. Endpunkt für die Matrix heißt `…/lernstand` (statt `dashboard`).
+Tests: 145 grün.
+
+Ursprünglicher Umfang:
 - Modell `ApiToken` (`userId`, `name`, `hash`, `scopes`, `lastUsedAt`,
   `revokedAt`); Hapi-Strategie `bearer`; Routen nur lesend:
   - `GET /api/v1/me`

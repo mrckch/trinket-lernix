@@ -39,6 +39,7 @@ const viewEngine     = require('./lib/util/nunjucks');
 const CatboxMongoose = require('./lib/util/catbox-mongoose');
 const clientIp       = require('./lib/util/clientIp');
 const accounts       = require('./lib/auth/accounts');
+const bearer         = require('./lib/auth/bearer');
 const fs             = require('fs');
 const path           = require('path');
 
@@ -285,6 +286,10 @@ const init = async () => {
   // Register the session auth strategy
   server.auth.strategy('session', 'session');
 
+  // Bearer-Token für die Lernstand-API (/api/v1), siehe lib/auth/bearer.js
+  server.auth.scheme('bearer', bearer.scheme());
+  server.auth.strategy('bearer', 'bearer');
+
   // Make session auth the default but don't require it
   server.auth.default({ strategy: 'session', mode: 'try' });
 
@@ -307,6 +312,7 @@ const init = async () => {
   Interaction = require('./lib/models/interaction');
   Folder   = require('./lib/models/folder');
   CourseInvitation = require('./lib/models/courseInvitation');
+  ApiToken = require('./lib/models/apiToken');
 
   // Lokalen Notfall-Admin aus BREAKGLASS_EMAIL/BREAKGLASS_PASSWORD sicherstellen
   try {

@@ -32,6 +32,56 @@ module.exports = [
       auth: 'session'
     }
   },
+  // --- API-Token verwalten (Session, Lehrkräfte/Admins) ---------------------------------
+  {
+    route : 'GET /api/tokens tokens.list',
+    config : { auth: 'session' }
+  },
+  {
+    route : 'POST /api/tokens tokens.create',
+    config : {
+      auth: 'session',
+      validate : {
+        payload : {
+          name   : Joi.string().min(1).max(80).required(),
+          scopes : Joi.array().items(Joi.string().max(40)).min(1).required()
+        }
+      }
+    }
+  },
+  {
+    route : 'DELETE /api/tokens/{tokenId} tokens.revoke',
+    config : { auth: 'session' }
+  },
+  // --- Lernstand-API /api/v1 (nur Bearer-Token, lesend; docs/lernix/openapi.yaml) --------
+  {
+    route : 'GET /api/v1/me apiv1.me',
+    config : { auth: { strategy: 'bearer' } }
+  },
+  {
+    route : 'GET /api/v1/courses apiv1.courses',
+    config : { auth: { strategy: 'bearer' } }
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId} apiv1.course',
+    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/students apiv1.students',
+    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/lernstand apiv1.lernstand',
+    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/students/{userId}/submissions apiv1.studentSubmissions',
+    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+  },
+  {
+    route : 'GET /api/v1/trinkets/{trinketId} apiv1.trinket',
+    config : { auth: { strategy: 'bearer' }, pre : ['trinket(params.trinketId)'] }
+  },
   {
     // IServ-Gruppen der angemeldeten Person (Session)
     route : 'GET /api/iserv/groups iserv.groups',
