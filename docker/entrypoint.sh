@@ -80,6 +80,7 @@ features:
   courses: true
   assets: false
   accessibilityToggle: false
+  storeClientAddress: false
   trinkets:
     python: true
     html: true
@@ -112,6 +113,10 @@ app:
     skulpt:
       local: true   # Skulpt aus public/components statt vom (nicht vorhandenen) CDN
       min: true
+  retention:
+    enabled: $(bool "${RETENTION_ENABLED:-true}")
+    schoolYearEnd: $(q "${RETENTION_SCHOOL_YEAR_END:-07-31}")
+    trashDays: ${RETENTION_TRASH_DAYS:-30}
   trustedProxies: $(q "$TRUSTED_PROXIES")
   adminIpAllowlist: $(q "$ADMIN_IP_ALLOWLIST")
   auth:

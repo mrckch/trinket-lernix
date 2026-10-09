@@ -141,7 +141,8 @@ routes = [
           name: Joi.string().min(1).max(140).required(),
           description: Joi.string().max(500),
           courseType: Joi.string().valid('public', 'private', 'open').optional(),
-          contentDefault: Joi.string().valid('publish', 'draft').optional()
+          contentDefault: Joi.string().valid('publish', 'draft').optional(),
+          iservGroupAct: Joi.string().max(200).allow('').optional()
         }
       }
     }
@@ -587,7 +588,9 @@ routes = [
         payload : {
           email    : Joi.string().max(200).regex(/^[^@\s]+@[^@\s]+$/).required(),
           fullname : Joi.string().max(80).required(),
-          role     : Joi.string().valid('student', 'teacher', 'admin').required()
+          role     : Joi.string().valid('student', 'teacher', 'admin').required(),
+          // simulierte IServ-Gruppen: "klasse.9b:Klasse 9b, ag.robotik:AG Robotik"
+          groups   : Joi.string().max(1000).allow('').optional()
         }
       }
     }

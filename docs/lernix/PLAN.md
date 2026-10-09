@@ -180,7 +180,17 @@ Ursprünglicher Umfang:
 - Tests: Nicht-Lehrkraft bekommt `student`; manipulierter `Host`-Header
   ändert die Redirect-URI nicht; `AUTH_MODE=dev` startet nicht mit `production`.
 
-### Phase 2 – Gruppen aus IServ (½–1 Tag)
+### Phase 2 – Gruppen aus IServ (½–1 Tag) — **erledigt 2026-10-09** (ADR 0003)
+
+Ergebnis: `lib/auth/groups.js` (Session-Gruppen, Zuordnung beim Login, `joinedVia`),
+Kursfeld `externalLink` mit Name, Auswahl im Formular „Kurs anlegen“, API
+`GET /api/iserv/groups` und `PUT /api/courses/{id}/iserv-group`; Aufbewahrung in
+`lib/util/retention.js` + `scripts/maintenance.js` (Compose-Dienst `maintenance`);
+Interaktions-Log ohne IP/Referer. Tests: 131 grün.
+
+Offen für Phase 4: Verknüpfung im Kurs-Editor anzeigen und ändern (AngularJS, Nutzer-Tab).
+
+Ursprünglicher Umfang:
 - Kurs bekommt `externalLink.source = 'iserv'`, `sourceId = <Gruppenname>`.
 - Lehrkraft wählt beim Anlegen eines Kurses eine ihrer IServ-Gruppen (Claims
   werden pro Session zwischengespeichert, nicht dauerhaft gespeichert).

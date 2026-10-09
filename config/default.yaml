@@ -1,6 +1,7 @@
 features:
   courses: true   # Enable/disable courses feature entirely
   assets: false   # Enable/disable asset uploads (requires S3 or compatible storage)
+  storeClientAddress: false  # Trinket Lernix: IP-Adresse/Referer im Interaktions-Log speichern? (ADR 0003)
   accessibilityToggle: false  # Show accessibility toggle in embed toolbar (for screen reader mode)
   trinkets:
     # Client-side languages - work out of the box
@@ -336,6 +337,11 @@ app:
       clientSecret:
       clientID:
       callbackURL:
+  # Aufbewahrung (ADR 0003): täglicher Lauf scripts/maintenance.js
+  retention:
+    enabled: true
+    schoolYearEnd: '07-31'   # MM-DD; danach werden IServ-Kurse archiviert und SuS-Trinkets in den Papierkorb gelegt
+    trashDays: 30            # Papierkorb-Frist, danach endgültig gelöscht
   # Nur diesen Absendern wird X-Forwarded-For geglaubt (IP der NPM-VM)
   trustedProxies: '127.0.0.1'
   # /admin, /api/admin und der Notfall-Login nur aus diesen Netzen (CIDR, kommagetrennt); fail closed

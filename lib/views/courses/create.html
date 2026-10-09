@@ -58,6 +58,21 @@
           </div>
         </div>
 
+        {% if iservGroups and iservGroups.length %}
+        <div class="row">
+          <div class="large-12 columns">
+            <label for="iserv-group">Mit IServ-Gruppe verknüpfen (optional)</label>
+            <select name="iservGroupAct" id="iserv-group">
+              <option value="">– keine Verknüpfung –</option>
+              {% for group in iservGroups %}
+              <option value="{{ group.act }}" {% if flash.payload and flash.payload.iservGroupAct == group.act %}selected{% endif %}>{{ group.name }}</option>
+              {% endfor %}
+            </select>
+            <small>Mitglieder dieser Gruppe werden bei ihrer nächsten Anmeldung automatisch als Schülerinnen und Schüler eingetragen.</small>
+          </div>
+        </div>
+        {% endif %}
+
         <div class="row">
           <div class="large-12 columns">
             <label for="content-default">Should course content be published or draft when created?</label>

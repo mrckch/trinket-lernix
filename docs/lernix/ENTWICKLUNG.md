@@ -13,6 +13,15 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 - Nach `npm install` im Container (`docker compose … exec app npm install --legacy-peer-deps <paket>`)
   ändern sich `package.json`/`package-lock.json` im Repo; für Produktion das Image neu bauen.
 
+## Wartungslauf (Aufbewahrung, ADR 0003)
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec app node scripts/maintenance.js --dry-run
+```
+
+Im Dev-Stack läuft der Dienst `maintenance` nicht automatisch (Profil `maintenance`), in
+Produktion täglich. Der Probelauf zeigt, was archiviert, in den Papierkorb gelegt und gelöscht würde.
+
 ## Tests
 
 Die Suite (mocha 3, chai 3, sinon 17, supertest) braucht ein **MongoDB ohne Authentifizierung**

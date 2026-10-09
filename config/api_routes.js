@@ -18,7 +18,10 @@ module.exports = [
           name           : Joi.string().max(140).required(),
           description    : Joi.string().max(500),
           courseType     : Joi.string().valid('public', 'private', 'open').optional(),
-          contentDefault : Joi.string().valid('publish', 'draft').optional()
+          contentDefault : Joi.string().valid('publish', 'draft').optional(),
+          // Trinket Lernix: optional mit einer IServ-Gruppe verknüpfen
+          iservGroupAct  : Joi.string().max(200).allow('').optional(),
+          iservGroupName : Joi.string().max(200).allow('').optional()
         }
       }
     }
@@ -27,6 +30,27 @@ module.exports = [
     route : 'GET /api/courses courses.getCourses',
     config : {
       auth: 'session'
+    }
+  },
+  {
+    // IServ-Gruppen der angemeldeten Person (Session)
+    route : 'GET /api/iserv/groups iserv.groups',
+    config : {
+      auth: 'session'
+    }
+  },
+  {
+    // IServ-Gruppe eines Kurses setzen oder lösen (act: '')
+    route : 'PUT /api/courses/{courseId}/iserv-group course.setIservGroup',
+    config : {
+      auth: 'session',
+      pre  : ['course(params.courseId)'],
+      validate : {
+        payload : {
+          act  : Joi.string().max(200).allow('').required(),
+          name : Joi.string().max(200).allow('').optional()
+        }
+      }
     }
   },
   {

@@ -26,3 +26,6 @@ services:
 
   db-backup:
     profiles: ["backup"]   # im Dev-Betrieb nicht starten
+
+  maintenance:
+    profiles: ["maintenance"]   # im Dev-Betrieb von Hand: docker compose … exec app node scripts/maintenance.js --dry-run
