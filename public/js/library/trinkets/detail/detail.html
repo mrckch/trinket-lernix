@@ -4,18 +4,18 @@
     <section class="options-right">
       <a class="button small" ng-if="isAdmin" ng-click="smile()"><i ng-class="{'fa fa-spinner fa-spin':isSnapping, 'fa fa-camera':!isSnapping}"></i></a>
       <a class="button small" ng-if="isOwner" data-reveal-id="addToFolderModal"><i class='fa fa-folder'></i></a>
-      <a class="button small" ng-if="isOwner && canCopy" ng-click="copy()"><span class="label-container"><i class='fa fa-files-o label-icon'></i> <span class='show-for-large-up label-text'>copy</span></span></a>
+      <a class="button small" ng-if="isOwner && canCopy" ng-click="copy()"><span class="label-container"><i class='fa fa-files-o label-icon'></i> <span class='show-for-large-up label-text'>kopieren</span></span></a>
 
-      <a data-dropdown="shareDropdown" aria-controls="shareDropdown" aria-expanded="false" class="button small"><span class="label-container"><i class='fa fa-share-alt label-icon'></i> <span class='show-for-large-up label-text'>Share</span></span></a>
+      <a data-dropdown="shareDropdown" aria-controls="shareDropdown" aria-expanded="false" class="button small"><span class="label-container"><i class='fa fa-share-alt label-icon'></i> <span class='show-for-large-up label-text'>Teilen</span></span></a>
       <ul id="shareDropdown" data-dropdown-content class="f-dropdown" aria-hidden="true">
-        <li ng-if="emailEnabled"><a ng-click="emailModal()"><i class="fa fa-envelope fa-fw"></i> Email</a></li>
+        <li ng-if="emailEnabled"><a ng-click="emailModal()"><i class="fa fa-envelope fa-fw"></i> E-Mail</a></li>
         <li><a ng-click="linkModal()"><i class="fa fa-link fa-fw"></i> Link</a></li>
-        <li><a ng-click="embedModal()"><i class="fa fa-code fa-fw"></i> Embed</a></li>
-        <li><a ng-click="publishModal()"><i class="fa fa-book fa-fw"></i> Publish</a></li>
-        <li ng-if="downloadable"><a ng-click="downloadTrinket()"><i class="fa fa-download fa-fw"></i> Download</a></li>
+        <li><a ng-click="embedModal()"><i class="fa fa-code fa-fw"></i> Einbetten</a></li>
+        <li><a ng-click="publishModal()"><i class="fa fa-book fa-fw"></i> Veröffentlichen</a></li>
+        <li ng-if="downloadable"><a ng-click="downloadTrinket()"><i class="fa fa-download fa-fw"></i> Herunterladen</a></li>
       </ul>
 
-      <a class="button small" ng-if="!isOwner && canCopy" ng-click="addToLibrary()" ng-class="{disabled:addingToLibrary, primary:!addingToLibrary}"><i class='fa fa-plus'></i> save a copy</a>
+      <a class="button small" ng-if="!isOwner && canCopy" ng-click="addToLibrary()" ng-class="{disabled:addingToLibrary, primary:!addingToLibrary}"><i class='fa fa-plus'></i> Kopie speichern</a>
       <!--Medium & up save button-->
       <a class="button small show-for-medium-up" ng-if="canSave && isOwner" ng-click="save()"
          ng-class="{disabled:!apiReady, warning:saveError, primary:isModified && !saveError}">
@@ -24,7 +24,7 @@
                         'hide':!isSaving && isModified && !saveError,
                         'fa fa-ban':!apiReady,
                         'fa fa-times':saveError,
-                        'fa fa-check':apiReady && !saveError && !isSaving && !isModified}" class="label-icon"></i><span class="label-text">{{isSaving ? 'saving' : saveError ? 'try again' : 'save'}}</span>
+                        'fa fa-check':apiReady && !saveError && !isSaving && !isModified}" class="label-icon"></i><span class="label-text">{{isSaving ? 'speichert …' : saveError ? 'erneut versuchen' : 'speichern'}}</span>
         </span>
       </a>
       <!--Small save button-->
@@ -38,20 +38,20 @@
         </span>
       </a>
       <a class="button small caution" ng-if="isOwner" data-reveal-id="trinketDeleteModal"><i class="fa fa-trash-o"></i></a>
-      <div class="label info last-saved">last saved {{timeSinceSave}}</div>
+      <div class="label info last-saved">gespeichert {{timeSinceSave}}</div>
     </section>
     <div class="spacer"></div>
     <nav class="breadcrumbs">
       <a href="/home"><i class="fa fa-home"></i></a>
-      <a ui-sref="list">My Trinkets</a>
+      <a ui-sref="list">Meine Trinkets</a>
       <a ng-if="trinketInFolder" ui-sref="folderList({slug: trinket.folder.folderSlug})" title="{{ trinket.folder.name }}"><i class="fa fa-folder"></i></a>
       <a class="current">
         <span ng-if="isOwner" editable-text="trinket.name"
               e-maxlength="50"
               onbeforesave="updateName($data)"
               buttons="no"
-              blur="submit">{{ trinket.name || 'Untitled' }}</span>
-        <span ng-if="!isOwner">{{ trinket.name || 'Untitled' }}</span>
+              blur="submit">{{ trinket.name || 'Ohne Titel' }}</span>
+        <span ng-if="!isOwner">{{ trinket.name || 'Ohne Titel' }}</span>
       </a>
     </nav>
   </section>
@@ -63,10 +63,10 @@
 
   <section id="metrics">
     <ul class="trinket-stats small-block-grid-5" ng-init="stats=[
-           {metric:'runs',       icon:'hand-o-up', title:'interactions'},
-           {metric:'forks',      icon:'code-fork', title:'remixes'},
-           {metric:'views',      icon:'code',      title:'views'},
-           {metric:'social',     icon:'users',     title:'shares'}
+           {metric:'runs',       icon:'hand-o-up', title:'Ausführungen'},
+           {metric:'forks',      icon:'code-fork', title:'Remixe'},
+           {metric:'views',      icon:'code',      title:'Aufrufe'},
+           {metric:'social',     icon:'users',     title:'Weitergaben'}
           ]">
       <li class="trinket-stat"
            title="{{trinket.metrics[stat.metric] || '0'}} {{stat.title}}"
@@ -74,9 +74,9 @@
         <i class="fa fa-{{stat.icon}}"></i>
         <label>{{ stat.title }} <strong>{{trinket.metrics[stat.metric] || 0 | formatNum}}</strong></label>
       </li>
-      <li ng-click="publishModal()" class="trinket-stat" title="{{ trinket.published ? 'Published' : '' }}">
+      <li ng-click="publishModal()" class="trinket-stat" title="{{ trinket.published ? 'Veröffentlicht' : '' }}">
         <i class="fa fa-book" ng-class="{success:trinket.published}"></i>
-        <label>{{ trinket.published ? "Published" : "Click to Publish" }}</label>
+        <label>{{ trinket.published ? "Veröffentlicht" : "Veröffentlichen" }}</label>
       </li>
     </ul>
   </section>
@@ -100,36 +100,36 @@
 </div>
 
 <div id="trinketDeleteModal" class="reveal-modal medium" data-reveal close="closeDeleteModal">
-  <h2>Delete this Trinket</h2>
-  <h3 class="subheader">Are you sure you want to delete this trinket?</h3>
+  <h2>Trinket löschen</h2>
+  <h3 class="subheader">Soll dieses Trinket wirklich gelöscht werden?</h3>
   <hr>
-  <p ng-if="trinket.metrics.embedViews">It looks like this trinket has been embedded on a website. If you delete it, it will no longer be visible there.</p>
-  <p ng-if="!trinket.metrics.embedViews">If this trinket has been embedded on a website, it will no longer be visible there.</p>
-  <a class="button caution close-modal">Nevermind, do not delete this trinket</a>
-  <a class="button danger" ng-click="remove()">Yes, delete this trinket</a>
+  <p ng-if="trinket.metrics.embedViews">Dieses Trinket ist anscheinend auf einer Webseite eingebettet. Nach dem Löschen ist es dort nicht mehr sichtbar.</p>
+  <p ng-if="!trinket.metrics.embedViews">Falls dieses Trinket irgendwo eingebettet ist, ist es dort nach dem Löschen nicht mehr sichtbar.</p>
+  <a class="button caution close-modal">Abbrechen</a>
+  <a class="button danger" ng-click="remove()">Ja, Trinket löschen</a>
   <a class="close-reveal-modal">&#215;</a>
 </div>
 
 <div id="trinketSaveErrorModal" class="reveal-modal medium" data-reveal close="closeSaveErrorModal">
-  <h3 class="subheader">We had a problem saving your trinket!</h3>
-  <p>Please try again but if you're still unable to save, please make a copy of your code. We don't want you to lose any work!</p>
-  <p>Hopefully this is just a temporary issue but if not please <a ng-click="messageUs()">let us know</a>.</p>
-  <a class="button small close-modal">Close</a>
+  <h3 class="subheader">Das Trinket konnte nicht gespeichert werden.</h3>
+  <p>Bitte versuche es noch einmal. Klappt es weiterhin nicht, kopiere deinen Code sicherheitshalber in eine Datei.</p>
+  <p>Bleibt das Problem, sag deiner Lehrkraft Bescheid.</p>
+  <a class="button small close-modal">Schließen</a>
   <a class="close-reveal-modal">&#215;</a>
 </div>
 
 <div id="addToFolderModal" class="shared-modal reveal-modal medium" data-reveal close="closeFolderModal">
   <div class="row">
     <div id="add-to-folder-messages"></div>
-    <h2>Add to Folder</h2>
+    <h2>In Ordner legen</h2>
   </div>
   <div class="row">
     <div class="medium-12 large-6 columns">
       <section id="no-folders" ng-show="folders && !folders.length">
-        <p>You haven't created any folders yet &mdash; try creating a new one!</p>
+        <p>Du hast noch keine Ordner &mdash; lege rechts einen neuen an.</p>
       </section>
       <section id="have-folders" ng-show="folders.length">
-        <p>Click a folder below to add this trinket.</p>
+        <p>Klicke auf einen Ordner, um das Trinket dort abzulegen.</p>
         <ul id="my-folders-list">
           <li class="folder-item" ng-repeat="folder in folders | orderBy:'name'">
             <i ng-if="trinket.folder.folderId == folder.id" class="trinket-added fa fa-check-circle fa-lg success"></i>
@@ -141,13 +141,13 @@
       </section>
     </div>
     <div class="medium-12 large-6 columns">
-      <p>You can also create a new folder.</p>
+      <p>Oder lege einen neuen Ordner an.</p>
       <form id="detail-new-folder-form" new-folder name="newFolderForm" ng-submit="addNewFolder()">
         <div class="row">
           <div class="small-12 columns">
-            <label>New Folder Name</label>
+            <label>Name des neuen Ordners</label>
             <input id="detail-new-folder-name" type="text" name="name" ng-model="name" required />
-            <button class="button small primary"><i ng-class="{'fa fa-circle-o-notch fa-lg fa-spin':isSubmitting}"></i> Create</button>
+            <button class="button small primary"><i ng-class="{'fa fa-circle-o-notch fa-lg fa-spin':isSubmitting}"></i> Anlegen</button>
           </div>
         </div>
       </form>

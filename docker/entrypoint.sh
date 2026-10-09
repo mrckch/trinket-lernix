@@ -121,6 +121,7 @@ app:
   adminIpAllowlist: $(q "$ADMIN_IP_ALLOWLIST")
   auth:
     mode: $(q "$AUTH_MODE")
+    requireLogin: $(bool "${REQUIRE_LOGIN:-true}")
     iserv:
       issuer: $(q "${ISERV_ISSUER:-}")
       clientID: $(q "${ISERV_CLIENT_ID:-}")

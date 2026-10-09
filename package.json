@@ -7,6 +7,8 @@
     "test": "test"
   },
   "dependencies": {
+    "@fontsource/lato": "^5.1.0",
+    "@fontsource/merriweather": "^5.1.0",
     "@hapi/boom": "^10.0.0",
     "@hapi/catbox-redis": "^7.0.0",
     "@hapi/hapi": "^20.0.0",
@@ -37,6 +39,7 @@
     "limax": "~1.4.0",
     "lodash": "^4.17.21",
     "marked": "git+https://github.com/trinketapp/marked.git",
+    "mathjax": "^2.7.9",
     "mime": "~1.2.11",
     "minimist": "^1.1.1",
     "mkdirp": "~0.3.5",

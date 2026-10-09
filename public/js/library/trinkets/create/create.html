@@ -1,18 +1,18 @@
 <div id="trinket-overview" class="row">
   <section ng-show="canCreate" class="page-menu">
     <section class="options-right">
-      <a class="button small primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;save</a>
-      <a class="button small caution" ng-click="cancel()">cancel</a>
+      <a class="button small primary" ng-click="save()"><i class="fa fa-save"></i>&nbsp;Speichern</a>
+      <a class="button small caution" ng-click="cancel()">Abbrechen</a>
     </section>
     <div class="spacer"></div>
     <nav class="breadcrumbs">
       <a href="/home"><i class="fa fa-home"></i></a>
-      <a ui-sref="list">My Trinkets</a>
+      <a ui-sref="list">Meine Trinkets</a>
       <a class="current">
         <span editable-text="trinket.name"
               e-maxlength="50"
               buttons="no"
-              blur="submit">{{ trinket.name || 'Untitled' }}</span>
+              blur="submit">{{ trinket.name || 'Ohne Titel' }}</span>
       </a>
     </nav>
   </section>
@@ -45,7 +45,7 @@
       You can try the examples below or try your own code and then click &nbsp;<i class="fa fa-play"></i> Run.
     </p>
   </section>
-  <p ng-if="lang == 'glowscript' && !iframeUrl">You can create Web VPython (formerly known as GlowScript) trinkets using Python or Blocks. Select which type you'd like to create below:</p>
+  <p ng-if="lang == 'glowscript' && !iframeUrl">Web-VPython-Trinkets (früher GlowScript) kannst du mit Python oder mit Blöcken erstellen. Wähle unten die Art aus:</p>
   <section id="embed-code" ng-class="lang == 'music' ? 'medium' : 'large'">
     <section id="glowscript-options" ng-if="lang == 'glowscript' && !iframeUrl">
       <div class="row">
@@ -58,7 +58,7 @@
         <div class="small-5 columns end">
           <div class="gsblocks-img-container" ng-click="setIframeUrl('glowscript-blocks')">
             <img ng-src="{{ config.prefix('/img/glowscript-blocks.png') }}" />
-            <span class="overlay"><span>Blocks</span></span>
+            <span class="overlay"><span>Blöcke</span></span>
           </div>
         </div>
       </div>
@@ -69,13 +69,13 @@
 
   <section ng-if="lang == 'python'">
     <p>
-      <b>Getting Started &mdash;</b> Type or paste Python code into the box on the left. Click <i class="fa fa-play"></i> <strong>Run</strong> to view its
-      output in the box on the right. Click <i class="fa fa-save"></i><strong>Save</strong> when you're done. Don't worry- you can always edit the code later.
+      <b>So geht’s &mdash;</b> Schreibe deinen Python-Code links in das Feld. Klicke auf <i class="fa fa-play"></i> <strong>Ausführen</strong>, um rechts
+      die Ausgabe zu sehen. Klicke auf <i class="fa fa-save"></i><strong>Speichern</strong>, wenn du fertig bist. Den Code kannst du jederzeit weiter bearbeiten.
     </p>
-    <p>First time? Try typing: <code>print("Hello, World!")</code></p>
+    <p>Zum ersten Mal hier? Probiere: <code>print("Hallo Welt!")</code></p>
     <p>
-      <b>Python Version &mdash;</b> By default, this Trinket will try to run both Python 2 and 3 code. You can also enable strict Python 2 or Python 3 modes with a
-      <code>#!/bin/python2</code> or <code>#!/bin/python3</code> at the top of your trinket.
+      <b>Python-Version &mdash;</b> Standardmäßig läuft sowohl Python-2- als auch Python-3-Code. Mit <code>#!/bin/python3</code>
+      in der ersten Zeile erzwingst du Python 3.
     </p>
   </section>
   <section ng-if="lang == 'music'">
@@ -87,31 +87,31 @@
   </section>
   <section ng-if="lang == 'glowscript' || lang == 'glowscript-blocks'">
     <p>
-      Web VPython is an easy-to-use, powerful environment for creating 3D animations. It is frequently used in Physics classrooms for modeling and visualizations.
-      Find out more about Web VPython at <a href="https://webvpython.org/" target="_blank">webvpython.org</a>.
+      Web VPython ist eine einfache, leistungsfähige Umgebung für 3D-Animationen, oft im Physikunterricht für Modelle und Visualisierungen genutzt.
+      Mehr dazu auf <a href="https://webvpython.org/" target="_blank">webvpython.org</a>.
     </p>
     <p ng-if="lang == 'glowscript' && iframeUrl">
-      To use the latest version of Web VPython, the first line of your program should be <code>Web VPython 3.2</code>.
-      To use older versions or to write your Web VPython programs in JavaScript, visit the
-      <a href="https://www.glowscript.org/docs/VPythonDocs/index.html" target="_blank">technical documentation</a>.
+      Für die aktuelle Version muss die erste Zeile deines Programms <code>Web VPython 3.2</code> lauten.
+      Ältere Versionen und JavaScript erklärt die
+      <a href="https://www.glowscript.org/docs/VPythonDocs/index.html" target="_blank">technische Dokumentation</a> (englisch).
     </p>
     <p ng-if="lang == 'glowscript-blocks' && iframeUrl">
-      The GlowScript Blocks trinket is being developed in coordination with the Department of Physics at Texas State University.
+      Die GlowScript-Blöcke entstehen in Zusammenarbeit mit dem Fachbereich Physik der Texas State University.
     </p>
   </section>
 
   <section ng-show="examples && iframeUrl">
-    <h3>Examples</h3>
+    <h3>Beispiele</h3>
     <p>
-      If you're looking for ideas on how to get started, or need ideas for a new project, here are a few examples to hopefully help.
-      Click on one of the images to try it out.
+      Ein paar Beispiele zum Einstieg oder als Idee für ein neues Projekt.
+      Klicke auf ein Bild, um es auszuprobieren.
     </p>
     <ul id="trinkets-list">
       <li class="named-list" ng-repeat="ex in examples">
         <a data-lang="{{lang}}" data-short-code="{{ex.shortCode}}" class="trinket-snapshot" ng-class="{title: ex.name}">
           <!-- ng-click="loadTrinket($index)" -->
           <img ng-src="{{ex.snapshot}}" width="280" height="280" alt="{{ex.snapshot}}">
-          <h3 class="title">{{ex.name || 'Untitled'}}</h3>
+          <h3 class="title">{{ex.name || 'Ohne Titel'}}</h3>
         </a>
       </li>
     </ul>

@@ -294,13 +294,13 @@
                 });
 
                 $('#course-settings-messages').notify(
-                  "Course info updated."
+                  "Kursdaten gespeichert."
                   , { className : 'success' }
                 );
               }
             }
             else if (result.err) {
-              message = result.message || "We had a problem saving your course. Please try again.";
+              message = result.message || "Der Kurs konnte nicht gespeichert werden. Bitte erneut versuchen.";
               $('#course-settings-messages').notify(
                 message, { className : 'alert' }
               );
@@ -823,9 +823,9 @@
               $('#archiveCourseModal').foundation('reveal', 'close');
               self.$scope.course.archived = result.course.archived;
 
-              var message = result.course.archived ? 'archived' : 'restored';
+              var message = result.course.archived ? 'archiviert' : 'wiederhergestellt';
               $('#course-notifications').notify(
-                "Course was successfully " + message
+                "Kurs wurde " + message
                 , { className : 'success' }
               );
             }

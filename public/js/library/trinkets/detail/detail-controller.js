@@ -427,13 +427,13 @@ TrinketIO.export('library.trinkets.detail.controller', [
 
           var statusText;
           if (result.status === 400) {
-            statusText = 'Names can only include lowercase letters, numbers, and hyphens.';
+            statusText = 'Der Name darf nur Kleinbuchstaben, Ziffern und Bindestriche enthalten.';
           }
           else if (result.status === 409) {
-            statusText = 'You have another trinket using this name.';
+            statusText = 'Du hast schon ein Trinket mit diesem Namen.';
           }
           else {
-            statusText = 'This name could not be used.';
+            statusText = 'Dieser Name kann nicht verwendet werden.';
           }
 
           $('#slug-status').removeClass('hide');

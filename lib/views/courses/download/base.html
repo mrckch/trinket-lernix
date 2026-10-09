@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" type="text/css" media="all" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
+    <link rel="stylesheet" type="text/css" media="all" href="/vendor/cdnjs/highlight.js/8.0/styles/github.min.css">
+    <link rel="stylesheet" type="text/css" href="/vendor/cdnjs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/vendor/cdnjs/foundation/5.5.3/css/foundation.css">
+    <link rel="stylesheet" type="text/css" href="/vendor/cdnjs/foundation/5.5.3/css/normalize.min.css">
     <style type="text/css">
     {% include "courses/download/course.css" %}
     </style>
@@ -35,6 +35,6 @@
     });
     MathJax.Ajax.config.path['siunitx']  = "{{ '/components/Mathjax-siunitx' | cachePrefix }}";
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="/vendor/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   </body>
 </html>

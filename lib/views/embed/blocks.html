@@ -1,21 +1,21 @@
 {% extends "embed/base.html" %}
 
 {% block head_styles %}
-<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
+<link href="/vendor/jquery/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/vendor/cdnjs/highlight.js/8.0/styles/github.min.css">
 {% endblock %}
 
 {% block toolbar_options %}
 {% if outputOnly %}
   {% include "embed/default-toolbar.html" %}
 {% else %}
-<a class="menu-button item {{'' if toggleCode else 'show-for-small-only'}} allow-original" data-action="code.edit" data-tooltip aria-haspopup="true" data-options="disable_for_touch:true" title="Edit the code.">
+<a class="menu-button item {{'' if toggleCode else 'show-for-small-only'}} allow-original" data-action="code.edit" data-tooltip aria-haspopup="true" data-options="disable_for_touch:true" title="Blöcke bearbeiten.">
   <i class="fa fa-pencil"></i>
-  <label class="show-for-large-up">Code</label>
+  <label class="show-for-large-up">Blöcke</label>
 </a>
-<a class="menu-button item allow-original" data-action="code.run" data-tooltip aria-haspopup="true" title="View the result." data-options="disable_for_touch:true">
+<a class="menu-button item allow-original" data-action="code.run" data-tooltip aria-haspopup="true" title="Programm ausführen und Ergebnis anzeigen." data-options="disable_for_touch:true">
   <i class="fa fa-play"></i>
-  <label class="show-for-large-up">Run</label>
+  <label class="show-for-large-up">Ausführen</label>
 </a>
 {% endif %}
 {% endblock %}
@@ -39,8 +39,8 @@
 
     {% if outputOnly %}
     <div id="outputTabs" class="{{ outputTabs }} {% if hideGeneratedCode %}hideGeneratedCode{% endif %}">
-      <div class="active menu-button {{ outputTabs }}" id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Run</div>
-      <div class="menu-button {% if hideGeneratedCode %}hideGeneratedCode{% endif %} {{ outputTabs }}" id="codeViewTab" data-action="code.view"><i class="fa fa-terminal"></i> View Code</div>
+      <div class="active menu-button {{ outputTabs }}" id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Ausführen</div>
+      <div class="menu-button {% if hideGeneratedCode %}hideGeneratedCode{% endif %} {{ outputTabs }}" id="codeViewTab" data-action="code.view"><i class="fa fa-terminal"></i> Python-Code</div>
     </div>
 
     <div id="outputContainer" class="{{ outputTabs }} {% if outputTabs == 'noTabs' %}withoutTabs{% else %}withTabs{% endif %}">
@@ -60,11 +60,11 @@
 
     <div id="outputTabs" class="{{ outputTabs }} {% if outputTabs == 'noTabs' %}withoutTabs{% else %}withTabs{% endif %}">
       <div class="{% if not showInstructions %}active {% endif %}menu-button {{ outputTabs }}"
-        id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Run</div>
+        id="codeOutputTab" data-action="output.view"><i class="fa fa-play"></i> Ausführen</div>
       <div class="menu-button {% if hideGeneratedCode %}hideGeneratedCode{% endif %} {{ outputTabs }}"
-        id="codeViewTab" data-action="code.view"><i class="fa fa-terminal"></i> View Code</div>
+        id="codeViewTab" data-action="code.view"><i class="fa fa-terminal"></i> Python-Code</div>
       <div class="{% if showInstructions %}active {% endif %}menu-button {% if hideInstructions or (not isOwner and not trinket.description) %}hideInstructions{% endif %} {{ outputTabs }}"
-        id="instructionsTab" data-action="instructions.view"><i class="fa fa-list"></i> Instructions</div>
+        id="instructionsTab" data-action="instructions.view"><i class="fa fa-list"></i> Anleitung</div>
     </div>
 
     <div id="outputContainer" class="{{ outputTabs }} {% if outputTabs == 'noTabs' %}withoutTabs{% else %}withTabs{% endif %}">
@@ -74,13 +74,13 @@
       <div id="output-dragbar" class="hide" data-action="resize"></div>
       <div id="console-wrap" class="hide">
         <div id="console-output"></div>
-        <a id="reset-output" title="clear output"><i class="fa fa-ban"></i></a>
+        <a id="reset-output" title="Ausgabe leeren"><i class="fa fa-ban"></i></a>
       </div>
     </div>
 
     <div id="blocklyCodeContainer" class="hide">
       <div id="blocklyPythonCode"></div>
-      <a id="createPythonLink" class="hide menu-button" data-action="code.pythonfromblocks">Create Python Trinket</a>
+      <a id="createPythonLink" class="hide menu-button" data-action="code.pythonfromblocks">Als Python-Trinket anlegen</a>
     </div>
 
     {% include "includes/embed-instructions.html" %}
@@ -90,13 +90,13 @@
 
   {% if not outputOnly %}
   <div id="runFirstModal" class="reveal-modal small" data-reveal data-css-top="20" data-offset="200">
-    <h2>Run your code first!</h2>
+    <h2>Führe deinen Code zuerst aus!</h2>
     <p class="lead">
-      It looks like you haven't tried running your new code.
+      Du hast deinen neuen Code noch nicht ausprobiert.
     </p>
-    <p>Try clicking
-    <a id="modalRun" class="button tiny"><i class="fa fa-play"></i>&nbsp;Run</a>
-    and if you like the result, try sharing again.</p>
+    <p>Klicke auf
+    <a id="modalRun" class="button tiny"><i class="fa fa-play"></i>&nbsp;Ausführen</a>
+    und teile den Code, wenn dir das Ergebnis gefällt.</p>
     <a class="close-reveal-modal">&#215;</a>
   </div>
   {% endif %}
@@ -110,7 +110,7 @@
   {{ component('ace-builds', 'src-min-noconflict/ext-language_tools.js') | safe }}
   {% endif %}
 
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+  <script type="text/javascript" src="/vendor/cdnjs/highlight.js/8.0/highlight.min.js"></script>
 
   {% if config.app.embed.skulpt.local %}
   <script type="text/javascript" src="/components/skulpt/skulpt{% if config.app.embed.skulpt.min %}.min{% endif%}.js"></script>

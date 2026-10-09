@@ -56,3 +56,6 @@ public/_published
 *.swp
 
 .agignore
+
+# Vite-Build (Schriften aus public/vendor/fonts)
+public/assets

@@ -4,7 +4,7 @@
 
 {% block head_styles %}
 {% if not outputOnly %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
+<link rel="stylesheet" type="text/css" href="/vendor/cdnjs/highlight.js/8.0/styles/github.min.css">
 {% endif %}
 {% endblock %}
 
@@ -14,15 +14,15 @@
 {% if outputOnly %}
   {% include "embed/default-toolbar.html" %}
 {% elif not trinket.displayOnly %}
-<a class="menu-button item {{'' if toggleCode else 'show-for-small-only'}} allow-original" data-action="code.edit" title="Edit the code.">
+<a class="menu-button item {{'' if toggleCode else 'show-for-small-only'}} allow-original" data-action="code.edit" title="Code bearbeiten.">
   <i class="fa fa-pencil"></i>
   <label class="show-for-large-up">Code</label>
 </a>
 <a class="run-it menu-button item button split allow-original"
-   data-action="code.{{'run' if runMode == 'run' else 'autorun'}}" title="Run your code."
+   data-action="code.{{'run' if runMode == 'run' else 'autorun'}}" title="Deinen Code ausführen."
    role="button" aria-labelledby="html_label" tabindex="0">
   <i id="html-run-icon" class="fa {{'fa-repeat' if not runMode or runMode != 'autorun' else 'fa-play'}}"></i>
-  <label id="html_label" class="show-for-large-up">{{'Click to Run' if runMode == 'run' else 'Autorun'}}</label>
+  <label id="html_label" class="show-for-large-up">{{'Ausführen' if runMode == 'run' else 'Automatisch'}}</label>
   <span data-dropdown="run-options" data-options="align:bottom" role="menu"></span>
 </a>
 {% endif %}
@@ -31,8 +31,8 @@
 {% block run_options %}
 {% if not outputOnly %}
 <ul id="run-options" class="f-dropdown" data-dropdown-content>
-  <li><a class="menu-button" data-action="code.autorun" data-button="autorun"><i class="fa fa-repeat"></i>Autorun</a></li>
-  <li><a class="menu-button" data-action="code.run" data-button="run"><i class="fa fa-play"></i>Click to Run</a></li>
+  <li><a class="menu-button" data-action="code.autorun" data-button="autorun"><i class="fa fa-repeat"></i>Automatisch ausführen</a></li>
+  <li><a class="menu-button" data-action="code.run" data-button="run"><i class="fa fa-play"></i>Nur auf Klick ausführen</a></li>
 </ul>
 {% endif %}
 {% endblock %}
@@ -59,12 +59,12 @@
     {% else %}
 
     <div id="errorConnecting" class="hide">
-      <p>Sorry, we had a problem displaying your page.<br /><br />Try clicking Autorun or Run again and if it continues let us know.</p>
+      <p>Deine Seite konnte leider nicht angezeigt werden.<br /><br />Klicke noch einmal auf Ausführen. Bleibt das Problem, sag deiner Lehrkraft Bescheid.</p>
     </div>
 
     <div id="outputTabs" class="{% if hideInstructions or (not isOwner and not trinket.description) %}hideInstructions{% endif %}">
-      <div class="{% if not showInstructions %}active {% endif %}menu-button" id="codeOutputTab" data-action="output.view">Result</div>
-      <div class="{% if showInstructions %}active {% endif %}menu-button" id="instructionsTab" data-action="instructions.view"><i class="fa fa-list"></i> Instructions</div>
+      <div class="{% if not showInstructions %}active {% endif %}menu-button" id="codeOutputTab" data-action="output.view">Ergebnis</div>
+      <div class="{% if showInstructions %}active {% endif %}menu-button" id="instructionsTab" data-action="instructions.view"><i class="fa fa-list"></i> Anleitung</div>
     </div>
 
     <div id="outputContainer" class="{% if hideInstructions or (not isOwner and not trinket.description) %}withoutTabs{% else %}withTabs{% endif %}">
@@ -78,15 +78,14 @@
   {% if not outputOnly %}
   <script id="assets-howto-message" type="text/template">
     <p>
-      Images can be reference using a relative url.
+      Bilder werden über einen relativen Pfad eingebunden.
     </p>
     <p>
-      For example, if you upload an image named "amazing.png", you can reference
-      it in an image tag like this:
+      Hast du zum Beispiel ein Bild "toll.png" hochgeladen, bindest du es so ein:
     </p>
-    <pre><code>&lt;img src="amazing.png"&gt;</code></pre>
+    <pre><code>&lt;img src="toll.png"&gt;</code></pre>
     <p>
-      You may also use it in css or in javascript with the same "amazing.png" path.
+      Auch in CSS oder JavaScript funktioniert derselbe Pfad "toll.png".
     </p>
   </script>
   {% endif %}
@@ -99,9 +98,9 @@
   {% endif %}
 
   {% if not outputOnly %}
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.js"></script>
+  <script type="text/javascript" src="/vendor/cdnjs/dropzone/4.0.1/min/dropzone.min.js"></script>
   <script src="{{ '/components/marked/lib/marked.js' | cachePrefix }}"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+  <script src="/vendor/cdnjs/highlight.js/8.0/highlight.min.js"></script>
   <script src="{{ '/js/trinket-config.js' | cachePrefix }}"></script>
   <script src="{{ '/js/trinket-markdown.js' | cachePrefix }}"></script>
   {% endif %}

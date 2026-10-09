@@ -1,15 +1,6 @@
-<p><code>assert</code> statements are a convenient way to insert debugging assertions into a program.</p>
-
-<p>The simple form, <code>assert &lt;expression&gt;</code>, is equivalent to</p>
-
-<pre><code>
-if __​debug__:
-    if not &lt;expression&gt;: raise AssertionError
+<p>Mit <code>assert</code> prüfst du eine Annahme im Programm. Ist sie falsch, bricht Python mit einem <code>AssertionError</code> ab.</p>
+<p>Die einfache Form <code>assert &lt;Bedingung&gt;</code> entspricht:</p>
+<pre><code>if not &lt;Bedingung&gt;:
+    raise AssertionError
 </code></pre>
-
-<p>The extended form, assert &lt;expression1&gt;, &lt;expression2&gt;, is equivalent to</p>
-
-<pre><code>
-if __​debug__:
-    if not &lt;expression1&gt;: raise AssertionError, &lt;expression2&gt;
-</code></pre>
+<p>Mit <code>assert &lt;Bedingung&gt;, &lt;Meldung&gt;</code> gibst du zusätzlich eine Fehlermeldung an.</p>

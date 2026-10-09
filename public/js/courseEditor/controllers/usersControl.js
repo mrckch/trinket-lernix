@@ -21,7 +21,7 @@
             this.users[ this.users.indexOf(user) ].onDashboard = false;
           }.bind($scope),
           dashboardMessage : function() {
-            return "User will no longer appear on dashboard.";
+            return "Die Person wird im Dashboard nicht mehr angezeigt.";
           }
         },
         show : {
@@ -29,7 +29,7 @@
             this.users[ this.users.indexOf(user) ].onDashboard = true;
           }.bind($scope),
           dashboardMessage : function() {
-            return "User will appear on dashboard.";
+            return "Die Person wird im Dashboard angezeigt.";
           }
         }
       };
@@ -110,14 +110,14 @@
             else if (result.alreadyListed) {
               // user already listed
               $('#add-user-messages').notify(
-                "That user is already a member of the group."
+                "Diese Person ist schon im Kurs."
                 , { className : 'warning' }
               );
             }
             else {
               // user not found
               $('#add-user-messages').notify(
-                "We had a problem finding or adding that user. Please try again."
+                "Die Person konnte nicht gefunden oder hinzugefügt werden. Bitte erneut versuchen."
                 , { className : 'alert' }
               );
             }
@@ -126,7 +126,7 @@
           }, function(err) {
             if (err && err.status === 404) {
               $('#add-user-messages').notify(
-                "That user wasn't found. Please try a different username or email address."
+                "Keine Person gefunden. Bitte Benutzername oder E-Mail-Adresse prüfen."
                 , { className : 'alert' }
               );
 
@@ -209,7 +209,7 @@
                 }
                 else {
                   $("#invitations-sent-messages").notify(
-                    "No new invitations sent."
+                    "Keine neuen Einladungen gesendet."
                     , { className : 'warning' }
                   );
                 }

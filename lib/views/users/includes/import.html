@@ -8,32 +8,32 @@
 <!-- Step 1: Trinkets -->
 <div class="row">
   <div class="small-12 columns">
-    <h5>Step 1 — Import Trinkets</h5>
-    <p>Upload the <code>trinket-export-*.zip</code> file downloaded from the old server.
+    <h5>Schritt 1 — Trinkets importieren</h5>
+    <p>Lade die Datei <code>trinket-export-*.zip</code> hoch, die du von trinket.io oder einem anderen Server exportiert hast.
        You can run this multiple times (once per author) before importing the course.</p>
-    <p><em>Already-imported trinkets are skipped automatically.</em></p>
+    <p><em>Bereits importierte Trinkets werden automatisch übersprungen.</em></p>
   </div>
 </div>
 
 <div class="row">
   <div class="small-12 columns">
-    <label>Trinkets zip file
+    <label>ZIP-Datei mit Trinkets
       <input type="file" id="trinketZipInput" accept=".zip">
     </label>
     <label style="display:inline-block; margin-right:16px;">
       <input type="checkbox" id="replaceExisting"> Replace existing trinkets
     </label>
-    <button id="importTrinketsBtn" class="button primary" disabled>Import Trinkets</button>
-    <span id="trinketSpinner" style="display:none; margin-left:10px;">Uploading…</span>
+    <button id="importTrinketsBtn" class="button primary" disabled>Trinkets importieren</button>
+    <span id="trinketSpinner" style="display:none; margin-left:10px;">Wird hochgeladen …</span>
   </div>
 </div>
 
 <div id="trinketResult" style="display:none; margin-top:15px;">
   <div class="row">
     <div class="small-12 columns">
-      <h6>Import result</h6>
+      <h6>Ergebnis</h6>
       <table style="width:100%;">
-        <thead><tr><th>Imported</th><th>Updated</th><th>Skipped</th><th>Failed</th><th>Materials patched</th></tr></thead>
+        <thead><tr><th>Neu</th><th>Aktualisiert</th><th>Übersprungen</th><th>Fehlgeschlagen</th><th>Materialien angepasst</th></tr></thead>
         <tbody>
           <tr>
             <td id="trImported">–</td>
@@ -53,8 +53,8 @@
 <!-- Step 2: Course -->
 <div class="row">
   <div class="small-12 columns">
-    <h5>Step 2 — Import Course</h5>
-    <p>Upload the <code>*-md.zip</code> course file downloaded from the old server.
+    <h5>Schritt 2 — Kurs importieren</h5>
+    <p>Lade die Kursdatei <code>*-md.zip</code> hoch, die du exportiert hast.
        Trinket embed links are automatically rewritten to point to this server.</p>
     <p><em>If any linked trinkets haven't been imported yet you'll see a warning and can
        choose to continue anyway (old trinket.io URLs will be left intact until those
@@ -64,25 +64,25 @@
 
 <div class="row">
   <div class="small-12 columns">
-    <label>Course name (optional — defaults to "Imported Course")
-      <input type="text" id="courseNameInput" placeholder="e.g. Introduction to Physics">
+    <label>Kursname (optional, sonst „Importierter Kurs“)
+      <input type="text" id="courseNameInput" placeholder="z. B. Informatik 9b">
     </label>
-    <label>Course zip file
+    <label>ZIP-Datei des Kurses
       <input type="file" id="courseZipInput" accept=".zip">
     </label>
-    <button id="importCourseBtn" class="button primary" disabled>Import Course</button>
-    <span id="courseSpinner" style="display:none; margin-left:10px;">Uploading…</span>
+    <button id="importCourseBtn" class="button primary" disabled>Kurs importieren</button>
+    <span id="courseSpinner" style="display:none; margin-left:10px;">Wird hochgeladen …</span>
   </div>
 </div>
 
 <!-- Missing-refs warning (shown when refs aren't resolved) -->
 <div id="missingRefsWarning" style="display:none; margin-top:15px;">
   <div class="alert-box warning">
-    <strong>Some trinket links could not be resolved:</strong>
+    <strong>Einige Trinket-Verweise konnten nicht aufgelöst werden:</strong>
     <ul id="missingRefsList" style="margin-top:8px;"></ul>
     <p style="margin-top:10px;">
       Import the missing trinkets (Step 1) and try again, or
-      <button id="forceImportBtn" class="button tiny alert" style="margin:0 4px;">Import anyway</button>
+      <button id="forceImportBtn" class="button tiny alert" style="margin:0 4px;">Trotzdem importieren</button>
       to leave old trinket.io URLs intact (they will be patched automatically once those trinkets are imported).
     </p>
   </div>
@@ -91,13 +91,13 @@
 <div id="courseResult" style="display:none; margin-top:15px;">
   <div class="alert-box success">
     Course imported successfully!
-    <a id="courseLink" href="#">View course →</a>
+    <a id="courseLink" href="#">Kurs öffnen →</a>
   </div>
 </div>
 
 <div id="assetWarnings" style="display:none; margin-top:10px;">
   <div class="alert-box warning">
-    <strong>Image hosting warning:</strong>
+    <strong>Hinweis zu Bildern:</strong>
     <ul id="assetWarningList" style="margin-top:6px;"></ul>
     <p style="margin-top:6px; margin-bottom:0;">
       Re-export from the original server and re-import to pick up a self-contained zip with embedded images.
@@ -172,15 +172,15 @@
         $('#trFailed').text(d.failed);
         $('#trPatched').text(d.patched || 0);
         $('#trinketResult').show();
-        $('#importSuccessMsg').text('Trinket import complete: ' + d.imported + ' new, ' + (d.updated || 0) + ' updated, ' + d.skipped + ' skipped.');
+        $('#importSuccessMsg').text('Import abgeschlossen: ' + d.imported + ' neu, ' + (d.updated || 0) + ' aktualisiert, ' + d.skipped + ' übersprungen.');
         $('#importSuccess').show();
         $('#importAlert').hide();
       } else {
-        showAlert(resp.error || 'Import failed.');
+        showAlert(resp.error || 'Import fehlgeschlagen.');
       }
     })
     .fail(function(xhr) {
-      var msg = 'Upload failed.';
+      var msg = 'Hochladen fehlgeschlagen.';
       try { msg = JSON.parse(xhr.responseText).error || msg; } catch(e) {}
       showAlert(msg);
     })
@@ -214,7 +214,7 @@
       contentType : false
     })
     .done(function(resp) {
-      if (!resp.data) { showAlert(resp.error || 'Import failed.'); return; }
+      if (!resp.data) { showAlert(resp.error || 'Import fehlgeschlagen.'); return; }
       var d = resp.data;
 
       if (d.status === 'missing_refs') {

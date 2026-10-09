@@ -418,7 +418,7 @@ $('document').ready(function() {
 
       if (this._viewingDraft) {
         var html = template('draftTextTemplate', {
-          draftText : 'Viewing Draft'
+          draftText : 'Entwurf'
         });
         this.$draftMessage.html(html);
 
@@ -631,8 +631,8 @@ $('document').ready(function() {
       var self = this,
         originalCode, restoreMsg, keepMsg;
 
-      restoreMsg = 'Do you want to restore your last session? <a title="restore the previous session" data-action="code.restore" class="text-link yep"><i class="fa fa-check"></i>&nbsp;Restore</a>&nbsp;&nbsp;or&nbsp;&nbsp;<a class="text-link nope"><i class="fa fa-trash"></i>&nbsp;Discard</a>';
-      keepMsg    = '<i class="fa fa-check-circle-o"></i>&nbsp;Your session has been restored. <a class="text-link yep"><i class="fa fa-thumbs-o-up">&nbsp;</i>Accept</a>&nbsp;&nbsp;or&nbsp;&nbsp;<a class="text-link nope"><i class="fa fa-undo"></i>&nbsp;Undo</a>';
+      restoreMsg = 'Letzte Sitzung wiederherstellen? <a title="Vorherige Sitzung wiederherstellen" data-action="code.restore" class="text-link yep"><i class="fa fa-check"></i>&nbsp;Wiederherstellen</a>&nbsp;&nbsp;oder&nbsp;&nbsp;<a class="text-link nope"><i class="fa fa-trash"></i>&nbsp;Verwerfen</a>';
+      keepMsg    = '<i class="fa fa-check-circle-o"></i>&nbsp;Deine Sitzung wurde wiederhergestellt. <a class="text-link yep"><i class="fa fa-thumbs-o-up">&nbsp;</i>Behalten</a>&nbsp;&nbsp;oder&nbsp;&nbsp;<a class="text-link nope"><i class="fa fa-undo"></i>&nbsp;Rückgängig</a>';
       showStatusBar(restoreMsg, function doRestore() {
         $('#statusMessages .close').click();
         originalCode = self._trinket.code;
@@ -731,7 +731,7 @@ $('document').ready(function() {
           throw new Error('fullscreen unavailable');
         }
       } catch(e) {
-        if (confirm('Your browser does not support fullscreen mode. Would you like to open this trinket in a new window?')) {
+        if (confirm('Dein Browser unterstützt keinen Vollbildmodus. Soll das Trinket in einem neuen Fenster geöffnet werden?')) {
           var url = window.location.href;
           // if trinket has been modified, keep the modifications when loading
           // the new page by by stuffing them into the hash
@@ -891,7 +891,7 @@ $('document').ready(function() {
           $('a.create-remix').data('action', 'code.save');
           $('a.create-remix').attr('title', 'Save changes.');
           $('a.create-remix').find('i').removeClass().addClass('fa fa-save');
-          $('a.create-remix').find('label').html('Save');
+          $('a.create-remix').find('label').html('Speichern');
         }
         else if (!upgradeNeeded) {
           $('a.create-remix').data('action', 'library.add');
@@ -907,13 +907,13 @@ $('document').ready(function() {
         $(form + ' .message').addClass('error').text(obj.flash.validation.email || obj.flash.validation.password);
       }
       else if (obj && obj.flash && obj.flash.duplicates) {
-        $(form + ' .message').addClass('error').text('This email is already registered; try logging in.');
+        $(form + ' .message').addClass('error').text('Diese E-Mail-Adresse ist schon registriert; bitte anmelden.');
       }
       else if (obj && obj.message) {
         $(form + ' .message').addClass('error').text(obj.message);
       }
       else {
-        $(form + ' .message').addClass('error').text('We were unable to log you in; please try again later.')
+        $(form + ' .message').addClass('error').text('Anmeldung nicht möglich; bitte später erneut versuchen.')
       }
     },
     updateSessionCache : function() {
@@ -938,7 +938,7 @@ $('document').ready(function() {
       var self = this;
 
       self.$draftMessage.fadeOut('fast', function() {
-        self.$draftMessage.text('Saving Draft').fadeIn('slow', function() {
+        self.$draftMessage.text('Entwurf wird gespeichert').fadeIn('slow', function() {
           self._updateDraft();
         });
       });
@@ -1052,7 +1052,7 @@ $('document').ready(function() {
       }
 
       self.$draftMessage.fadeOut('fast', function() {
-        self.$draftMessage.text('Saving ...').fadeIn('slow', function() {
+        self.$draftMessage.text('Wird gespeichert …').fadeIn('slow', function() {
           postData = {
               assets   : data.assets
             , settings : data.settings
@@ -1066,7 +1066,7 @@ $('document').ready(function() {
             $.post(url, postData).done(function(result) {
               if (result.success) {
                 self.$draftMessage.fadeOut('slow', function() {
-                  self.$draftMessage.text('Saved').fadeIn('slow');
+                  self.$draftMessage.text('Gespeichert').fadeIn('slow');
                 });
                 $(self).trigger("trinket.code.autosave");
                 if (self.assignment && window.parent) {
@@ -1075,7 +1075,7 @@ $('document').ready(function() {
               }
               else {
                 self.$draftMessage.fadeOut('slow', function() {
-                  self.$draftMessage.text('Error Saving').fadeIn('slow');
+                  self.$draftMessage.text('Fehler beim Speichern').fadeIn('slow');
                 });
               }
             });
@@ -1084,7 +1084,7 @@ $('document').ready(function() {
             $.post(url, postData).done(function(result) {
               if (result.success) {
                 self.$draftMessage.fadeOut('slow', function() {
-                  self.$draftMessage.text('Saved').fadeIn('slow');
+                  self.$draftMessage.text('Gespeichert').fadeIn('slow');
                 });
                 $(self).trigger("trinket.code.autosave");
                 if (self.assignment && window.parent) {
@@ -1093,7 +1093,7 @@ $('document').ready(function() {
               }
               else {
                 self.$draftMessage.fadeOut('slow', function() {
-                  self.$draftMessage.text('Error Saving').fadeIn('slow');
+                  self.$draftMessage.text('Fehler beim Speichern').fadeIn('slow');
                 });
               }
             });

@@ -49,15 +49,15 @@ function($scope, $state, $stateParams, $window, $timeout, $filter, $http, trinke
 
   $scope.sortOptions = {
       '-lastUpdated' : {
-          label : 'Last Updated'
+          label : 'Zuletzt bearbeitet'
         , class : 'fa fa-floppy-o fa-fw'
       }
     , '-lastView.viewedOn' : {
-          label : 'Last Viewed'
+          label : 'Zuletzt angesehen'
         , class : 'fa fa-eye fa-fw'
       }
     , '-totalViews' : {
-          label : 'Most Viewed'
+          label : 'Meistgesehen'
         , class : 'fa fa-sort-numeric-desc fa-fw'
       }
     , 'name' : {
@@ -67,11 +67,11 @@ function($scope, $state, $stateParams, $window, $timeout, $filter, $http, trinke
   };
   $scope.viewOptions = {
       'large' : {
-          label : 'Grid'
+          label : 'Kacheln'
         , class : 'fa fa-th-large fa-fw'
       }
     , 'list' : {
-          label : 'List'
+          label : 'Liste'
         , class : 'fa fa-th-list fa-fw'
       }
   };

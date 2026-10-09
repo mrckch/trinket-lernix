@@ -1,24 +1,9 @@
-<p>The <code>and</code> operator means if both the statement before and the statement after are true then the whole expression is true otherwise the whole expression is false. The behavior of <code>and</code> can be summarized as follows:</p>
+<p>Der Operator <code>and</code> liefert nur dann <code>True</code>, wenn beide Seiten wahr sind:</p>
 <table>
-<tbody><tr>
-<th>expression</th>
-<th>result</th>
-</tr>
-<tr>
-<td>true <code>and</code> true</td>
-<td>true</td>
-</tr>
-<tr>
-<td>true <code>and</code> false</td>
-<td>false</td>
-</tr>
-<tr>
-<td>false <code>and</code> true</td>
-<td>false</td>
-</tr>
-<tr>
-<td>false <code>and</code> false</td>
-<td>false</td>
-</tr>
+<tbody><tr><th>Ausdruck</th><th>Ergebnis</th></tr>
+<tr><td>True <code>and</code> True</td><td>True</td></tr>
+<tr><td>True <code>and</code> False</td><td>False</td></tr>
+<tr><td>False <code>and</code> True</td><td>False</td></tr>
+<tr><td>False <code>and</code> False</td><td>False</td></tr>
 </tbody></table>
-<p>Notice that if the first expression is false Python does not check the second expression since it knows the whole expression is false.</p>
+<p>Ist die erste Seite schon falsch, prüft Python die zweite gar nicht mehr.</p>

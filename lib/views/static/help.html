@@ -1,38 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Help{% endblock %}
+{% block title %}Hilfe{% endblock %}
 
 {% block body_id %}help{% endblock %}
 
 {% block content %}
 <div class="row" style="padding: 40px 0;">
   <div class="small-12 columns">
-    <h2>Help</h2>
+    <h2>Hilfe</h2>
   </div>
 </div>
 
 <div class="row">
   <div class="small-12 medium-6 columns">
-    <h3>Using Trinket</h3>
-    <h4>Creating a Trinket</h4>
-    <p>Click "New Trinket" from the dropdown menu in the navigation bar and select a language. You can write code in the editor and click "Run" to see the output.</p>
+    <h3>Für Schülerinnen und Schüler</h3>
+    <h4>Anmelden</h4>
+    <p>Klicke auf „Mit IServ anmelden“ und melde dich mit deinem IServ-Konto an. Du bist dann automatisch in den Kursen deiner Lerngruppen.</p>
 
-    <h4>Saving Your Work</h4>
-    <p>Sign up for an account to save your trinkets. Once logged in, your work is automatically saved.</p>
+    <h4>Ein Trinket anlegen</h4>
+    <p>Wähle oben im Menü „Neues Trinket“ und eine Sprache. Schreibe deinen Code im Editor und klicke auf „Ausführen“. Deine Arbeit wird automatisch gespeichert.</p>
 
-    <h4>Sharing Trinkets</h4>
-    <p>Each trinket has a unique URL you can share. You can also embed trinkets in other websites using the embed code.</p>
+    <h4>Aufgaben bearbeiten</h4>
+    <p>Öffne auf deiner Übersicht den Kurs und dort die Aufgabe. Klicke auf „Aufgabe starten“, bearbeite den Code und gib ihn mit „Abgeben“ ab. Deine Lehrkraft kann dir eine Rückmeldung geben.</p>
+
+    <h4>Teilen</h4>
+    <p>Jedes Trinket hat einen eigenen Link. Über „Teilen“ bekommst du den Link oder einen Einbettungscode, zum Beispiel für eine IServ-Seite.</p>
   </div>
 
   <div class="small-12 medium-6 columns">
-    <h3>Creating Courses</h3>
-    <p>Trinket allows educators to create interactive coding courses with embedded trinkets, text, and media.</p>
+    <h3>Für Lehrkräfte</h3>
+    <h4>Kurs anlegen</h4>
     <ol>
-      <li>Go to your library and click "New Course"</li>
-      <li>Add topics and pages to organize your content</li>
-      <li>Embed trinkets for interactive code examples</li>
-      <li>Share your course URL with students</li>
+      <li>Auf der Übersicht „Neuer Kurs“ wählen.</li>
+      <li>Optional die IServ-Gruppe auswählen: Die Mitglieder werden bei ihrer nächsten Anmeldung automatisch eingetragen.</li>
+      <li>Lektionen, Seiten und Aufgaben anlegen. Aufgaben enthalten ein Start-Trinket, das die Schülerinnen und Schüler bearbeiten.</li>
+      <li>Alternativ einen Zugangscode erzeugen und weitergeben.</li>
     </ol>
+
+    <h4>Lernstand</h4>
+    <p>Im Kurs zeigt das Dashboard, wer welche Aufgabe begonnen, abgegeben oder abgeschlossen hat. Von dort aus öffnest du die Abgaben und gibst Rückmeldungen.</p>
+
+    <h4>Lernstand per API</h4>
+    <p>Unter „Einstellungen → Tokens“ erzeugst du ein API-Token, mit dem externe Programme den Lernstand deiner Kurse lesen können.</p>
+
+    <h4>Aufbewahrung</h4>
+    <p>Nach dem Schuljahresende werden IServ-Kurse archiviert und die Trinkets der Schülerinnen und Schüler nach 30 Tagen gelöscht. Was bleiben soll, vorher kopieren.</p>
   </div>
 </div>
 
@@ -40,13 +52,8 @@
 
 <div class="row">
   <div class="small-12 columns">
-    <h3>Self-Hosting &amp; Development</h3>
-    <p>Trinket is open source software. For information on running your own instance, see the
-      <a href="https://github.com/trinketapp/trinket-oss">GitHub repository</a>.</p>
-
-    <h3>Support</h3>
-    <p>For bugs and feature requests, please open an issue on
-      <a href="https://github.com/trinketapp/trinket-oss/issues">GitHub</a>.</p>
+    <h3>Probleme?</h3>
+    <p>{% if config.app.supportEmail %}Schreib an <a href="mailto:{{ config.app.supportEmail }}">{{ config.app.supportEmail }}</a>.{% else %}Wende dich an deine Lehrkraft oder die Administration.{% endif %}</p>
   </div>
 </div>
 {% endblock %}

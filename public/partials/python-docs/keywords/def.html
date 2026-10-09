@@ -1,19 +1,16 @@
-<p>Functions in python are defined using the block keyword "def", followed with the function's name as the block's name.
-For example: </p>
-<pre><code>def say_hello():
-    print "Hello From My Function!"
+<p>Mit <code>def</code> definierst du eine Funktion. Danach folgt der Name der Funktion:</p>
+<pre><code>def sag_hallo():
+    print("Hallo aus meiner Funktion!")
 </code></pre>
-<p>Functions may also receive arguments (variables passed from the caller to the function) and return values to the caller.
-For example:</p>
-<pre><code>def sum_two_numbers(a, b):
+<p>Funktionen können Parameter entgegennehmen und einen Wert zurückgeben:</p>
+<pre><code>def summe(a, b):
     return a + b
 </code></pre>
-<h3>How do you call functions in Python?</h3>
-<p>Simply write the function's name followed by (), placing any required arguments within the brackets.
-For example, lets call the functions written above (in the previous example): </p>
-<pre><code># print a simple greeting 
-say_hello()
+<h3>Wie ruft man eine Funktion auf?</h3>
+<p>Einfach den Namen mit runden Klammern schreiben und darin die Argumente übergeben:</p>
+<pre><code># Begrüßung ausgeben
+sag_hallo()
 
-# print the sum of 1 and 2
-print sum_two_numbers(1,2)
+# Summe von 1 und 2 ausgeben
+print(summe(1, 2))
 </code></pre>

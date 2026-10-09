@@ -1,21 +1,16 @@
-<p>The <code>for</code> keyword is used to create for loops, which allow us to repeat instructions for each item in a collection.</p>
-
-<p>For example, we can loop over a list of items like this:</p>
-
-<pre><code>list = ["a", "b", "c", "d"]
-for letter in list:
-  print letter
+<p>Mit <code>for</code> baust du eine Schleife, die Anweisungen für jedes Element einer Sammlung wiederholt.</p>
+<p>Zum Beispiel über eine Liste:</p>
+<pre><code>buchstaben = ["a", "b", "c", "d"]
+for buchstabe in buchstaben:
+    print(buchstabe)
 </code></pre>
+<p>Das klappt mit allem, was man durchlaufen kann, etwa Zeichenketten und Dictionaries:</p>
+<pre><code># alle Zeichen einer Zeichenkette
+for zeichen in "Hallo":
+    print(zeichen)
 
-<p>We can also loop over any iterable object, like strings and dictionaries.</p>
-
-<pre><code>
-# print all the letters in a string
-for letter in "":
-  print letter
-
-# print all the keys in a dictionary
-numbers = {'one': 1, 'two': 2, 'three': 3}
-for name in numbers:
-  print name
+# alle Schlüssel eines Dictionaries
+zahlen = {'eins': 1, 'zwei': 2, 'drei': 3}
+for name in zahlen:
+    print(name)
 </code></pre>

@@ -40,29 +40,29 @@
                     }
                     else {
                       notifyjs(angular.element( document.querySelector('#join-course-messages') ),
-                        "Looks like you're already in that course!", "success");
+                        "Du bist schon in diesem Kurs.", "success");
                     }
                   }
                   else if (result.alreadyListed) {
                     notifyjs(angular.element( document.querySelector('#join-course-messages') ),
-                      "Looks like you're already in that course!", "success");
+                      "Du bist schon in diesem Kurs.", "success");
                   }
                   else if (result.flash && result.flash.validation) {
                     notifyjs(angular.element( document.querySelector('#join-course-messages') ),
-                      "No course was found with that code. Please check your code and try again.", "alert");
+                      "Kein Kurs mit diesem Code gefunden. Bitte Code prüfen und erneut versuchen.", "alert");
                   }
                   else if (result.message) {
                     notifyjs(angular.element( document.querySelector('#join-course-messages') ), result.message, "alert");
                   }
                   else {
                     notifyjs(angular.element( document.querySelector('#join-course-messages') ),
-                      "We had a problem verifying the code you entered. Please try again and contact us if the problem continues.", "alert");
+                      "Der Code konnte nicht geprüft werden. Bitte erneut versuchen.", "alert");
                   }
 
                   $scope.checkingAccessCode = false;
                 }, function(err) {
                   notifyjs(angular.element( document.querySelector('#join-course-messages') ),
-                    "We had a problem verifying the code you entered. Please try again and contact us if the problem continues.", "alert");
+                    "Der Code konnte nicht geprüft werden. Bitte erneut versuchen.", "alert");
 
                   $scope.checkingAccessCode = false;
                 });

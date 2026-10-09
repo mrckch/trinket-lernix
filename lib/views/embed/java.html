@@ -81,7 +81,7 @@
 {% endblock %}
 
 {% block body_scripts %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="/vendor/cdnjs/socket.io/4.5.4/socket.io.min.js"></script>
 
   {% if not outputOnly %}
   {{ component('ace-builds', 'src-min-noconflict/ace.js') | safe }}

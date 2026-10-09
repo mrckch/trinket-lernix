@@ -40,7 +40,7 @@ shareOptions.init();
 
 function submitEmailModalForm(recaptcha) {
   if ($('#share-email').val() && $('#share-yourname').val() && $('#share-youremail').val()) {
-    $('#sendEmail').attr('value', 'Sending ...');
+    $('#sendEmail').attr('value', 'Wird gesendet …');
     $('#sendEmail').addClass('disabled');
 
     var trinket_id = $('#emailModalForm').data('trinket-id');
@@ -53,7 +53,7 @@ function submitEmailModalForm(recaptcha) {
     }).done(function(data) {
       $('#share-email').val('');
 
-      var alertBox = '<div data-alert class="alert-box success"> Your email was sent! Thanks for sharing! <a class="close">&times;</a></div>';
+      var alertBox = '<div data-alert class="alert-box success"> Deine E-Mail wurde verschickt. <a class="close">&times;</a></div>';
       $('#emailAlert').empty().removeClass("hide").html(alertBox);
       $(document).foundation('alert', 'reflow');
 
@@ -61,11 +61,11 @@ function submitEmailModalForm(recaptcha) {
         $('#emailAlert').addClass("hide");
       }, 3000);
     }).fail(function(jqXHR, textStatus, errorThrown) {
-      var alertBox = '<div data-alert class="alert-box warning"> There was a problem sending your email. Please try again later. <a href="#" class="close">&times;</a></div>';
+      var alertBox = '<div data-alert class="alert-box warning"> Die E-Mail konnte nicht gesendet werden. Bitte später erneut versuchen. <a href="#" class="close">&times;</a></div>';
       $('#emailAlert').empty().removeClass("hide").html(alertBox);
       $(document).foundation('alert', 'reflow');
     }).always(function() {
-      $('#sendEmail').attr('value', 'Send');
+      $('#sendEmail').attr('value', 'Senden');
       $('#sendEmail').removeClass('disabled');
     });
   }

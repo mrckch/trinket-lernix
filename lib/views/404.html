@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="utf-8">
-    <title>Page not found</title>
-    <link href="//fonts.googleapis.com/css?family=Lato:300,900|Merriweather:300,400italic,900" rel="stylesheet" type="text/css">
+    <title>Seite nicht gefunden</title>
+    <link href="/vendor/fonts/lato/300.css" rel="stylesheet"><link href="/vendor/fonts/lato/900.css" rel="stylesheet"><link href="/vendor/fonts/merriweather/300.css" rel="stylesheet"><link href="/vendor/fonts/merriweather/900.css" rel="stylesheet">
     <style>
         html { padding: 40px 0; }
         body { text-align: center; font-family: "Merriweather", serif; }
@@ -45,12 +45,12 @@
     </style>
 </head>
 <body>
-  <h1>Page not found</h1>
+  <h1>Seite nicht gefunden</h1>
   <hr>
-  <p class="subheader">The page you're looking for doesn't exist or may have been moved.</p>
+  <p class="subheader">Diese Seite gibt es nicht oder sie wurde verschoben.</p>
   {% if config.app.supportEmail %}
-  <p class="subheader">If you believe this is an error, please contact <a href="mailto:{{ config.app.supportEmail }}">{{ config.app.supportEmail }}</a>.</p>
+  <p class="subheader">Wenn das ein Fehler ist, melde dich bei <a href="mailto:{{ config.app.supportEmail }}">{{ config.app.supportEmail }}</a>.</p>
   {% endif %}
-  <a href="/" class="nav-link">Go to Homepage</a>
+  <a href="/" class="nav-link">Zur Startseite</a>
 </body>
 </html>

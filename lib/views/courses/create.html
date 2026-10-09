@@ -7,8 +7,8 @@
 {% block content %}
   <div class="row">
     <div class="large-12 columns">
-      <h2>Create your course</h2>
-      <h3 class="subheader">Basic information about your new hands-on course.</h3>
+      <h2>Neuen Kurs anlegen</h2>
+      <h3 class="subheader">Die Grunddaten deines Kurses – alles lässt sich später ändern.</h3>
     </div>
   </div>
   <hr />
@@ -22,7 +22,7 @@
       <form action="/courses" method="post" id="add-course">
         <div class="row">
           <div class="large-12 columns">
-            <label for="course-name">What's the Course name?</label>
+            <label for="course-name">Wie heißt der Kurs?</label>
             <input type="text" name="name" id="course-name" value="{{ flash.payload.name }}" autofocus required />
             {% if flash.validation.name %}
               <small class="error">{{ flash.validation.name }}</small>
@@ -32,9 +32,9 @@
 
         <div class="row">
           <div class="large-12 columns">
-            <label for="course-description">What Description should show up on the page?</label>
+            <label for="course-description">Welche Beschreibung sollen die Teilnehmenden sehen?</label>
             <textarea name="description" id="course-description" rows="4" cols="50"
-              placeholder="Include additional information students need to know about this course." required>{{ flash.payload.description }}</textarea>
+              placeholder="Was die Schülerinnen und Schüler über diesen Kurs wissen sollten." required>{{ flash.payload.description }}</textarea>
             {% if flash.validation.description %}
               <small class="error">{{ flash.validation.description }}</small>
             {% endif %}
@@ -43,16 +43,16 @@
 
         <div class="row">
           <div class="large-12 columns">
-            <label for="course-type">Is this course public or private?</label>
+            <label for="course-type">Wer darf den Kurs sehen?</label>
             <select name="courseType" id="course-type">
               <option {% if flash.payload and flash.payload.courseType == "public" %}selected{% endif %} value="public">
-                Public - anyone with the URL will be able to view the course
+                Öffentlich – alle angemeldeten Nutzer mit dem Link können den Kurs sehen
               </option>
               <option {% if flash.payload and flash.payload.courseType == "private" %}selected{% endif %} value="private">
-                Private - only you and those to whom you grant access will be able to view the course
+                Privat – nur du und die eingetragenen Teilnehmenden
               </option>
               <option {% if flash.payload and flash.payload.courseType == "open" %}selected{% endif %} value="open">
-                Open - anyone can make a copy of this course and edit their own copy
+                Offen – andere Lehrkräfte dürfen den Kurs kopieren und bearbeiten
               </option>
             </select>
           </div>
@@ -75,13 +75,13 @@
 
         <div class="row">
           <div class="large-12 columns">
-            <label for="content-default">Should course content be published or draft when created?</label>
+            <label for="content-default">Sollen neue Inhalte sofort sichtbar sein?</label>
             <select name="contentDefault" id="content-default">
               <option {% if flash.payload and flash.payload.contentDefault == "publish" %}selected{% endif %} value="publish">
-                Published - pages and assignments will be published when created
+                Veröffentlicht – neue Seiten und Aufgaben sind sofort sichtbar
               </option>
               <option {% if flash.payload and flash.payload.contentDefault == "draft" %}selected{% endif %} value="draft">
-                Draft - pages and assignments will be marked as draft when created
+                Entwurf – neue Seiten und Aufgaben bleiben zunächst verborgen
               </option>
             </select>
           </div>
@@ -89,8 +89,8 @@
 
         <div class="row">
           <div class="large-12 columns">
-            <a id="save-course-button" class="button small primary"><i class="fa fa-save"></i>&nbsp;save</a>
-            <a class="button small caution" href="/home">cancel</a>
+            <a id="save-course-button" class="button small primary"><i class="fa fa-save"></i>&nbsp;Speichern</a>
+            <a class="button small caution" href="/home">Abbrechen</a>
           </div>
         </div>
       </form>

@@ -1,9 +1,9 @@
 {%- import "includes/pro-tips.html" as tips -%}
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="de" class="no-js">
 <head>
   <meta charset="utf-8">
-  <title>{{ config.app.siteName }}: {% block title %}run code anywhere{% endblock %}</title>
+  <title>{{ config.app.siteName }}: {% block title %}Programmieren im Browser{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="{% block meta_description %}{% endblock %}">
   <meta name="author" content="{% block meta_author %}{% endblock %}">
@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ '/img/icons/apple-touch-icon-114x114-precomposed.png' | cachePrefix }}">
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ '/img/icons/apple-touch-icon-72x72-precomposed.png' | cachePrefix }}">
   <link rel="apple-touch-icon-precomposed" href="{{ '/img/icons/apple-touch-icon-precomposed.png' | cachePrefix }}">
-  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/vendor/cdnjs/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous">
   {{ component('font-mfizz', 'css/font-mfizz.css') | safe }}
   <link rel="stylesheet" type="text/css" href="{{ '/css/embed.css' | cachePrefix }}" crossorigin="anonymous">
   {% block head_styles %}
@@ -28,7 +28,7 @@
         cachePrefix       : '{{config.app.cachePrefix}}',
         prefixes          :  {{ config.app.prefixes | json | safe }},
         components        :  {{ config.app.components | json | safe }},
-        vendorHost        : '{{ config.aws.buckets.vendorassets.host }}',
+        vendorHost        : '/vendor',
         python3_api       : '{% if serverside.python3.api %}{{ serverside.python3.api }}{% else %}{{ config.app.serverside.python3.api.default }}{% endif %}',
         java_api          : '{% if serverside.java.api %}{{ serverside.java.api }}{% else %}{{ config.app.serverside.java8.api.default }}{% endif %}',
         R_api             : '{% if serverside.R.api %}{{ serverside.R.api }}{% else %}{{ config.app.serverside.r3.api.default }}{% endif %}',
@@ -45,13 +45,13 @@
     {% endif %}
     </script>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/modernizr/2.8.2/modernizr.min.js" type="text/javascript"></script>
   <script src="{{ '/components/detectizr/dist/detectizr.min.js' | cachePrefix }}" type="text/javascript"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js" type="text/javascript"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha1.js" type="text/javascript"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/crypto-js/3.1.2/rollups/md5.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/crypto-js/3.1.2/rollups/sha1.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/crypto-js/3.1.2/rollups/aes.js" type="text/javascript"></script>
 
   {% block head_scripts %}
   {% endblock %}
@@ -105,7 +105,7 @@
         {% elif not outputOnly %}
         <section class="left">
           <div class="icon-bar left-menu-toggle">
-            <button class="item button menu-button left-off-canvas-toggle" data-action="menu.options" role="button" tabindex="0" aria-label="Open Menu">
+            <button class="item button menu-button left-off-canvas-toggle" data-action="menu.options" role="button" tabindex="0" aria-label="Menü öffnen">
               <i class="fa fa-bars"></i>
             </button>
           </div>
@@ -119,8 +119,8 @@
             {% if config.app.logo %}<img src="{{ config.app.logo | cachePrefix }}" alt="{{ config.app.siteName }}" />{% endif %}
           </span>
           <ul id="brand-menu" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
-            <li><a href="//{{config.app.url.hostname}}" target="_blank">About</a></li>
-            <li><a href="//{{config.app.url.hostname}}/signup" target="_blank">Sign Up</a></li>
+            <li><a href="//{{config.app.url.hostname}}" target="_blank">Über {{ config.app.siteName }}</a></li>
+            <li><a href="//{{config.app.url.hostname}}/login" target="_blank">Anmelden</a></li>
           </ul>
         {% else %}
           <span title="{{ config.app.siteName }}" data-dropdown="brand-menu" aria-controls="brand-menu" aria-expanded="false">
@@ -129,7 +129,7 @@
           </span>
           {% if runMode != "calculator" %}
           <ul id="brand-menu" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
-            <li><a id="brand">View on {{ config.app.siteName }} <i class="fa fa-external-link"></i></a></li>
+            <li><a id="brand">Auf {{ config.app.siteName }} öffnen <i class="fa fa-external-link"></i></a></li>
           </ul>
           {% endif %}
           {% block trinket_label %}
@@ -142,12 +142,12 @@
           <div class="icon-bar label-right">
             {% block toolbar_options %}{% endblock %}
             {% if not outputOnly and sharingEnabled %}
-            <button class="show-for-medium-up button split item menu-button" data-action="sharing.social" data-dropdown="share-options" data-options="align:bottom" role="button" aria-label="Share Menu" aria-controls="share-options"><i class="fa fa-share-alt"></i><label id="share_button_label" class="show-for-large-up">Share</label><span data-dropdown="share-options" data-options="align:bottom" role="menu"></span></button>
+            <button class="show-for-medium-up button split item menu-button" data-action="sharing.social" data-dropdown="share-options" data-options="align:bottom" role="button" aria-label="Teilen-Menü" aria-controls="share-options"><i class="fa fa-share-alt"></i><label id="share_button_label" class="show-for-large-up">Teilen</label><span data-dropdown="share-options" data-options="align:bottom" role="menu"></span></button>
             {% endif %}
             {% if not outputOnly and config.features.accessibilityToggle and lang in ['python', 'python3', 'pygame', 'java', 'R', 'glowscript', 'html'] %}
             <div id="editorToggleWrapper" style="display: inline-block; width: auto; padding: 0; margin-left: 10px">
-              <img src="{{ '/img/accessibility.png' | cachePrefix }}" alt="Accessibility" title="Accessibility" style="float: left" />
-              <fieldset id="editorToggleFieldset" class="switch small left highlight-on-focus" style="line-height: 12px; margin: 1px 4px 0 4px" title="Enable screen reader accessibility in code editor" aria-label="Enable screen reader accessibility in code editor" tabindex="0">
+              <img src="{{ '/img/accessibility.png' | cachePrefix }}" alt="Barrierefreiheit" title="Barrierefreiheit" style="float: left" />
+              <fieldset id="editorToggleFieldset" class="switch small left highlight-on-focus" style="line-height: 12px; margin: 1px 4px 0 4px" title="Editor für Screenreader zugänglich machen" aria-label="Editor für Screenreader zugänglich machen" tabindex="0">
                 <input id="toolbarEditorToggle" type="checkbox" name="toolbarEditorToggle" />
                 <label class="highlight-on-focus" for="toolbarEditorToggle"></label>
               </fieldset>
@@ -174,45 +174,45 @@
             <div class="item"><div id="draftMessage" class="hide draft-message"></div></div>
             {% if isMobile and lang == 'pygame' %}
             <a class="item" data-action="keyboard.toggle" data-no-analytics="true" id="noVNC_keyboardbutton">
-              <i class="fa fa-keyboard-o"></i> <label class="show-for-medium-up">Keyboard</label>
+              <i class="fa fa-keyboard-o"></i> <label class="show-for-medium-up">Tastatur</label>
             </a>
             <textarea id="noVNC_keyboardinput" autocapitalize="off" autocomplete="off" spellcheck="false" tabindex="-1"></textarea>
             {% endif %}
             {% if copyingEnabled %}
             <!-- no user, remix if trinket.id, copy if inline -->
-            <a title="{{ 'Remix this trinket.' if trinket.id else 'Save a copy of this trinket.' }}"
+            <a title="{{ 'Dieses Trinket remixen.' if trinket.id else 'Eine Kopie dieses Trinkets speichern.' }}"
                class="save-it menu-button allow-original ui-option guest-option has-tip item right-off-canvas-toggle {% if user %} hide{% endif %}"
                data-action="menu.user">
               <i class="fa fa-save"></i>
-              <label class="show-for-medium-up">{{ 'Remix' if trinket.id else 'Copy' }}</label>
+              <label class="show-for-medium-up">{{ 'Remix' if trinket.id else 'Kopieren' }}</label>
             </a>
             <!-- user, no trinket.id -->
-            <a title="Save a copy of this trinket."
+            <a title="Eine Kopie dieses Trinkets speichern."
                class="save-it create-copy menu-button allow-original ui-option user-option owner-option has-tip item {{ 'disabled' if isOwner }} {% if not user or library %}hide{% endif %}"
                data-action="{{ 'menu.upgrade' if upgradeNeeded else 'library.add' }}">
               <i class="fa fa-save"></i>
-              <label class="show-for-medium-up">Copy</label>
+              <label class="show-for-medium-up">Kopieren</label>
             </a>
             <!-- user, trinket.id -->
-            <a title="{{'Save changes.' if isOwner else 'Remix this trinket.'}}"
+            <a title="{{'Änderungen speichern.' if isOwner else 'Dieses Trinket remixen.'}}"
                class="save-it create-remix menu-button allow-original ui-option user-option owner-option has-tip item {% if isOwner %}disabled blue-highlight{% else %}green-highlight{% endif %} {% if not user or library %}hide{% endif %}"
                data-action="{{ 'menu.upgrade' if upgradeNeeded else ('code.save' if isOwner else 'library.add') }}">
               <i class="fa {{'fa-save' if isOwner else 'fa-code-fork'}}"></i>
-              <label class="show-for-medium-up">{{'Save' if isOwner else 'Remix'}}</label>
+              <label class="show-for-medium-up">{{'Speichern' if isOwner else 'Remix'}}</label>
             </a>
             <!-- user, has remix, viewing remix -->
-            <a title="Save changes to your Remix."
+            <a title="Änderungen an deinem Remix speichern."
                class="save-it save-remix menu-button allow-original ui-option user-option owner-option has-tip item blue-highlight {% if isOwner %}disabled{% endif %} {% if not user or library %}hide{% endif %}"
                data-action="{{ 'menu.upgrade' if upgradeNeeded else 'library.add' }}">
               <i class="fa fa-save"></i>
-              <label class="show-for-medium-up">Save</label>
+              <label class="show-for-medium-up">Speichern</label>
             </a>
             <!-- user, has remix, viewing original -->
-            <a title="Revert your Remix to this Original."
+            <a title="Deinen Remix auf das Original zurücksetzen."
                class="save-it revert-remix menu-button allow-original ui-option user-option owner-option has-tip item {{ 'disabled' if isOwner }} {% if not user or library %}hide{% endif %}"
                data-action="{{ 'menu.upgrade' if upgradeNeeded else 'library.add' }}">
               <i class="fa fa-fast-backward"></i>
-              <label class="show-for-medium-up">Restore</label>
+              <label class="show-for-medium-up">Zurücksetzen</label>
             </a>
             {% endif %}
           </div>
@@ -265,7 +265,7 @@
   <script id="statusMessageTemplate" type="text/html">
     <div id="statusMessages" aria-live="assertive" role="alert" tabindex=0 data-inteface="alert" data-alert class="alert-box {{type}}">
       <div>{{message}}</div>
-      <a href="#" title="Close message" class="close" aria-label="Close Alert" role="button"><i class="fa fa-times-circle"></i></a>
+      <a href="#" title="Meldung schließen" class="close" aria-label="Meldung schließen" role="button"><i class="fa fa-times-circle"></i></a>
     </div>
   </script>
   {% endraw %}
@@ -279,11 +279,11 @@
 
   <div id="confirmResetModal" class="reveal-modal medium" data-reveal data-css-top="35">
     <div class="row">
-      <h2 id="modalTitle">Are you sure?</h2>
-      <p class="lead">Resetting will undo all of your current changes.</p>
-      <a class="button caution menu-button allow-original" data-action="code.cancel-reset">Cancel</a>
-      <a class="button danger menu-button allow-original" data-action="code.confirm-reset">Yes, I am sure.</a>
-      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      <h2 id="modalTitle">Bist du sicher?</h2>
+      <p class="lead">Zurücksetzen verwirft alle deine aktuellen Änderungen.</p>
+      <a class="button caution menu-button allow-original" data-action="code.cancel-reset">Abbrechen</a>
+      <a class="button danger menu-button allow-original" data-action="code.confirm-reset">Ja, zurücksetzen.</a>
+      <a class="close-reveal-modal" aria-label="Schließen">&#215;</a>
     </div>
   </div>
 
@@ -297,11 +297,11 @@
   {% block settings_modal %}{% endblock %}
 
   <ul id="share-options" class="f-dropdown" data-dropdown-content role="menu">
-    {% if emailEnabled %}<li role="menuitem"><a class="menu-button" data-action="sharing.email" role="button"><i class="fa fa-envelope"></i>Email</a></li>{% endif %}
+    {% if emailEnabled %}<li role="menuitem"><a class="menu-button" data-action="sharing.email" role="button"><i class="fa fa-envelope"></i>E-Mail</a></li>{% endif %}
     <li role="menuitem"><a class="menu-button" data-action="sharing.share" role="button"><i class="fa fa-link"></i>Link</a></li>
-    <li role="menuitem"><a class="menu-button" data-action="sharing.embed" role="button"><i class="fa fa-code"></i>Embed</a></li>
+    <li role="menuitem"><a class="menu-button" data-action="sharing.embed" role="button"><i class="fa fa-code"></i>Einbetten</a></li>
     {% if downloadable %}
-    <li><a class="menu-button" data-action="mode.download"><i class="fa fa-download"></i>Download</a></li>
+    <li><a class="menu-button" data-action="mode.download"><i class="fa fa-download"></i>Herunterladen</a></li>
     {% endif %}
   </ul>
 
@@ -310,11 +310,11 @@
   {% raw %}
   <script id="restoreOriginalModalTemplate" type="text/html">
     <div id="restoreOriginalModal" class="reveal-modal medium" data-reveal data-css-top="35">
-      <h2 id="modalTitle">Reset to the original?</h2>
-      <p class="lead">Resetting will undo all of your current changes.</p>
-      <a class="button small caution" data-action="reject">No, keep my remix.</a>
-      <a class="button small danger" data-action="confirm">Yes, reset to the original.</a>
-      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      <h2 id="modalTitle">Auf das Original zurücksetzen?</h2>
+      <p class="lead">Zurücksetzen verwirft alle deine aktuellen Änderungen.</p>
+      <a class="button small caution" data-action="reject">Nein, meinen Remix behalten.</a>
+      <a class="button small danger" data-action="confirm">Ja, auf das Original zurücksetzen.</a>
+      <a class="close-reveal-modal" aria-label="Schließen">&#215;</a>
     </div>
   </script>
 
@@ -332,7 +332,7 @@
     </a>
     <div id="panel-{{testNumber}}" class="content">
       <p>
-        <strong>Message:</strong> <pre>{{reason}}</pre>
+        <strong>Meldung:</strong> <pre>{{reason}}</pre>
       </p>
     </div>
     </li>
@@ -355,10 +355,10 @@
     </a>
     <div id="panel-{{testNumber}}" class="content">
       <p>
-        <strong>Description:</strong> {{description}}
+        <strong>Beschreibung:</strong> {{description}}
       </p>
       <p>
-        <strong>Message:</strong> {{reason}}
+        <strong>Meldung:</strong> {{reason}}
       </p>
     </div>
     </li>
@@ -381,7 +381,7 @@
     </a>
     <div id="panel-{{testNumber}}" class="content">
       <p>
-        <strong>Description:</strong> {{description}}
+        <strong>Beschreibung:</strong> {{description}}
       </p>
     </div>
     </li>
@@ -391,9 +391,9 @@
     <li>
       <form id="accountForm">
         <span class='message hide'></span>
-        <input name="email"    type='email'    placeholder="Email"    required>
-        <input name="password" type='password' placeholder="Password" required>
-        <a id="login"    name="login"    class='button secondary small' data-action="login">Log In</a>
+        <input name="email"    type='email'    placeholder="E-Mail"    required>
+        <input name="password" type='password' placeholder="Passwort" required>
+        <a id="login"    name="login"    class='button secondary small' data-action="login">Anmelden</a>
         <!--<a id="register" name="register" class='button primary small'   data-action="signup">Create Account</a>-->
       </form>
     </li>
@@ -404,21 +404,21 @@
   </script>
 
   <script id="ownerMenuTemplate" type="text/html">
-    <li><label>Options</label></li>
+    <li><label>Optionen</label></li>
     <li>
       <a data-mode="interact" class="right-menu-link menu-button" data-action="code.save">
-        <i class="fa fa-save"></i>Update Original
+        <i class="fa fa-save"></i>Original aktualisieren
       </a>
     </li>
     {% endraw %}{% include "includes/external_links.html" %}{% raw %}
   </script>
 
   <script id="draftTextTemplate" type="text/html">
-    <a class="menu-button" data-action="code.reset" title="Reset"><i class="fa fa-refresh"></i></a> {{draftText}}
+    <a class="menu-button" data-action="code.reset" title="Zurücksetzen"><i class="fa fa-refresh"></i></a> {{draftText}}
   </script>
 
   <script id="addInstructionsTemplate" type="text/html">
-    <p>Click the pencil icon to add instructions to your trinket. When anyone else views this trinket, they'll also be able to view them.</p>
+    <p>Klicke auf das Stift-Symbol, um deinem Trinket eine Anleitung hinzuzufügen. Wer das Trinket ansieht, sieht auch die Anleitung.</p>
   </script>
 
   <script id="editInstructionsTemplate" type="text/html">
@@ -436,8 +436,8 @@
         </span>
       </div>
       <div class="new-comment-actions">
-        <a class="button tiny secondary save-inline-comment"><i class="fa fa-save"></i> Add Comment</a>
-        <a class="button tiny caution cancel-inline-comment">Cancel</a>
+        <a class="button tiny secondary save-inline-comment"><i class="fa fa-save"></i> Kommentar hinzufügen</a>
+        <a class="button tiny caution cancel-inline-comment">Abbrechen</a>
       </div>
     </div>
   </script>
@@ -464,22 +464,22 @@
 
   <script id="inlineCommentActions" type="text/html">
     <div class="comment-actions-wrapper">
-      <a class="comment-actions move-comment-up disabled" data-file-index="{{index}}" data-comment-id="{{commentId}}" title="Move comment up"><i class="fa fa-angle-up"></i></a>
-      <a class="comment-actions move-comment-down disabled" data-file-index="{{index}}" data-comment-id="{{commentId}}" title="Move comment down"><i class="fa fa-angle-down"></i></a>
-      <a class="comment-actions" data-dropdown="comment-actions-{{commentId}}" title="More options"><i class="fa fa-ellipsis-v"></i></a>
+      <a class="comment-actions move-comment-up disabled" data-file-index="{{index}}" data-comment-id="{{commentId}}" title="Kommentar nach oben"><i class="fa fa-angle-up"></i></a>
+      <a class="comment-actions move-comment-down disabled" data-file-index="{{index}}" data-comment-id="{{commentId}}" title="Kommentar nach unten"><i class="fa fa-angle-down"></i></a>
+      <a class="comment-actions" data-dropdown="comment-actions-{{commentId}}" title="Weitere Optionen"><i class="fa fa-ellipsis-v"></i></a>
     </div>
     <ul id="comment-actions-{{commentId}}" class="f-dropdown" data-dropdown-content>
-      <li><a class="edit-inline-comment" data-comment-id="{{commentId}}"><i class="fa fa-pencil fa-fw"></i> Edit comment</a></li>
-      <li><a class="confirm-remove-inline-comment" data-comment-id="{{commentId}}"><i class="fa fa-trash-o alert fa-fw"></i> Remove comment</a></li>
+      <li><a class="edit-inline-comment" data-comment-id="{{commentId}}"><i class="fa fa-pencil fa-fw"></i> Kommentar bearbeiten</a></li>
+      <li><a class="confirm-remove-inline-comment" data-comment-id="{{commentId}}"><i class="fa fa-trash-o alert fa-fw"></i> Kommentar entfernen</a></li>
     </ul>
     <div class="confirm-remove-comment-container hide" id="confirm-remove-comment-container-{{commentId}}">
-      <strong>Remove this comment?</strong><br /><br />
-      <a class="confirm-remove-comment button tiny danger" data-file-index="{{index}}" data-comment-id="{{commentId}}"><i class="fa fa-trash-o"></i> Remove</a>
-      <a class="cancel-remove-comment button tiny caution" data-comment-id="{{commentId}}">Cancel</a>
+      <strong>Diesen Kommentar entfernen?</strong><br /><br />
+      <a class="confirm-remove-comment button tiny danger" data-file-index="{{index}}" data-comment-id="{{commentId}}"><i class="fa fa-trash-o"></i> Entfernen</a>
+      <a class="cancel-remove-comment button tiny caution" data-comment-id="{{commentId}}">Abbrechen</a>
     </div>
     <div class="update-comment-container hide" id="update-comment-container-{{commentId}}">
-      <a class="update-comment button tiny secondary" data-file-index="{{index}}" data-comment-id="{{commentId}}"><i class="fa fa-save"></i> Update</a>
-      <a class="cancel-update-comment button tiny caution" data-comment-id="{{commentId}}">Cancel</a>
+      <a class="update-comment button tiny secondary" data-file-index="{{index}}" data-comment-id="{{commentId}}"><i class="fa fa-save"></i> Speichern</a>
+      <a class="cancel-update-comment button tiny caution" data-comment-id="{{commentId}}">Abbrechen</a>
     </div>
   </script>
   <script id="inlineCommentDismiss" type="text/html">
@@ -487,12 +487,12 @@
       <a class="comment-actions" data-dropdown="comment-actions-{{commentId}}"><i class="fa fa-ellipsis-v"></i></a>
     </div>
     <ul id="comment-actions-{{commentId}}" class="f-dropdown" data-dropdown-content>
-      <li><a class="confirm-remove-inline-comment" data-comment-id="{{commentId}}"><i class="fa fa-trash-o alert fa-fw"></i> Remove comment</a></li>
+      <li><a class="confirm-remove-inline-comment" data-comment-id="{{commentId}}"><i class="fa fa-trash-o alert fa-fw"></i> Kommentar entfernen</a></li>
     </ul>
     <div class="confirm-remove-comment-container hide" id="confirm-remove-comment-container-{{commentId}}">
-      <strong>Remove this comment?</strong><br /><br />
-      <a class="confirm-remove-comment button tiny danger" data-file-index="{{index}}" data-comment-id="{{commentId}}"><i class="fa fa-trash-o"></i> Remove</a>
-      <a class="cancel-remove-comment button tiny caution" data-comment-id="{{commentId}}">Cancel</a>
+      <strong>Diesen Kommentar entfernen?</strong><br /><br />
+      <a class="confirm-remove-comment button tiny danger" data-file-index="{{index}}" data-comment-id="{{commentId}}"><i class="fa fa-trash-o"></i> Entfernen</a>
+      <a class="cancel-remove-comment button tiny caution" data-comment-id="{{commentId}}">Abbrechen</a>
     </div>
   </script>
   {% endraw %}
@@ -500,7 +500,7 @@
   {% endif %}
 
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/localStorage/2.0.1/localStorage.min.js?swfURL=//cdnjs.cloudflare.com/ajax/libs/localStorage/2.0.1/localStorage.swf" type="text/javacript"></script>
+  <script src="/vendor/cdnjs/localStorage/2.0.1/localStorage.min.js?swfURL=/vendor/cdnjs/localStorage/2.0.1/localStorage.swf" type="text/javacript"></script>
 
   {% if not outputOnly %}
   {{ component('jszip', 'dist/jszip.min.js') | safe }}
@@ -513,7 +513,8 @@
 
   {{ component('lodash', 'dist/lodash.min.js') | safe }}
   {{ component('bluebird', 'js/browser/bluebird.min.js') | safe }}
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/moment.js/2.18.1/moment.min.js" type="text/javascript"></script>
+  <script src="/vendor/cdnjs/moment.js/2.18.1/locale/de.js" type="text/javascript"></script>
 
   {% set extra_js = [
     '/js/embed/foundation.js',

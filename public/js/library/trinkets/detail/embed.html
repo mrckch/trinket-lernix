@@ -1,36 +1,36 @@
 <div class="row collapse">
-  <p>Select the best options for your needs then copy the code below and paste it onto your site.</p>
+  <p>Wähle die passenden Optionen und kopiere dann den Code unten auf deine Seite (z. B. in IServ).</p>
 </div>
 <form>
   <div class="row collapse">
     <div class="faux-input textarea" ng-bind="embedCode" ng-text-select></div>
   </div>
   <fieldset>
-    <legend>Embed Options</legend>
+    <legend>Einbettung</legend>
     <div class="row">
       <div class="large-4 small-6 columns">
         <select ng-model="info.embedSize" ng-options="size as size.name for size in embedSizes"></select>
       </div>
       <div class="large-8 small-6 columns" ng-show="extraOptions">
         <select name="displayOptionEmbed" ng-model="info.embedDisplayMenu">
-          <option value="">Show code and output side-by-side (smaller screens will only show one at a time)</option>
-          <option value="embedOutputOnly">Only show output (hide the code)</option>
-          <option value="embedToggleCode">Only show code or output (let users toggle between them)</option>
+          <option value="">Code und Ausgabe nebeneinander (kleine Bildschirme zeigen nur eines)</option>
+          <option value="embedOutputOnly">Nur Ausgabe (Code ausblenden)</option>
+          <option value="embedToggleCode">Nur Code oder Ausgabe (umschaltbar)</option>
         </select>
         <ul class="compact-list">
-          <li ng-show="autorunOption"><input type="checkbox" id="embedStartInput" ng-model="info.embedStart"><label class="inline" for="embedStartInput">Auto run trinket when loaded</label></li>
+          <li ng-show="autorunOption"><input type="checkbox" id="embedStartInput" ng-model="info.embedStart"><label class="inline" for="embedStartInput">Beim Laden automatisch ausführen</label></li>
         </ul>
       </div>
     </div>
   </fieldset>
   <fieldset ng-show="runOption">
-    <legend>Run Options</legend>
+    <legend>Ausführen</legend>
     <div class="row">
       <div class="small-12 columns">
         <select name="runOptionEmbed" ng-model="info.embedRunMenu">
-          <option value="">Allow either Run or Interactive console</option>
-          <option value="embedRunOption">Run code only</option>
-          <option value="embedConsoleOption">Interactive console only</option>
+          <option value="">Ausführen und interaktive Konsole erlauben</option>
+          <option value="embedRunOption">Nur Ausführen</option>
+          <option value="embedConsoleOption">Nur interaktive Konsole</option>
         </select>
       </div>
     </div>

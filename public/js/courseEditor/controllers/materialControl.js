@@ -207,7 +207,7 @@
     var self = this;
 
     return self.savedMarkdown !== self.$scope.markdown
-      ? 'Your work has not finished saving.'
+      ? 'Deine Änderungen sind noch nicht fertig gespeichert.'
       : undefined;
   }
 
@@ -248,7 +248,7 @@
           return deferred.reject(result.flash.validation.name);
         }
 
-        return deferred.reject('An unknown error occured');
+        return deferred.reject('Unbekannter Fehler');
       });
 
     return deferred.promise;
@@ -371,7 +371,7 @@
         self.$timeout(function() {
           self.$scope.saving      = false;
           self.$scope.saveError   = true;
-          self.$scope.customError = "Check your network connection.";
+          self.$scope.customError = "Bitte Netzwerkverbindung prüfen.";
         }, 250);
 
         // try to save again every 5 seconds...

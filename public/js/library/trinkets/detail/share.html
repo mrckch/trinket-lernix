@@ -1,6 +1,5 @@
 <div class="row collapse">
-  <p>Need to share this trinket with students or other teachers?<br />
-  This trinket is available for others to view at the URL below.</p>
+  <p>Dieses Trinket ist für angemeldete Nutzer unter dem folgenden Link erreichbar.</p>
 </div>
 <form>
   <div class="row collapse">
@@ -9,25 +8,25 @@
     </div>
   </div>
   <fieldset>
-    <legend>Link Options</legend>
+    <legend>Link-Optionen</legend>
     <div class="row collapse">
       <div class="small-10">
         <select name="displayOptionLink" ng-model="info.shareDisplayMenu">
-          <option value="">Show code and output side-by-side (smaller screens will only show one at a time)</option>
-          <option value="shareOutputOnly">Only show output (hide the code)</option>
-          <option value="shareToggleCode">Only show code or output (let users toggle between them)</option>
+          <option value="">Code und Ausgabe nebeneinander (kleine Bildschirme zeigen nur eines)</option>
+          <option value="shareOutputOnly">Nur Ausgabe (Code ausblenden)</option>
+          <option value="shareToggleCode">Nur Code oder Ausgabe (umschaltbar)</option>
         </select>
       </div>
     </div>
   </fieldset>
   <fieldset ng-show="runOption">
-    <legend>Run Options</legend>
+    <legend>Ausführen</legend>
     <div class="row collapse">
       <div class="small-10">
         <select name="runOptionLink" ng-model="info.shareRunMenu">
-          <option value="">Allow either Run or Interactive console</option>
-          <option value="shareRunOption">Run code only</option>
-          <option value="shareConsoleOption">Interactive console only</option>
+          <option value="">Ausführen und interaktive Konsole erlauben</option>
+          <option value="shareRunOption">Nur Ausführen</option>
+          <option value="shareConsoleOption">Nur interaktive Konsole</option>
         </select>
       </div>
     </div>

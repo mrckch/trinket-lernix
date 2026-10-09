@@ -1,18 +1,18 @@
-<a class="button" ng-class="buttonClass" ng-click="openJoinCourse()"><i class="fa fa-user-plus"></i> Join Course</a>
+<a class="button" ng-class="buttonClass" ng-click="openJoinCourse()"><i class="fa fa-user-plus"></i> Kurs beitreten</a>
 
 <script type="text/ng-template" id="joinCourse.html">
   <div id="join-course-messages"></div>
-  <h2 id="join-course-title">Join a Course</h2>
-  <p class="lead">To join a course, you'll need the right Access Code. If you don't have one, contact your instructor.</p>
+  <h2 id="join-course-title">Einem Kurs beitreten</h2>
+  <p class="lead">Zum Beitreten brauchst du den Zugangscode deiner Lehrkraft. Kurse deiner IServ-Gruppen findest du nach der Anmeldung automatisch auf der Übersicht.</p>
   <form id="join-course-form" name="joinCourseForm" ng-submit="checkAccessCode()">
     <div class="row">
       <div class="small-12 medium-4 columns">
-        <input type="text" name="accessCode" ng-model="accessCode" ng-required="required" placeholder="enter your Access Code here" />
+        <input type="text" name="accessCode" ng-model="accessCode" ng-required="required" placeholder="Zugangscode eingeben" />
       </div>
       <div class="small-12 medium-4 columns end">
-        <button type="submit" class="button tiny"><i ng-class="checkingAccessCode ? 'fa fa-circle-o-notch fa-spin' : 'fa fa-check-circle'"></i> Verify Code and Join</button>
+        <button type="submit" class="button tiny"><i ng-class="checkingAccessCode ? 'fa fa-circle-o-notch fa-spin' : 'fa fa-check-circle'"></i> Beitreten</button>
       </div>
     </div>
   </form>
-  <a class="close-reveal-modal" aria-label="Close" ng-click="close()">&#215;</a>
+  <a class="close-reveal-modal" aria-label="Schließen" ng-click="close()">&#215;</a>
 </script>

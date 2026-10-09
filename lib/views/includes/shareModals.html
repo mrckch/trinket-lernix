@@ -1,44 +1,44 @@
   {% set blocksRegExp = r/blocks/ %}
-  {% if blocksRegExp.test(lang) %}{% set blocksOrCode = "blocks" %}{% else %}{% set blocksOrCode = "code" %}{% endif %}
+  {% if blocksRegExp.test(lang) %}{% set blocksOrCode = "Blöcke" %}{% else %}{% set blocksOrCode = "Code" %}{% endif %}
   <ul id="displayOptionTextList" class="hide">
-    <li data-value="">Show <span class="blocksOrCode">{{ blocksOrCode }}</span> and output side-by-side (smaller screens will only show one at a time)</li>
-    <li data-value="outputOnly">Only show output (hide the <span class="blocksOrCode">{{ blocksOrCode }}</span>)</li>
-    <li data-value="toggleCode">Only show <span class="blocksOrCode">{{ blocksOrCode }}</span> or output (let users toggle between them)</li>
+    <li data-value=""><span class="blocksOrCode">{{ blocksOrCode }}</span> und Ausgabe nebeneinander (kleine Bildschirme zeigen nur eines)</li>
+    <li data-value="outputOnly">Nur Ausgabe (<span class="blocksOrCode">{{ blocksOrCode }}</span> ausblenden)</li>
+    <li data-value="toggleCode">Nur <span class="blocksOrCode">{{ blocksOrCode }}</span> oder Ausgabe (umschaltbar)</li>
   </ul>
-  <div id="shareModal" class="reveal-modal {{modalWidth if modalWidth else 'full'}}" data-reveal {% if not noCssTop %}data-css-top="0"{% endif %} {% if not noOffset %}data-offset="0"{% endif %} role="dialog" aria-label="Share Trinket Link Dialog">
+  <div id="shareModal" class="reveal-modal {{modalWidth if modalWidth else 'full'}}" data-reveal {% if not noCssTop %}data-css-top="0"{% endif %} {% if not noOffset %}data-offset="0"{% endif %} role="dialog" aria-label="Link zum Trinket teilen">
     <div class="row">
       <div class="small-12 columns">
         <div class="row">
-          <span class="modal-title" role="heading">Share Your Code!</span>
+          <span class="modal-title" role="heading">Code teilen</span>
         </div>
         <form>
           <div class="row">
-            <label for="shareURL"><i>Copy the link below to share your code</i></label>
-            <div id="shareUrl" class="faux-input" data-metric="linkShares" role="textbox" tabindex="0" aria-label="Copy this link to share your trinket."></div>
+            <label for="shareURL"><i>Kopiere den Link, um deinen Code zu teilen</i></label>
+            <div id="shareUrl" class="faux-input" data-metric="linkShares" role="textbox" tabindex="0" aria-label="Diesen Link kopieren, um das Trinket zu teilen."></div>
           </div>
           <div class="row">
             <fieldset>
-              <legend>Customize</legend>
+              <legend>Anpassen</legend>
               {% if runOption or config.app.runOption[lang] %}
               <div id="shareRunOption">
                 <select id="runOptionLink" name="runOptionLink" class="runOptions" data-type="shareUrl" data-trinket-shortCode="" data-trinket-runMode="">
-                  <option value="">Allow either Run or Interactive console</option>
-                  <option value="run">Run code only</option>
-                  <option value="console">Interactive console only</option>
+                  <option value="">Ausführen und interaktive Konsole erlauben</option>
+                  <option value="run">Nur Ausführen</option>
+                  <option value="console">Nur interaktive Konsole</option>
                 </select>
               </div>
               {% endif %}
               {% if displayOption %}
               <div id="shareDisplayOptions">
                 <select id="displayOptionLink" name="displayOptionLink" class="displayOptions" data-type="shareUrl" data-trinket-shortCode="" data-trinket-runMode="">
-                  <option value="">Show {{ blocksOrCode }} and output side-by-side (smaller screens will only show one at a time)</option>
-                  <option value="outputOnly">Only show output (hide the {{ blocksOrCode }})</option>
-                  <option value="toggleCode">Only show {{ blocksOrCode }} or output (let users toggle between them)</option>
+                  <option value="">{{ blocksOrCode }} und Ausgabe nebeneinander (kleine Bildschirme zeigen nur eines)</option>
+                  <option value="outputOnly">Nur Ausgabe ({{ blocksOrCode }} ausblenden)</option>
+                  <option value="toggleCode">Nur {{ blocksOrCode }} oder Ausgabe (umschaltbar)</option>
                 </select>
               </div>
               {% endif %}
               {% if lang != "music" %}
-              <input type="checkbox" id="showInstructionsShareToggle" name="showInstructionsShare" class="checkboxToggle" value="shareUrl" /><label for="showInstructionsShareToggle">Show instructions first when loaded</label>
+              <input type="checkbox" id="showInstructionsShareToggle" name="showInstructionsShare" class="checkboxToggle" value="shareUrl" /><label for="showInstructionsShareToggle">Beim Öffnen zuerst die Anleitung zeigen</label>
               {% endif %}
             </fieldset>
           </div>
@@ -50,46 +50,46 @@
     </div>
     <a class="close-reveal-modal">&#215;</a>
   </div>
-  <div id="embedModal" class="reveal-modal {{modalWidth if modalWidth else 'full'}}" data-reveal {% if not noCssTop %}data-css-top="0"{% endif %} {% if not noOffset %}data-offset="0"{% endif %} role="dialog" aria-label="Embed Trinket Dialog">
+  <div id="embedModal" class="reveal-modal {{modalWidth if modalWidth else 'full'}}" data-reveal {% if not noCssTop %}data-css-top="0"{% endif %} {% if not noOffset %}data-offset="0"{% endif %} role="dialog" aria-label="Trinket einbetten">
     <div class="row">
-      <span class="modal-title" role="heading">Embed Your Code!</span>
+      <span class="modal-title" role="heading">Code einbetten</span>
     </div>
     <form>
       <div class="row">
-        <label for="embedCode">Embed this code on your site</label>
+        <label for="embedCode">Diesen Code auf einer eigenen Seite einbetten (z. B. in IServ)</label>
       </div>
       <div class="row">
         <div class="small-12 columms">
-          <div id="embedCode" class="faux-input textarea" data-metric="embedShares" role="textbox" aria-multiline="false" tabindex="0" aria-label="Copy this embed code"></div>
+          <div id="embedCode" class="faux-input textarea" data-metric="embedShares" role="textbox" aria-multiline="false" tabindex="0" aria-label="Einbettungscode kopieren"></div>
         </div>
       </div>
       <div class="row">
         <fieldset>
-          <legend>Customize</legend>
+          <legend>Anpassen</legend>
       {% if runOption or config.app.runOption[lang] %}
         <div id="embedRunOption">
           <select id="runOptionEmbed" name="runOptionEmbed" class="runOptions" data-type="embedCode" data-trinket-shortCode="" data-trinket-runMode="">
-            <option value="">Allow either Run or Interactive console</option>
-            <option value="run">Run code only</option>
-            <option value="console">Interactive console only</option>
+            <option value="">Ausführen und interaktive Konsole erlauben</option>
+            <option value="run">Nur Ausführen</option>
+            <option value="console">Nur interaktive Konsole</option>
           </select>
         </div>
       {% endif %}
       {% if displayOption %}
       <div id="embedDisplayOptions">
         <select id="displayOptionEmbed" name="displayOptionEmbed" class="displayOptions" data-type="embedCode" data-trinket-shortCode="" data-trinket-runMode="">
-          <option value="">Show {{ blocksOrCode }} and output side-by-side (smaller screens will only show one at a time)</option>
-          <option value="outputOnly">Only show output (hide the {{ blocksOrCode }})</option>
-          <option value="toggleCode">Only show {{ blocksOrCode }} or output (let users toggle between them)</option>
+          <option value="">{{ blocksOrCode }} und Ausgabe nebeneinander (kleine Bildschirme zeigen nur eines)</option>
+          <option value="outputOnly">Nur Ausgabe ({{ blocksOrCode }} ausblenden)</option>
+          <option value="toggleCode">Nur {{ blocksOrCode }} oder Ausgabe (umschaltbar)</option>
         </select>
         {% if autorunOption or config.app.autorun.indexOf(lang) >= 0 %}
-        <input type="checkbox" id="autorunEmbedToggle" name="autorunEmbed" class="checkboxToggle" value="embedCode" /><label for="autorunEmbedToggle">Auto run trinket when loaded</label>
+        <input type="checkbox" id="autorunEmbedToggle" name="autorunEmbed" class="checkboxToggle" value="embedCode" /><label for="autorunEmbedToggle">Beim Laden automatisch ausführen</label>
         {% endif %}
         {% if hideGeneratedCodeOption or config.app.hideGeneratedCode.indexOf(lang) >= 0 %}
-        <input type="checkbox" id="hideGeneratedCodeEmbedToggle" name="hideGeneratedCodeEmbed" class="checkboxToggle" value="embedCode" /><label for="hideGeneratedCodeEmbedToggle">Do not show generated python</label>
+        <input type="checkbox" id="hideGeneratedCodeEmbedToggle" name="hideGeneratedCodeEmbed" class="checkboxToggle" value="embedCode" /><label for="hideGeneratedCodeEmbedToggle">Erzeugten Python-Code nicht anzeigen</label>
         {% endif %}
         {% if lang != "music" %}
-          <input type="checkbox" id="showInstructionsEmbedToggle" name="showInstructionsEmbed" class="checkboxToggle" value="embedCode" /><label for="showInstructionsEmbedToggle">Show instructions first when loaded</label>
+          <input type="checkbox" id="showInstructionsEmbedToggle" name="showInstructionsEmbed" class="checkboxToggle" value="embedCode" /><label for="showInstructionsEmbedToggle">Beim Öffnen zuerst die Anleitung zeigen</label>
         {% endif %}
       </div>
       {% endif %}
@@ -98,39 +98,39 @@
     </form>
     <a class="close-reveal-modal">&#215;</a>
   </div>
-  {% if emailEnabled %}<div id="emailModal" class="reveal-modal {{modalWidth if modalWidth else 'full'}}" data-reveal {% if not noCssTop %}data-css-top="0"{% endif %} {% if not noOffset %}data-offset="0"{% endif %} role="dialog" aria-label="Email Trinket Dialog">
+  {% if emailEnabled %}<div id="emailModal" class="reveal-modal {{modalWidth if modalWidth else 'full'}}" data-reveal {% if not noCssTop %}data-css-top="0"{% endif %} {% if not noOffset %}data-offset="0"{% endif %} role="dialog" aria-label="Trinket per E-Mail senden">
     <div class="row first-row">
-     <span class="modal-title" role="heading">Email Your Code!</span>
+     <span class="modal-title" role="heading">Code per E-Mail senden</span>
     </div>
     <form id="emailModalForm" data-trinket-id="" role="form">
       <div class="row">
         <div class="small-12 medium-3 columns">
-          <label class="inline" for="share-email">Send To</label>
+          <label class="inline" for="share-email">Empfänger</label>
         </div>
         <div class="small-12 medium-9 columns">
-          <input type="email" id="share-email" name="email" placeholder="What email address should we send the link to?" required />
+          <input type="email" id="share-email" name="email" placeholder="An welche E-Mail-Adresse soll der Link gehen?" required />
         </div>
       </div>
       <div class="row">
         <div class="small-12 medium-3 columns">
-          <label class="inline" for="share-yourname">Your Name</label>
+          <label class="inline" for="share-yourname">Dein Name</label>
         </div>
         <div class="small-12 medium-9 columns">
-          <input type="text" id="share-yourname" name="yourname" placeholder="What is your name?" required />
+          <input type="text" id="share-yourname" name="yourname" placeholder="Wie heißt du?" required />
         </div>
       </div>
       <div class="row">
         <div class="small-12 medium-3 columns">
-          <label class="inline" for="share-youremail">Your Email</label>
+          <label class="inline" for="share-youremail">Deine E-Mail</label>
         </div>
         <div class="small-12 medium-9 columns">
-          <input type="email" id="share-youremail" name="youremail" value="{% if user %}{{ user.email }}{% endif %}" placeholder="Your email address - so the recipient can reply to you" {% if user %}disabled{% endif %}/>
+          <input type="email" id="share-youremail" name="youremail" value="{% if user %}{{ user.email }}{% endif %}" placeholder="Deine E-Mail-Adresse, damit man dir antworten kann" {% if user %}disabled{% endif %}/>
         </div>
       </div>
       <div class="row">
         <div class="small-12 medium-3 columns">
           <input id="emailToken" name="emailToken" type="hidden" value="{{ emailToken }}" />
-          <button class="g-recaptcha button success small" data-sitekey="{{ config.app.recaptcha.sitekey }}" data-callback="submitEmailForm" data-badge="bottomleft">Send</button>
+          <button class="g-recaptcha button success small" data-sitekey="{{ config.app.recaptcha.sitekey }}" data-callback="submitEmailForm" data-badge="bottomleft">Senden</button>
         </div>
         <div id="emailAlert" class="small-12 medium-9 columns end hide"></div>
       </div>
@@ -140,4 +140,3 @@
     {% endif %}
     <a class="close-reveal-modal">&#215;</a>
   </div>{% endif %}
-

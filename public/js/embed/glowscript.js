@@ -196,7 +196,7 @@ function runCode() {
   }
 
   if (!trinketAppConfig.versionMap[version]) {
-    api.showMessage('alert', 'Invalid version of GlowScript.');
+    api.showMessage('alert', 'Ungültige GlowScript-Version.');
     return;
   }
 
@@ -537,7 +537,7 @@ window.TrinketAPI = {
     if (event) {
       api.sendAnalytics('Interaction', {
         action   : 'Click',
-        label    : 'Run'
+        label    : 'Ausführen'
       });
     }
   },

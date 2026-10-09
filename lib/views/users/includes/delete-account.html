@@ -5,19 +5,19 @@
 </div>
 <div class="row">
   <div class="small-12 columns">
-    <a data-reveal-id="confirmDeleteAccountModal" class="button caution">Delete my Trinket Account</a>
+    <a data-reveal-id="confirmDeleteAccountModal" class="button caution">Mein Konto löschen</a>
   </div>
 </div>
 <div id="confirmDeleteAccountModal" class="reveal-modal" data-reveal>
   <div id="delete-account-messages"></div>
   <div class="row">
     <div class="small-12 columns">
-      <h2>Are you sure?</h2>
+      <h2>Bist du sicher?</h2>
     </div>
   </div>
   <div class="row">
     <div class="small-12 columns">
-      <p>If you are certain you want to delete your Trinket account, please enter your username below to confirm.</p>
+      <p>Wenn du dein Konto wirklich löschen willst, gib zur Bestätigung deinen Benutzernamen ein. Alle deine Trinkets werden gelöscht.</p>
     </div>
   </div>
   <div class="row">
@@ -27,10 +27,10 @@
   </div>
   <div class="row">
     <div class="small-12 columns">
-      <a id="delete-confirmed" class="button danger disabled">Delete Account</a>
+      <a id="delete-confirmed" class="button danger disabled">Konto löschen</a>
     </div>
   </div>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  <a class="close-reveal-modal" aria-label="Schließen">&#215;</a>
 </div>
 
 {% block extra_js %}
@@ -61,7 +61,7 @@ $('#delete-confirmed').click(function() {
   })
   .fail(function(err) {
     $('#delete-account-messages').notify(
-      'There was a problem deleting your account. Please check your info and try again.'
+      'Das Konto konnte nicht gelöscht werden. Bitte Eingabe prüfen und erneut versuchen.'
       , { position : 'top center', className : 'alert' }
     );
   });

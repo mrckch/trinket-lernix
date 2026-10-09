@@ -7,16 +7,16 @@
 
 <div class="row">
   <div class="small-12 columns">
-    <h5>Export Your Trinkets</h5>
-    <p>Download all your trinkets as a zip file. This includes all code files and uploaded assets.</p>
-    <p><em>Note: Exports are available for 3 days after completion. You can request a new export once every hour.</em></p>
+    <h5>Deine Trinkets exportieren</h5>
+    <p>Lade alle deine Trinkets als ZIP-Datei herunter, mit allen Code-Dateien und hochgeladenen Bildern.</p>
+    <p><em>Hinweis: Ein Export ist 3 Tage lang verfügbar. Ein neuer Export ist einmal pro Stunde möglich.</em></p>
   </div>
 </div>
 
 <div class="row">
   <div class="small-12 columns">
     <div id="export-progress" class="hide" style="margin: 20px 0;">
-      <p id="progress-text">Preparing export...</p>
+      <p id="progress-text">Export wird vorbereitet …</p>
       <div class="progress">
         <span class="meter" style="width: 0%"></span>
       </div>
@@ -30,9 +30,9 @@
 
 <div class="row" style="margin-top: 30px;">
   <div class="small-12 columns">
-    <h6>Recent Exports</h6>
+    <h6>Letzte Exporte</h6>
     <div id="export-list">
-      <p class="loading">Loading...</p>
+      <p class="loading">Wird geladen …</p>
     </div>
   </div>
 </div>
@@ -75,24 +75,24 @@
   function updateProgress(exportData) {
     if (exportData.status === 'pending' || exportData.status === 'processing') {
       $('#export-progress').removeClass('hide');
-      $('#request-export').prop('disabled', true).text('Export in progress...');
+      $('#request-export').prop('disabled', true).text('Export läuft …');
 
       var progress = exportData.progress || {};
       var percent = progress.total ? Math.round((progress.processed / progress.total) * 100) : 0;
       var text = progress.total
-        ? 'Processing: ' + progress.processed + ' of ' + progress.total + ' trinkets'
-        : 'Preparing export...';
+        ? 'Verarbeite ' + progress.processed + ' von ' + progress.total + ' Trinkets'
+        : 'Export wird vorbereitet …';
 
       $('#progress-text').text(text);
       $('#export-progress .meter').css('width', percent + '%');
     } else {
       $('#export-progress').addClass('hide');
-      $('#request-export').prop('disabled', false).text('Download All Trinkets');
+      $('#request-export').prop('disabled', false).text('Alle Trinkets herunterladen');
 
       if (exportData.status === 'completed') {
-        showSuccess('Export complete! Check your email or click the download link below.');
+        showSuccess('Export fertig. Klicke unten auf Herunterladen.');
       } else if (exportData.status === 'failed') {
-        showError('Export failed: ' + (exportData.errorMessage || 'Unknown error'));
+        showError('Export fehlgeschlagen: ' + (exportData.errorMessage || 'Unbekannter Fehler'));
       }
     }
   }
@@ -131,28 +131,28 @@
         $list.empty();
 
         if (!result.success || !result.data || result.data.length === 0) {
-          $list.html('<p>No exports yet.</p>');
+          $list.html('<p>Noch keine Exporte.</p>');
           return;
         }
 
         var html = '<table style="width: 100%;"><thead><tr>' +
-          '<th>Date</th><th>Status</th><th>Trinkets</th><th>Size</th><th>Action</th>' +
+          '<th>Datum</th><th>Status</th><th>Trinkets</th><th>Größe</th><th></th>' +
           '</tr></thead><tbody>';
 
         result.data.forEach(function(exp) {
           var action = '';
           if (exp.downloadAvailable) {
-            action = '<a href="/api/exports/' + exp.id + '/download" class="button tiny">Download</a>';
+            action = '<a href="/api/exports/' + exp.id + '/download" class="button tiny">Herunterladen</a>';
           } else if (exp.status === 'pending' || exp.status === 'processing') {
-            action = '<span class="label">In Progress</span>';
+            action = '<span class="label">Läuft</span>';
             // Start polling if not already
             if (!pollInterval) {
               pollExportStatus(exp.id);
             }
           } else if (exp.status === 'failed') {
-            action = '<span class="label alert">Failed</span>';
+            action = '<span class="label alert">Fehlgeschlagen</span>';
           } else {
-            action = '<span class="label secondary">Expired</span>';
+            action = '<span class="label secondary">Abgelaufen</span>';
           }
 
           html += '<tr>' +
@@ -168,14 +168,14 @@
         $list.html(html);
       })
       .fail(function() {
-        $('#export-list').html('<p>Failed to load exports.</p>');
+        $('#export-list').html('<p>Exporte konnten nicht geladen werden.</p>');
       });
   }
 
   $('#request-export').click(function(e) {
     e.preventDefault();
     var $btn = $(this);
-    $btn.prop('disabled', true).text('Starting export...');
+    $btn.prop('disabled', true).text('Export wird gestartet …');
 
     $.ajax({
       url: '/api/exports',
@@ -184,22 +184,22 @@
     })
     .done(function(result) {
       if (result.success && result.data) {
-        showSuccess(result.data.message || 'Export started!');
+        showSuccess(result.data.message || 'Export gestartet.');
         pollExportStatus(result.data.exportId);
         loadExportList();
       } else {
-        showError(result.error || 'Failed to start export');
-        $btn.prop('disabled', false).text('Download All Trinkets');
+        showError(result.error || 'Export konnte nicht gestartet werden');
+        $btn.prop('disabled', false).text('Alle Trinkets herunterladen');
       }
     })
     .fail(function(xhr) {
-      var error = 'Failed to start export';
+      var error = 'Export konnte nicht gestartet werden';
       try {
         var resp = JSON.parse(xhr.responseText);
         error = resp.error || error;
       } catch(e) {}
       showError(error);
-      $btn.prop('disabled', false).text('Download All Trinkets');
+      $btn.prop('disabled', false).text('Alle Trinkets herunterladen');
     });
   });
 

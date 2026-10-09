@@ -13,6 +13,18 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 - Nach `npm install` im Container (`docker compose … exec app npm install --legacy-peer-deps <paket>`)
   ändern sich `package.json`/`package-lock.json` im Repo; für Produktion das Image neu bauen.
 
+## Frontend-Bibliotheken (ADR 0005)
+
+`public/vendor/` ist nicht im Repo. Nach dem Klonen oder nach Änderungen an `config/vendor.json`:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec app node scripts/vendor-fetch.js
+```
+
+Der Lauf prüft am Ende, ob jeder `/vendor/`-Verweis in Konfiguration, Templates und Skripten
+existiert (`--check` nur prüfen). Neue externe Bibliothek: URL in `config/vendor.json`
+eintragen, Verweis im Code auf `/vendor/<host>/…` setzen, Skript laufen lassen.
+
 ## Lernstand-API ausprobieren (ADR 0004)
 
 Als Lehrkraft unter `/account/tokens` ein Token anlegen, dann:

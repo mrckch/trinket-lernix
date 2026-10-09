@@ -1,12 +1,10 @@
-<p>The <code>elif</code> keyword is short for "else if" and is used along with the <code>if</code> keyword to create if/else statements, which are how you direct Python to different things based on some condition. For example:</p>
-
+<p><code>elif</code> steht für „sonst, falls“ und wird zusammen mit <code>if</code> benutzt, um mehrere Fälle zu unterscheiden:</p>
 <pre><code>x = 15
-if x < 10
-  print "x is less than ten"
+if x < 10:
+    print("x ist kleiner als zehn")
 elif x > 10:
-  print "x is greater than ten"
-else
-  print "x is 10"
+    print("x ist größer als zehn")
+else:
+    print("x ist 10")
 </code></pre>
-
-<p>When this code is run, the statements associated with the <code>elif</code> block will be run and "x is greater than ten" will be printed because 15 is greater than 10.</p>
+<p>Hier wird „x ist größer als zehn“ ausgegeben, weil 15 größer als 10 ist.</p>

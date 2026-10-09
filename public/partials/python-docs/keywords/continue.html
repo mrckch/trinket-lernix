@@ -1,10 +1,7 @@
-<p>The <code>continue</code> keyword is used to skip ahead to the next cycle of a <code>while</code> or <code>for</code> loop.</p>
-
-<pre><code>
-for x in range(1,10):
-  if x == 5:
-    continue
-  print x
+<p>Mit <code>continue</code> springst du sofort zum nächsten Durchlauf einer <code>while</code>- oder <code>for</code>-Schleife.</p>
+<pre><code>for x in range(1, 10):
+    if x == 5:
+        continue
+    print(x)
 </code></pre>
-
-<p>In the code above, the number 5 will not be printed.  This is because the <code>continue</code> statement will execute when <code>x</code> is equal to 5.  When that happens, the rest of the loop body, the <code>print x</code> line, will not be executed and the loop will restart with <code>x</code> equal to 6.</p>
+<p>Die 5 wird hier nicht ausgegeben: Bei <code>x == 5</code> überspringt <code>continue</code> den Rest des Schleifenkörpers, und es geht mit 6 weiter.</p>

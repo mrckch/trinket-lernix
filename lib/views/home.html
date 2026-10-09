@@ -28,21 +28,21 @@
 {% endif %}
 <section id="recent-trinkets" class="row">
   <div class="clearfix">
-    <h2 class="left">My Recent Trinkets</h2>
+    <h2 class="left">Meine letzten Trinkets</h2>
     <nav class="right">
       <new-trinket></new-trinket>
     </nav>
   </div>
-  <p>Trinkets are interactive examples you can put on any site.  Create or edit your trinkets here:</p>
+  <p>Trinkets sind kleine Programme, die direkt im Browser laufen. Hier erstellst und bearbeitest du deine Trinkets:</p>
   <ul class="medium-block-grid-3 small-block-grid-1">
   {% for trinket in trinkets %}
     <li class="item" title="{% if trinket.name == "" %}{% else %}{{ trinket.name }}{% endif %}">
       <a href="/library/trinkets/{{ trinket.shortCode }}">
         <img src="{{ trinket.snapshot }}">
         <div class="overlay">
-          Click To Edit
+          Zum Bearbeiten klicken
           <div class="homeLabel">
-            {% if trinket.name == "" %}<i>Untitled</i>{% else %}{{ trinket.name }}{% endif %}
+            {% if trinket.name == "" %}<i>Ohne Titel</i>{% else %}{{ trinket.name }}{% endif %}
           </div>
         </div>
       </a>
@@ -51,7 +51,7 @@
   </ul>
   <section class="row">
     <div class="columns small-12">
-      <a href="/library/trinkets" class="right button">View All My Trinkets&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+      <a href="/library/trinkets" class="right button">Alle meine Trinkets&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
     </div>
   </section>
 </section>
@@ -62,17 +62,17 @@
 <section ng-controller="CoursesController">
   <div class="row clearfix">
     <div class="small-12 medium-8 columns">
-      <h2 class="left">My Courses</h2>
+      <h2 class="left">Meine Kurse</h2>
 
       <div ng-hide="courses" class="row">
         <div class="small-12 columns">
-          <h2><i class="fa fa-spinner fa-spin"></i> Loading Courses</h2>
+          <h2><i class="fa fa-spinner fa-spin"></i> Kurse werden geladen</h2>
         </div>
       </div>
 
       <div ng-cloak ng-show="courses && !courses.length && featuredCourses && featuredCourses.length" class="row">
         <div class="small-12 columns">
-          <p>Get started with Trinket Courses by trying one of our featured courses!</p>
+          <p>Du bist noch in keinem Kurs. Deine Lehrkraft trägt dich über die IServ-Gruppe ein oder gibt dir einen Zugangscode.</p>
         </div>
       </div>
 
@@ -89,7 +89,7 @@
       <div ng-cloak ng-show="archived && archived.length" class="row">
         <div class="small-12 columns">
           <a ng-click="showArchived=!showArchived" style="display: inline-block; margin-bottom: 8px">
-            {{ showArchived ? "Hide" : "Show" }} Archived Courses ({{ archived.length }})
+            Archivierte Kurse {{ showArchived ? "ausblenden" : "anzeigen" }} ({{ archived.length }})
           </a>
           <ul ng-show="showArchived" class="no-bullet course-list">
             <li ng-repeat="course in archived | orderBy:'name'" ng-click="gotoCourse(course); $event.stopPropagation()">
@@ -101,14 +101,14 @@
 
       <div ng-cloak ng-show="courses" class="row">
         <div class="small-12 columns">
-          <a ng-show="canCreateCourse" class="button" href="/courses/new"><i class="fa fa-plus-circle"></i> New Course</a>
+          <a ng-show="canCreateCourse" class="button" href="/courses/new"><i class="fa fa-plus-circle"></i> Neuer Kurs</a>
           <join-course courses-by-id="coursesById" courses="courses"></join-course>
         </div>
       </div>
     </div>
 
     <div ng-cloak ng-show="featuredCourses && featuredCourses.length" class="small-12 medium-4 columns">
-      <h2>Featured Courses</h2>
+      <h2>Empfohlene Kurse</h2>
       <div class="row">
         <div class="small-12 columns featured-course">
           <ul class="no-bullet featured-course-list">
@@ -135,14 +135,14 @@
 
 {% if flash.acceptedCourseInvitation %}
 <div id="classWelcomeModal" class="reveal-modal small" data-reveal>
-  <h2>Congratulations!</h2>
-  <p>You've joined <strong>{{ flash.acceptedCourseInvitation.course.name }}</strong>.</p>
-  <p><a class="button secondary" href="/{{ flash.acceptedCourseInvitation.course.ownerSlug }}/courses/{{ flash.acceptedCourseInvitation.course.slug }}">Go to Course</a></p>
+  <h2>Geschafft!</h2>
+  <p>Du bist jetzt im Kurs <strong>{{ flash.acceptedCourseInvitation.course.name }}</strong>.</p>
+  <p><a class="button secondary" href="/{{ flash.acceptedCourseInvitation.course.ownerSlug }}/courses/{{ flash.acceptedCourseInvitation.course.slug }}">Zum Kurs</a></p>
   <hr>
   <p>
-    You'll also find a link to {{ flash.acceptedCourseInvitation.course.name }} in the list of courses on your Home page.
+    Den Kurs {{ flash.acceptedCourseInvitation.course.name }} findest du ab jetzt auch in der Kursliste auf deiner Übersicht.
   </p>
-  <p>Questions or suggestions? Click the <i class="fa fa-question-circle"></i> Help link at the top of the page next to your username.</p>
+  <p>Fragen? Klicke oben auf <i class="fa fa-question-circle"></i> Hilfe oder wende dich an deine Lehrkraft.</p>
   <a class="close-reveal-modal">&#215;</a>
 </div>
 {% endif %}

@@ -4,7 +4,7 @@
 
 {% block head_styles %}
 {% if not outputOnly %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
+<link rel="stylesheet" type="text/css" href="/vendor/cdnjs/highlight.js/8.0/styles/github.min.css">
 {% endif %}
 {% endblock %}
 
@@ -12,18 +12,18 @@
 {% if outputOnly %}
   {% include "embed/default-toolbar.html" %}
 {% else %}
-<a class="edit-it menu-button item {{'' if toggleCode or runMode == "calculator" else 'show-for-small-only'}} allow-original" data-action="code.edit" data-tooltip aria-haspopup="true" data-options="disable_for_touch:true" title="Edit the code.">
+<a class="edit-it menu-button item {{'' if toggleCode or runMode == "calculator" else 'show-for-small-only'}} allow-original" data-action="code.edit" data-tooltip aria-haspopup="true" data-options="disable_for_touch:true" title="Code bearbeiten.">
   <i class="fa fa-pencil"></i>
   <label class="show-for-large-up">Code</label>
 </a>
-<a class="run-it menu-button item allow-original" data-action="code.run" data-tooltip aria-haspopup="true" title="View the result." data-options="disable_for_touch:true">
+<a class="run-it menu-button item allow-original" data-action="code.run" data-tooltip aria-haspopup="true" title="Programm ausführen und Ergebnis anzeigen." data-options="disable_for_touch:true">
   <i class="fa fa-play"></i>
-  <label class="show-for-large-up">Run</label>
+  <label class="show-for-large-up">Ausführen</label>
 </a>
 {% if runMode != 'calculator' %}
-<a class="menu-button item show-for-medium-up" data-action="code.help" data-data="open" data-tooltip aria-haspopup="true" title="Web VPython Help" data-options="disable_for_touch:true">
+<a class="menu-button item show-for-medium-up" data-action="code.help" data-data="open" data-tooltip aria-haspopup="true" title="Web-VPython-Hilfe" data-options="disable_for_touch:true">
   <i class="fa fa-question"></i>
-  <label class="show-for-large-up">Help</label>
+  <label class="show-for-large-up">Hilfe</label>
 </a>
 {% endif %}
 {% endif %}
@@ -43,21 +43,21 @@
     <div class="row">
       <div class="small-8 columns">
         <p><strong>Web VPython</strong></p>
-        <p>Web VPython is an easy-to-use, powerful environment for creating 3D animations. You can also use VPython with installed Python: see <a href="https://vpython.org" target="_blank">vpython.org</a>.</p>
-        <p>Helpful Web VPython resources:
+        <p>Web VPython ist eine einfache, leistungsfähige Umgebung für 3D-Animationen. VPython gibt es auch für installiertes Python: siehe <a href="https://vpython.org" target="_blank">vpython.org</a>.</p>
+        <p>Hilfreiche Links zu Web VPython:
           <ul>
             <li><a href="https://webvpython.org" target="_blank">webvpython.org</a></li>
-            <li><a href="https://glowscript.org/docs/VPythonDocs/index.html" target="_blank">Web VPython Help</a></li>
+            <li><a href="https://glowscript.org/docs/VPythonDocs/index.html" target="_blank">Web-VPython-Dokumentation (englisch)</a></li>
           </ul>
         </p>
       </div>
       <div class="small-4 columns right">
-        <img src="{{ '/img/glowscript-example.png' | cachePrefix }}" alt="Web VPython Example" title="Web VPython Example" />
+        <img src="{{ '/img/glowscript-example.png' | cachePrefix }}" alt="Web-VPython-Beispiel" title="Web-VPython-Beispiel" />
       </div>
     </div>
     <div class="row">
       <div class="small-12 columns">
-        <p>Here is a quick example to help get you started.</p>
+        <p>Ein kurzes Beispiel zum Einstieg:</p>
         <p id="glowscriptContainer">
           <pre><code id="glowscriptExample" class="hide">Web VPython 3.2
 
@@ -110,7 +110,7 @@ while True:
 
     {% if outputOnly %}
     <div id="loadingContent" class="hide">
-      <span><i class="fa fa-spinner fa-spin"></i> Loading</span>
+      <span><i class="fa fa-spinner fa-spin"></i> Wird geladen</span>
     </div>
     <div id="glowscriptIframeContainer"></div>
 
@@ -123,7 +123,7 @@ while True:
 
     <div id="outputContainer" class="{% if hideInstructions or (not isOwner and not trinket.description) %}withoutTabs{% else %}withTabs{% endif %}">
       <div id="loadingContent" class="hide">
-        <span><i class="fa fa-spinner fa-spin"></i> Loading</span>
+        <span><i class="fa fa-spinner fa-spin"></i> Wird geladen</span>
       </div>
       <div id="glowscriptIframeContainer"></div>
       <div id="output-dragbar" class="hide" data-action="resize"></div>
@@ -139,13 +139,13 @@ while True:
 
   {% if not outputOnly %}
   <div id="runFirstModal" class="reveal-modal small" data-interface="run-modal" data-reveal data-css-top="20" data-offset="200">
-    <h2>Run your code first!</h2>
+    <h2>Führe deinen Code zuerst aus!</h2>
     <p class="lead">
-      It looks like you haven't tried running your new code.
+      Du hast deinen neuen Code noch nicht ausprobiert.
     </p>
-    <p>Try clicking
-    <a id="modalRun" class="button tiny" data-action="code.run"><i class="fa fa-play"></i>&nbsp;Run</a>
-    and if you like the result, try sharing again.</p>
+    <p>Klicke auf
+    <a id="modalRun" class="button tiny" data-action="code.run"><i class="fa fa-play"></i>&nbsp;Ausführen</a>
+    und teile den Code, wenn dir das Ergebnis gefällt.</p>
     <a class="close-reveal-modal">&#215;</a>
   </div>
   {% endif %}
@@ -181,7 +181,7 @@ while True:
         </style>
         <link type="text/css" href="{{url}}/{{prefix}}components/{{path}}/css/redmond/IDE/jquery-ui.custom.css" rel="stylesheet" />
         <link type="text/css" href="{{url}}/{{prefix}}components/{{path}}/css/ide.css" rel="stylesheet" />
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.3/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/javascript" src="/vendor/mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
         {{jqueryList}}
         <script type="text/javascript" src="{{url}}/{{prefix}}components/{{path}}/package/glow.{{version}}.min.js"></script>
         <script type="text/javascript" src="{{url}}/{{prefix}}components/{{path}}/package/RSrun.{{version}}.min.js"></script>
@@ -352,7 +352,7 @@ while True:
   {% if not outputOnly %}
   {{ component('ace-builds', 'src-min-noconflict/ace.js') | safe }}
   {{ component('ace-builds', 'src-min-noconflict/ext-modelist.js') | safe }}
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+  <script type="text/javascript" src="/vendor/cdnjs/highlight.js/8.0/highlight.min.js"></script>
   <script src="{{ '/components/marked/lib/marked.js' | cachePrefix }}"></script>
   <script src="{{ '/js/trinket-config.js' | cachePrefix }}"></script>
   <script src="{{ '/js/trinket-markdown.js' | cachePrefix }}"></script>

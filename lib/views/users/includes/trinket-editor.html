@@ -14,7 +14,7 @@
           </fieldset>
         </div>
         <div class="small-10 columns">
-          <label class="inline inline-lesser">Disable Ace Editor</label>
+          <label class="inline inline-lesser">Einfachen Editor verwenden (ohne Ace)</label>
         </div>
       </div>
 
@@ -30,52 +30,52 @@
           </fieldset>
         </div>
         <div class="small-10 columns">
-          <label class="inline inline-lesser">Line Wrapping Enabled</label>
+          <label class="inline inline-lesser">Zeilenumbruch im Editor</label>
         </div>
       </div>
 
       <div class="row">
         <div class="small-2 columns">
           <select id="pythonIndent">
-            <option value="2" {% if user.settings.pythonTab == 2 %}selected{% endif %}>2 spaces</option>
-            <option value="4" {% if user.settings.pythonTab == 4 %}selected{% endif %}>4 spaces</option>
+            <option value="2" {% if user.settings.pythonTab == 2 %}selected{% endif %}>2 Leerzeichen</option>
+            <option value="4" {% if user.settings.pythonTab == 4 %}selected{% endif %}>4 Leerzeichen</option>
           </select>
         </div>
         <div class="small-10 columns">
-          <label class="inline">Python/Pygame Tab Size</label>
+          <label class="inline">Einrückung Python</label>
         </div>
       </div>
       <div class="row">
         <div class="small-2 columns">
           <select id="htmlIndent">
-            <option value="2" {% if user.settings.htmlTab == 2 %}selected{% endif %}>2 spaces</option>
-            <option value="4" {% if user.settings.htmlTab == 4 %}selected{% endif %}>4 spaces</option>
+            <option value="2" {% if user.settings.htmlTab == 2 %}selected{% endif %}>2 Leerzeichen</option>
+            <option value="4" {% if user.settings.htmlTab == 4 %}selected{% endif %}>4 Leerzeichen</option>
           </select>
         </div>
         <div class="small-10 columns">
-          <label class="inline">HTML Tab Size</label>
+          <label class="inline">Einrückung HTML</label>
         </div>
       </div>
       <div class="row">
         <div class="small-2 columns">
           <select id="javaIndent">
-            <option value="2" {% if user.settings.javaTab == 2 %}selected{% endif %}>2 spaces</option>
-            <option value="4" {% if user.settings.javaTab == 4 %}selected{% endif %}>4 spaces</option>
+            <option value="2" {% if user.settings.javaTab == 2 %}selected{% endif %}>2 Leerzeichen</option>
+            <option value="4" {% if user.settings.javaTab == 4 %}selected{% endif %}>4 Leerzeichen</option>
           </select>
         </div>
         <div class="small-10 columns">
-          <label class="inline">Java Tab Size</label>
+          <label class="inline">Einrückung Java</label>
         </div>
       </div>
       <div class="row">
         <div class="small-2 columns">
           <select id="rIndent">
-            <option value="2" {% if user.settings.rTab == 2 %}selected{% endif %}>2 spaces</option>
-            <option value="4" {% if user.settings.rTab == 4 %}selected{% endif %}>4 spaces</option>
+            <option value="2" {% if user.settings.rTab == 2 %}selected{% endif %}>2 Leerzeichen</option>
+            <option value="4" {% if user.settings.rTab == 4 %}selected{% endif %}>4 Leerzeichen</option>
           </select>
         </div>
         <div class="small-10 columns">
-          <label class="inline">R Tab Size</label>
+          <label class="inline">Einrückung R</label>
         </div>
       </div>
     </div>

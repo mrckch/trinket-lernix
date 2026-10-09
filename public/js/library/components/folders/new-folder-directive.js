@@ -23,7 +23,7 @@
                   Restangular.restangularizeElement(null, response.folder, 'folders')
                 );
 
-                messageFunc("New folder created.", "success");
+                messageFunc("Neuer Ordner angelegt.", "success");
 
                 $scope.name = '';
               }
@@ -31,7 +31,7 @@
                 messageFunc(response.message, "alert");
               }
               else {
-                messageFunc("We had a problem creating your new folder. Please try again.", "alert");
+                messageFunc("Der Ordner konnte nicht angelegt werden. Bitte erneut versuchen.", "alert");
               }
 
               $scope.isSubmitting = false;
@@ -40,7 +40,7 @@
                 messageFunc(err.message, "alert");
               }
               else {
-                messageFunc("We had a problem creating your new folder. Please try again.", "alert");
+                messageFunc("Der Ordner konnte nicht angelegt werden. Bitte erneut versuchen.", "alert");
               }
 
               $scope.isSubmitting = false;

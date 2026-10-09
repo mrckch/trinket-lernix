@@ -13,7 +13,7 @@
           </button>
           <ul id="dashboard-view-options" class="tiny f-dropdown" data-dropdown-content>
             <li ng-repeat="(key, option) in viewOptions">
-              <a ng-click="changeView(key)"><i class="{{ option.class }}"></i> <span class="show-for-large-up">View {{ option.label }}</span></a>
+              <a ng-click="changeView(key)"><i class="{{ option.class }}"></i> <span class="show-for-large-up">{{ option.label }}</span></a>
             </li>
           </ul>
         </section>
@@ -27,8 +27,8 @@
     <div class="small-12 columns">
       <div class="row">
         <div class="small-12 columns">
-          <h4 ng-class="{'first-lesson':$first}"><div data-tooltip class="draft-circle in-dashboard has-tip" title="Marked as draft" ng-if="lesson.isDraft">&nbsp;</div> {{ lesson.name }}</h4>
-          <div ng-if="$first && hiddenCount" class="right hidden-user-count">({{ hiddenCount }} hidden)</div>
+          <h4 ng-class="{'first-lesson':$first}"><div data-tooltip class="draft-circle in-dashboard has-tip" title="Als Entwurf markiert" ng-if="lesson.isDraft">&nbsp;</div> {{ lesson.name }}</h4>
+          <div ng-if="$first && hiddenCount" class="right hidden-user-count">({{ hiddenCount }} ausgeblendet)</div>
         </div>
       </div>
       <div ng-repeat="material in lesson.materials" class="row material-row course-dashboard">
@@ -37,7 +37,7 @@
           <i ng-if="material.type === 'assignment' && usingDates(material)" class="fa fa-clock-o fa-fw"></i>
           <i ng-switch-when="assignment" class="fa fa-pencil-square-o fa-fw"></i>
 
-          <div data-tooltip class="draft-circle in-dashboard has-tip" title="Marked as draft" ng-if="material.isDraft">&nbsp;</div>
+          <div data-tooltip class="draft-circle in-dashboard has-tip" title="Als Entwurf markiert" ng-if="material.isDraft">&nbsp;</div>
 
           <a ng-switch-when="assignment" ng-click="viewAssignment(lesson, material)">{{ material.name }}</a>
           <span ng-switch-when="page" class="not-assignment">{{ material.name }}</span>
@@ -55,7 +55,7 @@
       <div ng-show="students.length" ng-repeat="student in students | orderBy:'displayName'" class="row student-row course-dashboard">
         <div class="small-4 columns student-name">
           <img class="avatar" ng-src="{{ student.avatar }}" /> <a ng-click="viewStudent(student)">{{ student.displayName }}</a>
-          <span ng-if="student.deleted" class="secondary-label label round" title="This user deleted their account.">deleted</span>
+          <span ng-if="student.deleted" class="secondary-label label round" title="Dieses Konto wurde gelöscht.">gelöscht</span>
         </div>
         <div class="small-7 columns">
           <assignment-dashboard total-key="'assignment-count'" assignment="studentsOverview[student.userId]"></assignment-dashboard>
@@ -63,7 +63,7 @@
         <div class="small-1 columns">
           <a class="dashboard-actions-link with-chart right" data-dropdown="user-{{ student.username }}"><i class="fa fa-ellipsis-v"></i></a>
           <ul id="user-{{ student.username }}" class="f-dropdown" data-options="align:left" data-dropdown-content>
-            <li><a ng-click="updateUserView(student, 'dashboard', 'hide')"><i class="fa fa-fw fa-dashboard alert"></i> Hide from Dashboard</a></li>
+            <li><a ng-click="updateUserView(student, 'dashboard', 'hide')"><i class="fa fa-fw fa-dashboard alert"></i> Im Dashboard ausblenden</a></li>
           </ul>
         </div>
       </div>
@@ -74,14 +74,14 @@
   <div ng-show="hiddenStudents.length" class="row hidden-users-header">
     <div class="small-12 collapse">
       <fieldset ng-class="{'border-on':showHidden}" class="border">
-        <legend class="clickable-legend" ng-click="showHidden = !showHidden"><i ng-class="{'hide':showHidden}" class="fa fa-chevron-right"></i> Hidden from Dashboard ({{ hiddenStudents.length }})</legend>
+        <legend class="clickable-legend" ng-click="showHidden = !showHidden"><i ng-class="{'hide':showHidden}" class="fa fa-chevron-right"></i> Im Dashboard ausgeblendet ({{ hiddenStudents.length }})</legend>
 
         <div class="row hidden-users collapsed" ng-class="{'show-hidden-users':showHidden}">
           <div class="small-12 columns">
             <div ng-repeat="student in hiddenStudents | orderBy:'displayName'" class="row student-row course-dashboard">
               <div class="small-4 columns student-name">
                 <img class="avatar" ng-src="{{ student.avatar }}" /> {{ student.displayName }}
-                <span ng-if="student.deleted" class="secondary-label label round" title="This user deleted their account.">deleted</span>
+                <span ng-if="student.deleted" class="secondary-label label round" title="Dieses Konto wurde gelöscht.">gelöscht</span>
               </div>
               <div class="small-7 columns">
                 <assignment-dashboard total-key="'assignment-count'" assignment="studentsOverview[student.userId]"></assignment-dashboard>
@@ -89,7 +89,7 @@
               <div class="small-1 columns">
                 <a class="dashboard-actions-link with-chart right" data-dropdown="user-{{ student.username }}"><i class="fa fa-ellipsis-v"></i></a>
                 <ul id="user-{{ student.username }}" class="f-dropdown" data-options="align:left" data-dropdown-content>
-                  <li><a ng-click="updateUserView(student, 'dashboard', 'show')"><i class="fa fa-fw fa-dashboard"></i> Show on Dashboard</a></li>
+                  <li><a ng-click="updateUserView(student, 'dashboard', 'show')"><i class="fa fa-fw fa-dashboard"></i> Im Dashboard anzeigen</a></li>
                 </ul>
               </div>
             </div>
@@ -101,12 +101,12 @@
 
   <div ng-cloak ng-show="course" class="row chart-legend">
     <div class="small-12 columns">
-      <p class="legend-label">Legend</p>
+      <p class="legend-label">Legende</p>
       <div class="chart-wrapper">
-        <div class="chart-segment completed" style="width: 25%" title="Feedback Sent"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Returned</span>
-        </div><div class="chart-segment submitted" style="width: 25%" title="Submitted"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Submitted</span>
-        </div><div class="chart-segment started" style="width: 25%" title="Started"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Started</span>
-        </div><div class="chart-segment not-started" style="width: 25%" title="Not Started"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Not&nbsp;Started</span>
+        <div class="chart-segment completed" style="width: 25%" title="Rückmeldung gesendet"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Zurückgegeben</span>
+        </div><div class="chart-segment submitted" style="width: 25%" title="Abgegeben"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Abgegeben</span>
+        </div><div class="chart-segment started" style="width: 25%" title="Begonnen"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Begonnen</span>
+        </div><div class="chart-segment not-started" style="width: 25%" title="Nicht begonnen"><span class="show-for-small-only">&nbsp;</span><span class="show-for-medium-up">Nicht&nbsp;begonnen</span>
         </div>
       </div>
     </div>

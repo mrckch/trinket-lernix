@@ -1,10 +1,8 @@
-<p>The <code>else</code> keyword is used along with the <code>if</code> keyword to create if/else statements, which are how you direct Python to different things based on some condition. For example:</p>
-
+<p><code>else</code> wird zusammen mit <code>if</code> benutzt und legt fest, was passiert, wenn die Bedingung falsch ist:</p>
 <pre><code>x = 1
-if x < 10
-  print "x is less than ten"
+if x < 10:
+    print("x ist kleiner als zehn")
 else:
-  print "x is greater than ten"
+    print("x ist mindestens zehn")
 </code></pre>
-
-<p>When this code is run, the <code>print "x is less than ten"</code> statement will be run because 1 is less than 10.  However, if the first line instead was <code>x = 20</code>, then the statements associated with the <code>else</code> block will be run and "x is greater than ten" will be printed instead.</p>
+<p>Hier wird „x ist kleiner als zehn“ ausgegeben. Stünde in der ersten Zeile <code>x = 20</code>, käme stattdessen der <code>else</code>-Block an die Reihe.</p>

@@ -38,26 +38,26 @@
 
       $scope.stateDisplay = {
           "not-started" : {
-              text : "Not Started"
+              text : "Nicht begonnen"
             , icon : "fa-circle-o not-started"
           }
         , "started"     : {
-              text      : "Started"
+              text      : "Begonnen"
             , icon      : "fa-dot-circle-o started"
             , dateField : "startedOn"
           }
         , "submitted"   : {
-              text      : "Submitted"
+              text      : "Abgegeben"
             , icon      : "fa-check-circle-o submitted"
             , dateField : "submittedOn"
           }
         , "submittedLate"     : {
-              text      : "Late Submission"
+              text      : "Verspätet abgegeben"
             , icon      : "fa-check-circle-o submittedLate"
             , dateField : "submittedOn"
           }
         , "completed"   : {
-              text      : "Feedback Sent"
+              text      : "Rückmeldung gesendet"
             , icon      : "fa-check-circle completed"
             , dateField : "lastUpdated"
           }
@@ -67,11 +67,11 @@
 
       $scope.viewOptions = {
           'assignment' : {
-              label : 'Assignments'
+              label : 'Nach Aufgaben'
             , class : 'fa fa-pencil-square-o fa-fw'
           }
         , 'student' : {
-              label : 'Students'
+              label : 'Nach Schüler:innen'
             , class : 'fa fa-user fa-fw'
           }
       };
@@ -205,7 +205,7 @@
                 });
 
                 if (!$scope.student) {
-                  throw new Error("Student not found.");
+                  throw new Error("Schüler:in nicht gefunden.");
                 }
 
                 $scope.student.id = $scope.student.userId;

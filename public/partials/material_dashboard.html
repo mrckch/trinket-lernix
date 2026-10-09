@@ -9,8 +9,8 @@
       </nav>
     </section>
     <div class="right">
-      <a ng-disabled="!prev.assignment" ng-class="{disabled:!prev.assignment}" ng-click="viewAssignment(prev.assignment.lesson, prev.assignment.material)" class="button small">Previous</a>
-      <a ng-disabled="!next.assignment" ng-class="{disabled:!next.assignment}" ng-click="viewAssignment(next.assignment.lesson, next.assignment.material)" class="button small">Next</a>
+      <a ng-disabled="!prev.assignment" ng-class="{disabled:!prev.assignment}" ng-click="viewAssignment(prev.assignment.lesson, prev.assignment.material)" class="button small">Zurück</a>
+      <a ng-disabled="!next.assignment" ng-class="{disabled:!next.assignment}" ng-click="viewAssignment(next.assignment.lesson, next.assignment.material)" class="button small">Weiter</a>
     </div>
   </div>
 </header>
@@ -18,7 +18,7 @@
 <div id="course-content" class="dashboard-content dashboard-list" ui-scrollfix="45">
   <div class="row instructions-card" ng-click="showInstructions=!showInstructions">
     <div class="small-12 columns">
-      <span>Assignment Instructions</span>
+      <span>Aufgabenstellung</span>
 
       <div class="row collapsed" ng-class="{'show-instructions-row':showInstructions}">
         <div class="small-12 columns" ng-bind-html="material.markup"></div>
@@ -28,19 +28,19 @@
 
   <div ng-if="usingDates(material)" class="row">
     <div class="small-12 columns">
-      <p><i class="fa fa-clock-o"></i> Due by {{ material.trinket.submissionsDue.dateValue | localDate }}</p>
+      <p><i class="fa fa-clock-o"></i> Fällig am {{ material.trinket.submissionsDue.dateValue | localDate }}</p>
     </div>
   </div>
 
   <div ng-if="loading && !loadingError" class="row dashboard-container">
     <div class="small-12 columns text-center">
-      <h2><i class="fa fa-spinner fa-spin"></i> Loading</h2>
+      <h2><i class="fa fa-spinner fa-spin"></i> Wird geladen</h2>
     </div>
   </div>
 
   <div ng-if="!loading && loadingError" class="row dashboard-container">
     <div class="small-12 columns">
-      <p>We're having trouble loading these student submissions. Please refresh the page or <a class="contact-us-link" href="/contact">message us</a> if the problem continues.</p>
+      <p>Die Abgaben konnten nicht geladen werden. Bitte lade die Seite neu.</p>
     </div>
   </div>
 
@@ -49,7 +49,7 @@
       <div class="row user-info">
         <div class="small-6 columns" ng-click="toggleStudent(user)">
           <img class="avatar" ng-src="{{ user.avatar }}" /> <span class="student-name">{{ user.displayName }}</span>
-          <span ng-if="user.deleted" class="secondary-label label round" title="This user deleted their account.">deleted</span>
+          <span ng-if="user.deleted" class="secondary-label label round" title="Dieses Konto wurde gelöscht.">gelöscht</span>
         </div>
         <div class="small-5 columns" ng-click="toggleStudent(user)">
           <i ng-class="stateDisplay[user.state].icon" class="fa fa-fw"></i>
@@ -60,7 +60,7 @@
 
           <ul id="user-{{ user.username }}" class="f-dropdown" data-options='align:left' data-dropdown-content>
             <li>
-              <a ng-click="viewStudent(user)">View Student</a>
+              <a ng-click="viewStudent(user)">Schüler:in ansehen</a>
             </li>
           </ul>
         </div>
@@ -79,7 +79,7 @@
   <div ng-show="hiddenUsers.length" class="row hidden-users-header">
     <div class="small-12 collapse">
       <fieldset ng-class="{'border-on':showHidden}" class="border">
-        <legend class="clickable-legend" ng-click="showHidden = !showHidden"><i ng-class="{'hide':showHidden}" class="fa fa-chevron-right"></i> Hidden from Dashboard ({{ hiddenUsers.length }})</legend>
+        <legend class="clickable-legend" ng-click="showHidden = !showHidden"><i ng-class="{'hide':showHidden}" class="fa fa-chevron-right"></i> Im Dashboard ausgeblendet ({{ hiddenUsers.length }})</legend>
         <div class="hidden-users collapsed" ng-class="{'show-hidden-users':showHidden}">
 
           <div ng-repeat="user in hiddenUsers | orderBy:'displayName'" class="row user-row" ng-class="{'clickable':user.state === 'submitted' || user.state === 'completed', 'row-open':viewingSubmission.user === user.userId}">
@@ -87,7 +87,7 @@
               <div class="row user-info">
                 <div class="small-6 columns" ng-click="toggleStudent(user)">
                   <img class="avatar" ng-src="{{ user.avatar }}" /> <span class="student-name">{{ user.displayName }}</span>
-                  <span ng-if="user.deleted" class="secondary-label label round" title="This user deleted their account.">deleted</span>
+                  <span ng-if="user.deleted" class="secondary-label label round" title="Dieses Konto wurde gelöscht.">gelöscht</span>
                 </div>
                 <div class="small-6 columns" ng-click="toggleStudent(user)">
                   <i ng-class="stateDisplay[user.state].icon" class="fa fa-fw"></i>
@@ -98,7 +98,7 @@
 
                   <ul id="user-{{ user.username }}" class="f-dropdown" data-options='align:left' data-dropdown-content>
                     <li>
-                      <a ng-click="viewStudent(user)">View Student</a>
+                      <a ng-click="viewStudent(user)">Schüler:in ansehen</a>
                     </li>
                   </ul>
                 </div>

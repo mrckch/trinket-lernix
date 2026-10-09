@@ -13,11 +13,11 @@
 {% block content %}
   {% if not course.id %}
   <div class="row">
-    <h2>Course is unavailable or does not exist.</h2>
+    <h2>Dieser Kurs ist nicht verfügbar oder existiert nicht.</h2>
   </div>
   {% if courses.length %}
   <div class="row">
-    <p>Check out one of these features courses:</p>
+    <p>Vielleicht interessiert dich einer dieser Kurse:</p>
     <ul>
       {% for course in courses %}
       <li><a href='{{ host({ slug: course.ownerSlug }) }}{{ subdomain({ slug: course.ownerSlug }, course) }}'>{{course.name}}</a></li>
@@ -38,43 +38,43 @@
       <div class="course-subnav clearfix row gutterless">
         <section class="left">
           <nav class="title breadcrumbs">
-            <a href="//{% endraw %}{{ config.app.url.hostname }}{% raw %}/home" aria-label="Go Home"><i class="fa fa-home"></i></a>
+            <a href="//{% endraw %}{{ config.app.url.hostname }}{% raw %}/home" aria-label="Zur Übersicht"><i class="fa fa-home"></i></a>
             <a class="current">{{ course.name }}</a>
           </nav>
         </section>
         <div class="right">
           {% endraw %}{% if canViewSubmissions or canEdit or canCopy %}
-            <a class="button small dropdown-blue" data-dropdown="course-actions" id="course-actions-button"><i class="fa fa-cog"></i> <div class="show-for-large-up">Course</div></a>
+            <a class="button small dropdown-blue" data-dropdown="course-actions" id="course-actions-button"><i class="fa fa-cog"></i> <div class="show-for-large-up">Kurs</div></a>
             <ul id="course-actions" class="f-dropdown small" data-dropdown-content>
             {% if canViewSubmissions %}
               <li><a ng-click="viewDashboard()"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
             {% endif %}
             {% if canEdit %}
-              <li><a ng-click="editMaterial()"><i class="fa fa-pencil fa-fw"></i> Edit Course</a></li>
+              <li><a ng-click="editMaterial()"><i class="fa fa-pencil fa-fw"></i> Kurs bearbeiten</a></li>
             {% elif canCopy %}
-              <li><a ng-click="copyCourse()"><i class="fa fa-copy fa-fw"></i> Make a Copy of this Course</a></li>
+              <li><a ng-click="copyCourse()"><i class="fa fa-copy fa-fw"></i> Kurs kopieren</a></li>
             {% endif %}
             </ul>
           {% endif %}{% raw %}
-          <a href class="prev button small" ng-click="previousMaterial()" ng-disabled="!havePreviousMaterial()" aria-label="Previous Page">
+          <a href class="prev button small" ng-click="previousMaterial()" ng-disabled="!havePreviousMaterial()" aria-label="Vorherige Seite">
             <i class="fa fa-angle-left"></i>
           </a>
-          <a href class="next button small" ng-click="nextMaterial()" ng-disabled="!haveNextMaterial()" aria-label="Next Page">
+          <a href class="next button small" ng-click="nextMaterial()" ng-disabled="!haveNextMaterial()" aria-label="Nächste Seite">
             <i class="fa fa-angle-right"></i>
           </a>
         </div>
       </div>
     </header>
     <div id="course-content" ui-scrollfix="45" ng-class="{open:menuOpen}">
-      <a id="outline-expander" ng-click="menuOpen=!menuOpen" aria-label="Toggle Outline">
+      <a id="outline-expander" ng-click="menuOpen=!menuOpen" aria-label="Gliederung ein-/ausblenden">
         <i class="fa" ng-class="{'fa-bars':!menuOpen,'fa-times':menuOpen}"></i>
       </a>
       <aside id="outline" ng-attr-aria-hidden="{{ menuOpen ? false : true }}">
-        <div class="info" aria-label="Course Description">
+        <div class="info" aria-label="Kursbeschreibung">
           <p>{{ course.description }}</p>
         </div>
         <div>
-          <ul class="outline-list lessons" aria-label="Course Outline" role="navigation">
+          <ul class="outline-list lessons" aria-label="Kursgliederung" role="navigation">
             <li class="outline-list-item lesson" ng-repeat="lesson in course.lessons" ng-class="{past:lesson.isPast,current:lesson.isCurrent,future:lesson.isFuture}">
               <div class="lesson-title clearfix">
                 <span class="lesson-name">
@@ -104,12 +104,12 @@
           </h1>
           <div ng-hide="material.noContent" ng-bind-html="content()" class="content"></div>
           <div ng-switch="material.type" ng-show="material.noContent" class="content">
-            <p ng-switch-when="page">No content has been added to this page yet.</p>
-            <p ng-switch-when="assignment">No instructions have been added to this assignment yet.</p>
+            <p ng-switch-when="page">Diese Seite hat noch keinen Inhalt.</p>
+            <p ng-switch-when="assignment">Diese Aufgabe hat noch keine Aufgabenstellung.</p>
   {% endraw %}
     {% if canEdit %}
-            <a ng-show="material.slug && material.type === 'page'" href="/{{course.ownerSlug}}/courses/{{course.slug}}{% raw %}#/{{lesson.slug}}/{{material.slug}}/edit{% endraw %}">Click here to add content to your page.</a>
-            <a ng-show="!material.slug && course.slug" href="/{{course.ownerSlug}}/courses/{{course.slug}}">Click here to add content to your course.</a>
+            <a ng-show="material.slug && material.type === 'page'" href="/{{course.ownerSlug}}/courses/{{course.slug}}{% raw %}#/{{lesson.slug}}/{{material.slug}}/edit{% endraw %}">Hier klicken, um Inhalt zu dieser Seite hinzuzufügen.</a>
+            <a ng-show="!material.slug && course.slug" href="/{{course.ownerSlug}}/courses/{{course.slug}}">Hier klicken, um Inhalt zu diesem Kurs hinzuzufügen.</a>
     {% endif %}
   {% raw %}
           </div>
@@ -123,18 +123,18 @@
       <h3><i class="fa fa-copy"></i> {{ course.name }}</h3>
       <div class="row">
         <div class="small-12 columns">
-          <p>Looks like you may already have a copy of this course. If you'd like another copy please enter a new name.</p>
+          <p>Du hast anscheinend schon eine Kopie dieses Kurses. Für eine weitere Kopie gib bitte einen neuen Namen ein.</p>
         </div>
       </div>
       <form name="course-copy-name" ng-submit="copyCourse()">
         <div class="row">
           <div class="small-12 columns">
-            <label>Course name</label>
+            <label>Kursname</label>
             <input type="text" name="course-name" ng-model="courseCopyName" />
           </div>
         </div>
       </form>
-      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      <a class="close-reveal-modal" aria-label="Schließen">&#215;</a>
     </div>
     {% endif %}
   {% raw %}
@@ -145,10 +145,10 @@
   {% endif %}
   {% if flash.firstVisit %}
     <div id="congratsModal" class="reveal-modal small" data-reveal>
-      <h2>Well Done!</h2>
+      <h2>Gut gemacht!</h2>
       <hr>
-      <h4>From here, keep editing this page, or create your own.</h4>
-      <p>Questions or suggestions? Click the question mark in the lower right corner.</p>
+      <h4>Bearbeite diese Seite weiter oder lege eine eigene an.</h4>
+      <p>Fragen? Klicke oben auf Hilfe.</p>
       <a class="close-reveal-modal">&#215;</a>
     </div>
   {% endif %}

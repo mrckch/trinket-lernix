@@ -1,6 +1,6 @@
 <div ng-if="material.trinket.submissionsDue.enabled" class="row">
   <div class="small-12 columns">
-    Due by {{ material.trinket.submissionsDue.dateValue | localDate }}
+    Fällig am {{ material.trinket.submissionsDue.dateValue | localDate }}
   </div>
 </div>
 
@@ -9,7 +9,7 @@
     <div class="small-12 columns">
       <div class="row">
         <div class="small-12 columns" ng-click="toggleSubmission(submission)">
-          Submission #{{ $index + 1 }} &mdash; <span title="{{ submission.submittedOn | localDate }}">{{ submission.submittedOn | formatDate }}</span>
+          Abgabe {{ $index + 1 }} &mdash; <span title="{{ submission.submittedOn | localDate }}">{{ submission.submittedOn | formatDate }}</span>
         </div>
       </div>
       <div class="row collapsed" ng-class="{'show-row':showSubmission[submission.id]}">
@@ -26,7 +26,7 @@
           <!-- student comments -->
           <div class="row">
             <div class="small-12 columns">
-              <strong>Comments from student:</strong><br />{{ submission.comments[0].commentText }}
+              <strong>Kommentar der Schülerin / des Schülers:</strong><br />{{ submission.comments[0].commentText }}
             </div>
           </div>
 
@@ -34,14 +34,14 @@
 
           <div class="row">
             <div class="small-12 columns">
-              <span title="{{ submission.lastUpdated | localDate }}">Feedback sent {{ submission.lastUpdated | formatDate }}</span>
+              <span title="{{ submission.lastUpdated | localDate }}">Rückmeldung gesendet {{ submission.lastUpdated | formatDate }}</span>
             </div>
           </div>
 
           <!-- feedback plus revision -->
           <div class="row" ng-if="submission.includeRevision">
             <div class="small-12 columns">
-              <strong>Revision:</strong>
+              <strong>Überarbeitung:</strong>
               <iframe ng-src="{{ submission.revisionIframe }}"
                       width="100%" height="400" frameborder="0" marginwidth="0" allowfullscreen></iframe>
             </div>
@@ -49,7 +49,7 @@
 
           <div class="row">
             <div class="small-12 columns">
-              <strong>Comments to student:</strong><br />{{ submission.feedback.commentText }}
+              <strong>Rückmeldung:</strong><br />{{ submission.feedback.commentText }}
             </div>
           </div>
 
@@ -61,7 +61,7 @@
 
 <div class="row trinket-feedback">
   <div class="small-12 columns">
-    <div class="previous-submission" ng-if="previousSubmissions.length"><strong>Submission #{{ previousSubmissions.length + 1 }}:</strong></div>
+    <div class="previous-submission" ng-if="previousSubmissions.length"><strong>Abgabe {{ previousSubmissions.length + 1 }}:</strong></div>
     <iframe ng-class="{'previous-submission':!previousSubmissions.length}"
             ng-src="{{ submissionIframe }}"
             width="100%" height="400"
@@ -73,7 +73,7 @@
   <div ng-if="canSendFeedback()" ng-switch-when="submitted" class="small-12 columns">
     <div class="row">
       <div class="small-12 columns">
-        <strong>Comments from student:</strong><br />{{ submission.comments[0].commentText }}
+        <strong>Kommentar der Schülerin / des Schülers:</strong><br />{{ submission.comments[0].commentText }}
       </div>
     </div>
     <hr />
@@ -86,7 +86,7 @@
                ng-disabled="!revisionMade"
                ng-class="{disabled:!revisionMade}"
                ng-change="submissionOptChange('includeRevision')" />
-        <label for="includeRevision" ng-class="{disabled:!revisionMade}">Include revision in feedback to student</label>
+        <label for="includeRevision" ng-class="{disabled:!revisionMade}">Überarbeitung mit der Rückmeldung freigeben</label>
       </div>
     </div>
     <div class="row">
@@ -96,12 +96,12 @@
                ng-model="feedbackForm.allowResubmit"
                id="allowResubmit"
                ng-change="submissionOptChange('allowResubmit')" />
-        <label for="allowResubmit">Allow student to submit again</label>
+        <label for="allowResubmit">Erneute Abgabe erlauben</label>
       </div>
     </div>
     <div class="row">
       <div class="small-12 columns">
-        <label>Comments to student</label>
+        <label>Rückmeldung an die Schülerin / den Schüler</label>
       </div>
     </div>
     <div class="row">
@@ -112,33 +112,33 @@
     </div>
     <div class="row">
       <div class="small-12 columns">
-        <a ng-click="sendFeedback()" ng-class="{disabled:!canSubmit}" class="button small secondary"><i class="fa" ng-class="sendingFeedback ? 'fa-circle-o-notch fa-spin' : 'fa-reply'"></i> Send Feedback</a>
-        <a ng-click="cancelFeedback()" class="button small caution">Cancel</a>
+        <a ng-click="sendFeedback()" ng-class="{disabled:!canSubmit}" class="button small secondary"><i class="fa" ng-class="sendingFeedback ? 'fa-circle-o-notch fa-spin' : 'fa-reply'"></i> Rückmeldung senden</a>
+        <a ng-click="cancelFeedback()" class="button small caution">Abbrechen</a>
       </div>
     </div>
   </div>
   <div ng-switch-when="submittedLate" class="small-12 columns">
-    <a ng-click="acceptSubmission()" ng-class="{disabled:!canAccept}" class="button small secondary"><i class="fa" ng-class="acceptingSubmission ? 'fa-circle-o-notch fa-spin' : 'fa-cloud-upload'"></i> Accept Submission</a>
+    <a ng-click="acceptSubmission()" ng-class="{disabled:!canAccept}" class="button small secondary"><i class="fa" ng-class="acceptingSubmission ? 'fa-circle-o-notch fa-spin' : 'fa-cloud-upload'"></i> Verspätete Abgabe annehmen</a>
   </div>
   <div ng-switch-when="completed" class="small-12 columns">
     <div class="row">
       <div class="small-12 columns">
-        <strong>Comments from student:</strong><br />{{ submission.comments[0].commentText }}
+        <strong>Kommentar der Schülerin / des Schülers:</strong><br />{{ submission.comments[0].commentText }}
       </div>
     </div>
     <hr />
     <div class="row">
       <div class="small-11 columns">
         <p>
-          <span ng-if="submission.submissionOpts.includeRevision"><i class="fa fa-check"></i> Revision available for student.</span>
-          <span ng-if="!submission.submissionOpts.includeRevision"><i class="fa fa-ban"></i> Revision not available for student.</span>
+          <span ng-if="submission.submissionOpts.includeRevision"><i class="fa fa-check"></i> Überarbeitung für Schüler:in sichtbar.</span>
+          <span ng-if="!submission.submissionOpts.includeRevision"><i class="fa fa-ban"></i> Keine Überarbeitung freigegeben.</span>
 
-          <span ng-if="submission.submissionOpts.allowResubmit"><i class="fa fa-check"></i> Student can submit again.</span>
-          <span ng-if="!submission.submissionOpts.allowResubmit"><i class="fa fa-ban"></i> Student cannot submit again.</span>
+          <span ng-if="submission.submissionOpts.allowResubmit"><i class="fa fa-check"></i> Erneute Abgabe erlaubt.</span>
+          <span ng-if="!submission.submissionOpts.allowResubmit"><i class="fa fa-ban"></i> Keine erneute Abgabe.</span>
         </p>
       </div>
       <div class="small-1 columns">
-        <a class="right" ng-if="canSendFeedback()" ng-click="editCompleted()"><i class="fa fa-pencil"></i> Edit</a>
+        <a class="right" ng-if="canSendFeedback()" ng-click="editCompleted()"><i class="fa fa-pencil"></i> Bearbeiten</a>
       </div>
     </div>
     <div ng-if="submission.submissionOpts.includeRevision" class="row">
@@ -158,7 +158,7 @@
   <div ng-switch-when="editing" class="small-12 columns">
     <div class="row">
       <div class="small-12 columns">
-        <strong>Comments from student:</strong><br />{{ submission.comments[0].commentText }}
+        <strong>Kommentar der Schülerin / des Schülers:</strong><br />{{ submission.comments[0].commentText }}
       </div>
     </div>
     <hr />
@@ -170,12 +170,12 @@
                id="includeRevision"
                ng-disabled="!revisionMade"
                ng-class="{disabled:!revisionMade}" />
-        <label for="includeRevision" ng-class="{disabled:!revisionMade}">Include revision in feedback to student</label>
+        <label for="includeRevision" ng-class="{disabled:!revisionMade}">Überarbeitung mit der Rückmeldung freigeben</label>
         <input type="checkbox"
                name="allowResubmit"
                ng-model="feedbackForm.allowResubmit"
                id="allowResubmit" />
-        <label for="allowResubmit">Allow student to submit again</label>
+        <label for="allowResubmit">Erneute Abgabe erlauben</label>
       </div>
     </div>
     <div class="row">
@@ -186,7 +186,7 @@
     </div>
     <div class="row">
       <div class="small-12 columns">
-        <label>Comments to student</label>
+        <label>Rückmeldung an die Schülerin / den Schüler</label>
       </div>
     </div>
     <div class="row">
@@ -199,8 +199,8 @@
       <div class="small-12 columns">
         <a ng-click="sendFeedback()"
            ng-class="{disabled:!canUpdate}"
-           class="button small secondary"><i class="fa" ng-class="sendingFeedback ? 'fa-circle-o-notch fa-spin' : 'fa-reply'"></i> Update Feedback</a>
-        <a ng-click="cancelEdit()" class="button small caution">Cancel</a>
+           class="button small secondary"><i class="fa" ng-class="sendingFeedback ? 'fa-circle-o-notch fa-spin' : 'fa-reply'"></i> Rückmeldung aktualisieren</a>
+        <a ng-click="cancelEdit()" class="button small caution">Abbrechen</a>
       </div>
     </div>
   </div>

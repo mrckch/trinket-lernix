@@ -13,7 +13,7 @@
       </div>
       {% if config.features.assets %}
       <div class="medium-6 small-10 small-offset-1 columns end">
-        <button id="upload-button" class="tiny file-upload">Upload new picture</button>
+        <button id="upload-button" class="tiny file-upload">Neues Bild hochladen</button>
         <div id="hidden-previews" class="hide"></div>
       </div>
       {% endif %}
@@ -39,8 +39,8 @@
 
       <div class="row">
         <div class="medium-3 small-10 small-offset-1 columns">
-          <label for="display-name" class="show-for-medium-up inline">Display Name</label>
-          <label for="display-name" class="show-for-small-only">Display Name</label>
+          <label for="display-name" class="show-for-medium-up inline">Anzeigename</label>
+          <label for="display-name" class="show-for-small-only">Anzeigename</label>
         </div>
         <div class="medium-6 small-10 small-offset-1 columns end">
           <input type="text" id="display-name" name="name" value="{{ user.name }}" required />
@@ -49,8 +49,8 @@
 
       <div class="row">
         <div class="medium-3 small-10 small-offset-1 columns">
-          <label for="username" class="show-for-medium-up inline">Username</label>
-          <label for="username" class="show-for-small-only">Username</label>
+          <label for="username" class="show-for-medium-up inline">Benutzername</label>
+          <label for="username" class="show-for-small-only">Benutzername</label>
         </div>
         <div class="medium-6 small-10 small-offset-1 columns end">
           <input type="text" id="username" name="username" value="{{ user.username }}" required />
@@ -73,7 +73,7 @@
       <div class="row update-row collapse">
         <div class="medium-6 small-10 small-offset-1 columns">
           <input type="hidden" id="avatar" name="avatar" value="{{ user.avatar }}" />
-          <input type="submit" class="button primary small" value="update profile" />
+          <input type="submit" class="button primary small" value="Profil speichern" />
         </div>
       </div>
     </div>
@@ -82,7 +82,7 @@
 
 {% block extra_js %}
 {% if config.features.assets %}
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js"></script>
+<script type="text/javascript" src="/vendor/cdnjs/dropzone/4.2.0/min/dropzone.min.js"></script>
 <script type="text/javascript">
 Dropzone.autoDiscover = false;
 var avatarDropzone = new Dropzone("div#avatar-dropzone", {
@@ -153,11 +153,11 @@ $('#update-profile').submit(function(event) {
       showAlert("#profileError");
     }
     else {
-      $('#message').text('Something went wrong when trying to update your profile. Please try again.');
+      $('#message').text('Das Profil konnte nicht gespeichert werden. Bitte erneut versuchen.');
       showAlert("#profileError");
     }
   }).fail(function(err) {
-    $('#message').text('Something went wrong when trying to update your profile. Please try again.');
+    $('#message').text('Das Profil konnte nicht gespeichert werden. Bitte erneut versuchen.');
     showAlert("#passwordError");
   });
 });

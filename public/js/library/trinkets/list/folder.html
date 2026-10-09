@@ -2,7 +2,7 @@
   <section class="left">
     <nav class="title breadcrumbs">
       <a href="/home"><i class="fa fa-home"></i></a>
-      <a ui-sref="list">My Trinkets</a>
+      <a ui-sref="list">Meine Trinkets</a>
       <a class="current">
         <span ng-if="isOwner" editable-text="folder.name"
               e-maxlength="50"
@@ -13,37 +13,37 @@
       </a>
     </nav>
     <section id="listview-options">
-      <trinket-search on-select="addSelectedTrinket" placeholder-text="add trinkets by name or instructions" button-icon="fa fa-plus fa-fw"></trinket-search>
+      <trinket-search on-select="addSelectedTrinket" placeholder-text="Trinkets nach Name suchen und hinzufügen" button-icon="fa fa-plus fa-fw"></trinket-search>
     </section>
   </section>
   <section class="right">
-    <a class="button small caution right" title="Delete Folder" data-reveal-id="delete-folder" data-reveal><i class="fa fa-trash-o"></i></a>
+    <a class="button small caution right" title="Ordner löschen" data-reveal-id="delete-folder" data-reveal><i class="fa fa-trash-o"></i></a>
   </section>
 </div>
 <div id="folder-list-messages"></div>
-<div class="row" ng-show="!items"><h2><i class="fa fa-spinner fa-spin"></i>&nbsp;Loading...</h2></div>
+<div class="row" ng-show="!items"><h2><i class="fa fa-spinner fa-spin"></i>&nbsp;Wird geladen …</h2></div>
 <div class="row" ng-show="items && !items.length">
-  <h2>No trinkets have been added to this folder.</h2>
+  <h2>In diesem Ordner sind noch keine Trinkets.</h2>
 </div>
 <div ng-show="items.length">
   <ul id="trinkets-list" infinite-scroll="moreTrinkets()" infinite-scroll-distance='1' class="{{viewType}}-view">
     <li ng-repeat="item in items" ng-click="gotoTrinket(item.shortCode)">
       <a class="snapshot" ng-class="{titled: item.name}" ui-sref="detail({shortCode: item.shortCode})">
         <img ng-class="{'set-height': item.lang != 'glowscript' && item.lang != 'glowscript-blocks'}" ng-src="{{item.snapshot}}" alt="{{item.snapshot}}">
-        <h3 ng-class="{titled: item.name}" class="title trinket-list-with-lang {{viewType}}-view lang-{{item.lang}} trinketLabel">{{item.name || 'Untitled'}}</h3>
+        <h3 ng-class="{titled: item.name}" class="title trinket-list-with-lang {{viewType}}-view lang-{{item.lang}} trinketLabel">{{item.name || 'Ohne Titel'}}</h3>
       </a>
       <div class="trinket-stats">
         <div ng-if="item.lastView.viewedOn" class="trinket-last-date">
-          Last viewed {{ item.lastView.viewedOn | formatDate }}
+          Zuletzt angesehen {{ item.lastView.viewedOn | formatDate }}
         </div>
         <div ng-if="!item.lastView.viewedOn" class="trinket-last-date">
-          Last updated {{ item.lastUpdated | formatDate }}
+          Zuletzt bearbeitet {{ item.lastUpdated | formatDate }}
         </div>
         <ul class="small-block-grid-5" ng-init="stats=[
-               {metric:'runs',       icon:'hand-o-up', title:'interactions'},
-               {metric:'forks',      icon:'code-fork', title:'remixes'},
-               {metric:'views',      icon:'code',      title:'views'},
-               {metric:'social',     icon:'users',     title:'shares'}
+               {metric:'runs',       icon:'hand-o-up', title:'Ausführungen'},
+               {metric:'forks',      icon:'code-fork', title:'Remixe'},
+               {metric:'views',      icon:'code',      title:'Aufrufe'},
+               {metric:'social',     icon:'users',     title:'Weitergaben'}
               ]">
           <li class="trinket-stat"
               title="{{item.metrics[stat.metric] || '0'}} {{stat.title}}"
@@ -54,7 +54,7 @@
               {{item.metrics[stat.metric] | formatNum}}
             </div>
           </li>
-          <li class="trinket-stat" title="{{ item.published ? 'Published' : '' }}">
+          <li class="trinket-stat" title="{{ item.published ? 'Veröffentlicht' : '' }}">
             <i ng-if="item.published" class="fa fa-book" ng-class="{success:item.published}"></i>
           </li>
         </ul>
@@ -65,11 +65,11 @@
 
 <div id="delete-folder" class="reveal-modal" data-reveal role="dialog" close="closeDeleteModal">
   <h2 id="delete-folder-title">{{ folder.name }}</h2>
-  <h3 class="subheader">Are you sure you want to delete this folder?</h3>
-  <p>Deleting this folder is permanent and cannot be undone. Any trinkets in this folder will show up in your list &mdash; they will <strong>not</strong> be deleted.</p>
-  <label>Please enter the name of this folder below to confirm.</label>
+  <h3 class="subheader">Soll dieser Ordner wirklich gelöscht werden?</h3>
+  <p>Das Löschen lässt sich nicht rückgängig machen. Die Trinkets aus dem Ordner bleiben erhalten und erscheinen wieder in deiner Liste.</p>
+  <label>Gib zur Bestätigung den Namen des Ordners ein.</label>
   <input type="text" ng-model="confirmFolderName" ng-change="compareNamesForDelete(confirmFolderName)" />
-  <a id="delete-folder-confirmed" class="button danger small" ng-click="remove()" ng-class="{disabled: notConfirmed}">Yes, delete this folder</a>
-  <a id="cancel-delete-folder" class="button caution small close-modal">Nevermind, do not delete this folder</a>
+  <a id="delete-folder-confirmed" class="button danger small" ng-click="remove()" ng-class="{disabled: notConfirmed}">Ja, Ordner löschen</a>
+  <a id="cancel-delete-folder" class="button caution small close-modal">Abbrechen</a>
   <a class="close-reveal-modal">&#215;</a>
 </div>

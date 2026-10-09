@@ -40,6 +40,7 @@ const CatboxMongoose = require('./lib/util/catbox-mongoose');
 const clientIp       = require('./lib/util/clientIp');
 const accounts       = require('./lib/auth/accounts');
 const bearer         = require('./lib/auth/bearer');
+const access         = require('./lib/auth/access');
 const fs             = require('fs');
 const path           = require('path');
 
@@ -313,6 +314,9 @@ const init = async () => {
   Folder   = require('./lib/models/folder');
   CourseInvitation = require('./lib/models/courseInvitation');
   ApiToken = require('./lib/models/apiToken');
+
+  // Login-Pflicht (ADR 0005): nach der Authentifizierung, vor dem Handler
+  server.ext('onPostAuth', access.enforce);
 
   // Lokalen Notfall-Admin aus BREAKGLASS_EMAIL/BREAKGLASS_PASSWORD sicherstellen
   try {

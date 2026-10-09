@@ -1455,8 +1455,8 @@ window.TrinketAPI = {
       , stop    : 'fa fa-stop'
     };
     var titles = {
-        run     : 'View the result.'
-      , console : 'Run code interactively.'
+        run     : 'Programm ausführen und Ergebnis anzeigen.'
+      , console : 'Code interaktiv in der Konsole ausführen.'
       , stop    : 'Stop program.'
     };
     var labels = {

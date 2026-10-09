@@ -11,7 +11,7 @@ function EmbedApi($window, $rootScope) {
     link: function (scope, element, attrs) {
       scope.loadedTrinketApp = false;
 
-      var unsavedChangesMessage = 'You have unsaved changes, are you sure you want to leave this page?';
+      var unsavedChangesMessage = 'Du hast ungespeicherte Änderungen. Seite wirklich verlassen?';
       var draftMessage = 'A draft of your changes has been saved but others will not see them when you share unless you click Save. Are you sure you want to leave this page?';
       var exitEvents = ['$stateChangeStart', '$locationChangeStart'];
       var registeredEvents = [];

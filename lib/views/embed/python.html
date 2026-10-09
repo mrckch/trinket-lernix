@@ -5,11 +5,11 @@
 {% block head_styles %}
 
 {% if not outputOnly %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
+<link rel="stylesheet" type="text/css" href="/vendor/cdnjs/highlight.js/8.0/styles/github.min.css">
 {% endif %}
 
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.1.1/rangeslider.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.9/css/weather-icons.min.css">
+<link rel="stylesheet" type="text/css" href="/vendor/cdnjs/rangeslider.js/2.1.1/rangeslider.min.css">
+<link rel="stylesheet" type="text/css" href="/vendor/cdnjs/weather-icons/2.0.9/css/weather-icons.min.css">
 
 {% endblock %}
 
@@ -20,22 +20,22 @@
 {% if outputOnly %}
   {% include "embed/default-toolbar.html" %}
 {% else %}
-<a class="edit-it menu-button item allow-original {{'' if toggleCode else 'show-for-small-only'}}" data-action="code.edit" title="Edit the code.">
+<a class="edit-it menu-button item allow-original {{'' if toggleCode else 'show-for-small-only'}}" data-action="code.edit" title="Code bearbeiten.">
   <i class="fa fa-pencil"></i>
   <label class="show-for-large-up">Code</label>
 </a>
 <a class="button run-it menu-button item {{'' if (runOption and not runMode) else 'split'}} allow-original"
    data-action="code.{{runOption if runOption else 'run'}}"
-   title="{{'View the result.' if not runOption or runOption == 'run' else 'Run code interactively.'}}"
-   role="button" aria-label="Run Button" tabindex="0">
+   title="{{'Programm ausführen und Ergebnis anzeigen.' if not runOption or runOption == 'run' else 'Code interaktiv in der Konsole ausführen.'}}"
+   role="button" aria-label="Ausführen" tabindex="0">
   <i class="fa {{'fa-play' if not runOption or runOption == 'run' else 'fa-terminal'}}"></i>
-  <label class="show-for-large-up">{{'Run' if not runOption or runOption == 'run' else 'Console'}}</label>
+  <label class="show-for-large-up">{{'Ausführen' if not runOption or runOption == 'run' else 'Konsole'}}</label>
   <span data-dropdown="run-options" data-options="align:bottom" role="menu"></span>
 </a>
 <a class="check-it menu-button item allow-original {{'' if (draft and draft.settings.testsEnabled) or (not draft and trinket.settings.testsEnabled) else 'hide'}}"
-   data-action="code.check" title="Check your code." tabindex=0>
+   data-action="code.check" title="Deinen Code prüfen." tabindex=0>
   <i class="fa fa-check-circle"></i>
-  <label class="show-for-large-up">Check</label>
+  <label class="show-for-large-up">Prüfen</label>
 </a>
 {% endif %}
 {% endblock %}
@@ -43,8 +43,8 @@
 {% block run_options %}
 {% if not outputOnly %}
 <ul id="run-options" class="f-dropdown" data-dropdown-content>
-  <li><a class="menu-button" data-action="code.run" data-button="run"><i class="fa fa-play"></i>Run</a></li>
-  <li><a class="menu-button" data-action="code.console" data-button="console"><i class="fa fa-terminal"></i>Console</a></li>
+  <li><a class="menu-button" data-action="code.run" data-button="run"><i class="fa fa-play"></i>Ausführen</a></li>
+  <li><a class="menu-button" data-action="code.console" data-button="console"><i class="fa fa-terminal"></i>Konsole</a></li>
 </ul>
 {% endif %}
 {% endblock %}
@@ -74,26 +74,26 @@
 
     <div id="output-dragbar" class="hide" data-action="resize"></div>
     <div id="console-wrap" class="hide">
-      <div id="console-output" aria-live="polite" aria-label="Code Output"></div>
+      <div id="console-output" aria-live="polite" aria-label="Programmausgabe"></div>
     </div>
 
     {% else %}
 
     <div id="outputTabs" class="{% if hideInstructions or (not isOwner and not trinket.description) %}hideInstructions{% endif %}">
-      <div class="{% if not showInstructions %}active {% endif %}menu-button" id="codeOutputTab" data-action="output.view">Result</div>
-      <div class="{% if showInstructions %}active {% endif %}menu-button" id="instructionsTab" data-action="instructions.view"><i class="fa fa-list"></i> Instructions</div>
+      <div class="{% if not showInstructions %}active {% endif %}menu-button" id="codeOutputTab" data-action="output.view">Ergebnis</div>
+      <div class="{% if showInstructions %}active {% endif %}menu-button" id="instructionsTab" data-action="instructions.view"><i class="fa fa-list"></i> Anleitung</div>
     </div>
 
     <div id="outputContainer" class="{% if hideInstructions or (not isOwner and not trinket.description) %}withoutTabs{% else %}withTabs{% endif %}">
       <div id="graphic-wrap" class="hide">
-        <div id="graphic" aria-label="Visual Output" role="application" tabindex="0"></div>
+        <div id="graphic" aria-label="Grafische Ausgabe" role="application" tabindex="0"></div>
       </div>
 
       <div id="output-dragbar" class="hide" data-action="resize"></div>
 
       <div id="console-wrap" class="hide">
-        <div id="console-output" aria-live="assertive" aria-label="Code Output"></div>
-        <a id="reset-output" title="clear output"><i class="fa fa-ban"></i></a>
+        <div id="console-output" aria-live="assertive" aria-label="Programmausgabe"></div>
+        <a id="reset-output" title="Ausgabe leeren"><i class="fa fa-ban"></i></a>
       </div>
 
       {% include 'includes/unittest-wrap.html' %}
@@ -106,25 +106,25 @@
 
   {% if not outputOnly %}
   <div id="runFirstModal" class="reveal-modal small" data-interface="run-modal" data-reveal data-css-top="20" data-offset="200">
-    <h2>Run your code first!</h2>
+    <h2>Führe deinen Code zuerst aus!</h2>
     <p class="lead">
-      It looks like you haven't tried running your new code.
+      Du hast deinen neuen Code noch nicht ausprobiert.
     </p>
-    <p>Try clicking
-    <a id="modalRun" class="button tiny" data-action="code.run"><i class="fa fa-play"></i>&nbsp;Run</a>
-    and if you like the result, try sharing again.</p>
+    <p>Klicke auf
+    <a id="modalRun" class="button tiny" data-action="code.run"><i class="fa fa-play"></i>&nbsp;Ausführen</a>
+    und teile den Code, wenn dir das Ergebnis gefällt.</p>
     <a class="close-reveal-modal">&#215;</a>
   </div>
 
   <script id="assets-howto-message" type="text/template">
     <p>
-      <span>Images can be used with the <code>turtle</code> module.</span>
+      <span>Bilder lassen sich mit dem Modul <code>turtle</code> verwenden.</span>
       <pre><code>import turtle
 screen = turtle.Screen()
-# set the screen background
+# Hintergrundbild setzen
 screen.bgpic("filename.png")
 
-# Or, set the shape of a turtle
+# Oder: Form einer Turtle setzen
 screen.addshape("filename.png")
 tina = turtle.Turtle()
 tina.shape("filename.png")</code></pre>
@@ -135,21 +135,21 @@ tina.shape("filename.png")</code></pre>
 
 {% block body_scripts %}
   {% if not outputOnly %}
-  <script src="//cdnjs.cloudflare.com/ajax/libs/sockjs-client/0.3.4/sockjs.min.js"></script>
+  <script src="/vendor/cdnjs/sockjs-client/0.3.4/sockjs.min.js"></script>
   {% if not aceOff %}
   {{ component('ace-builds', 'src-min-noconflict/ace.js') | safe }}
   {{ component('ace-builds', 'src-min-noconflict/ext-modelist.js') | safe }}
   {{ component('ace-builds', 'src-min-noconflict/ext-language_tools.js') | safe }}
   {% endif %}
 
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.js"></script>
+  <script type="text/javascript" src="/vendor/cdnjs/diff_match_patch/20121119/diff_match_patch.js"></script>
+  <script type="text/javascript" src="/vendor/cdnjs/dropzone/4.0.1/min/dropzone.min.js"></script>
   {% endif %}
 
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.1.1/rangeslider.min.js"></script>
+  <script type="text/javascript" src="/vendor/cdnjs/rangeslider.js/2.1.1/rangeslider.min.js"></script>
 
   {% if not outputOnly %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.4/socket.io.min.js"></script>
+  <script src="/vendor/cdnjs/socket.io/1.7.4/socket.io.min.js"></script>
   {% endif %}
 
   {% if config.app.embed.skulpt.local %}
@@ -184,7 +184,7 @@ tina.shape("filename.png")</code></pre>
 
   {% else %}
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+  <script src="/vendor/cdnjs/highlight.js/8.0/highlight.min.js"></script>
   <script src="{{ '/js/trinket-config.js' | cachePrefix }}"></script>
   <script src="{{ '/js/trinket-markdown.js' | cachePrefix }}"></script>
   <script src="{{ '/js/util/html-to-image.js' | cachePrefix }}"></script>

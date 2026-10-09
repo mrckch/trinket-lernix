@@ -1,24 +1,9 @@
-<p>The <code>or</code> operator returns true if the first expression is true, or if the second expression is true or both are true. If neither are true it returns false. Here's the table:</p>
+<p>Der Operator <code>or</code> liefert <code>True</code>, wenn mindestens eine der beiden Seiten wahr ist. Nur wenn beide falsch sind, kommt <code>False</code> heraus:</p>
 <table>
-<tbody><tr>
-<th>expression</th>
-<th>result</th>
-</tr>
-<tr>
-<td>true <code>or</code> true</td>
-<td>true</td>
-</tr>
-<tr>
-<td>true <code>or</code> false</td>
-<td>true</td>
-</tr>
-<tr>
-<td>false <code>or</code> true</td>
-<td>true</td>
-</tr>
-<tr>
-<td>false <code>or</code> false</td>
-<td>false</td>
-</tr>
+<tbody><tr><th>Ausdruck</th><th>Ergebnis</th></tr>
+<tr><td>True <code>or</code> True</td><td>True</td></tr>
+<tr><td>True <code>or</code> False</td><td>True</td></tr>
+<tr><td>False <code>or</code> True</td><td>True</td></tr>
+<tr><td>False <code>or</code> False</td><td>False</td></tr>
 </tbody></table>
-<p>Notice that if the first expression is true Python doesn't check the second expression since it knows the whole expression is true. This works since <code>or</code> is true if at least one half of the expression is true. The first part is true so the second part could be either false or true, but the whole expression is still true.</p>
+<p>Ist die erste Seite schon wahr, prüft Python die zweite gar nicht mehr, weil das Ergebnis dann ohnehin feststeht.</p>

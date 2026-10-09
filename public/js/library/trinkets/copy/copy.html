@@ -1,18 +1,18 @@
 <div id="trinket-overview" class="row">
   <section ng-show="canSave" class="page-menu">
     <section class="options-right">
-      <a class="button small primary" ng-click="save()"><i class="fa fa-save"></i> save</a>
-      <a class="button small caution"  ng-click="cancel()">cancel</a>
+      <a class="button small primary" ng-click="save()"><i class="fa fa-save"></i> Speichern</a>
+      <a class="button small caution"  ng-click="cancel()">Abbrechen</a>
     </section>
     <div class="spacer"></div>
     <nav class="breadcrumbs">
       <a href="/home"><i class="fa fa-home"></i></a>
-      <a ui-sref="list">My Trinkets</a>
+      <a ui-sref="list">Meine Trinkets</a>
       <a class="current">
         <span editable-text="name"
               e-maxlength="50"
               buttons="no"
-              blur="submit">{{ name || 'Untitled' }}</span>
+              blur="submit">{{ name || 'Ohne Titel' }}</span>
       </a>
     </nav>
   </section>

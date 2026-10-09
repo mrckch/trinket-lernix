@@ -16,3 +16,4 @@ serverside
 test
 *.md
 !README.md
+public/vendor

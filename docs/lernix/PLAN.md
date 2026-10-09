@@ -221,7 +221,18 @@ Ursprünglicher Umfang:
 - OpenAPI-Beschreibung (`docs/lernix/openapi.yaml`), damit SchulAssistent
   und Portal andocken können.
 
-### Phase 4 – Oberfläche (1–2 Tage)
+### Phase 4 – Oberfläche (1–2 Tage) — **erledigt 2026-10-09** (ADR 0005)
+
+Entscheidungen Marc: Login erzwingen, alles auf Deutsch, alle Bibliotheken selbst hosten.
+Ergebnis: `lib/auth/access.js` (Allowlist, Einbettungen bleiben offen), deutsche Templates,
+Partials, Bibliotheks-Ansichten, JS-Meldungen und Python-Hilfen; `config/vendor.json` +
+`scripts/vendor-fetch.js` (51 Verweise, Schriften per @fontsource, MathJax per npm);
+Konto-Seiten E-Mail/Passwort nur noch für Nicht-IServ-Konten. Tests: 152 grün.
+
+Offen (klein, bei Bedarf): Admin-Bereich bleibt englisch; Embeds der abgeschalteten
+Sprachen unübersetzt; Kurs-Editor zeigt die IServ-Gruppe noch nicht an.
+
+Ursprünglicher Umfang:
 - Deutsch für Login, Kursseiten, Dashboard, Aufgabenansicht (Nunjucks und
   AngularJS-Partials; Rest schrittweise).
 - SuS-Startseite „Meine Aufgaben“ über alle Kurse (offen, fällig, abgegeben).

@@ -6,7 +6,7 @@
 <div class="auth-page-wrapper">
   <div class="row">
     <div class="medium-8 medium-offset-2 small-12 columns">
-      <h2 class="text-center">Sign Up for your Free Account!</h2>
+      <h2 class="text-center">Konto anlegen (nur Entwicklung)</h2>
     </div>
   </div>
 
@@ -17,14 +17,14 @@
       <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
         <input type="hidden" value="sign-up" name="formName">
         <label
-          {% if flash.validation.email %}class="error"{% endif %}>Email Address
-          <input type="text" name="email" value="{{ flash.payload.email }}" placeholder="What's your email address?" required/>
+          {% if flash.validation.email %}class="error"{% endif %}>E-Mail-Adresse
+          <input type="text" name="email" value="{{ flash.payload.email }}" placeholder="Deine E-Mail-Adresse" required/>
         </label>
         {% if flash.validation.email %}
           <small class="error">{{ flash.validation.email }}</small>
         {% endif %}
         {% if flash.duplicates.email %}
-          <small class="error">An account already exists with this email{% if emailEnabled %}, need to <a href='/forgot-pass'>recover your password?</a>{% endif %}</small>
+          <small class="error">Mit dieser E-Mail-Adresse gibt es schon ein Konto.</small>
         {% endif %}
       </div>
     </div>
@@ -32,8 +32,8 @@
     <div class="row">
       <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
         <label
-          {% if flash.validation.password %}class="error"{% endif %}>Password
-          <input type="password" name="password" placeholder="What password would you like?" required/>
+          {% if flash.validation.password %}class="error"{% endif %}>Passwort
+          <input type="password" name="password" placeholder="Wunschpasswort" required/>
         </label>
         {% if flash.validation.password %}
           <small class="error">{{ flash.validation.password }}</small>
@@ -44,15 +44,15 @@
     <div class="row">
       <div class="medium-2 medium-offset-3 small-4 small-offset-1 columns">
         {% if config.app.recaptcha and config.app.recaptcha.sitekey %}
-        <button class="g-recaptcha button primary small" data-sitekey="{{ config.app.recaptcha.sitekey }}" data-callback="submitSignUpShortForm" data-badge="bottomleft">Sign Up</button>
+        <button class="g-recaptcha button primary small" data-sitekey="{{ config.app.recaptcha.sitekey }}" data-callback="submitSignUpShortForm" data-badge="bottomleft">Registrieren</button>
         {% else %}
-        <button type="submit" class="button primary small">Sign Up</button>
+        <button type="submit" class="button primary small">Registrieren</button>
         {% endif %}
       </div>
     </div>
     <div class="row">
       <div class="text-center medium-6 medium-offset-3 small-10 small-offset-1 columns">
-        Already have an account? <a href="/login">Log In</a>
+        Schon ein Konto? <a href="/login">Anmelden</a>
       </div>
     </div>
   </form>

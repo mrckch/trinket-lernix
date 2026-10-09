@@ -1,5 +1,5 @@
 <p ng-show="!interactions">
-  <i class="fa fa-spinner fa-spin"></i> Loading...
+  <i class="fa fa-spinner fa-spin"></i> Wird geladen …
 </p>
 <table id="interactionsTable" ng-show="interactions && interactions.length">
   <tbody>
@@ -7,13 +7,13 @@
       <td>
          {{ interactionMap[interaction.action] }} {{ interaction.interacted | formatDate }}
          <span ng-if='interaction.referer_host'>
-           from <a href='{{ interaction.referer }}' target='_blank'>{{ interaction.referer_host }}</a>
+           von <a href='{{ interaction.referer }}' target='_blank'>{{ interaction.referer_host }}</a>
          </span>
       </td>
     </tr>
   </tbody>
 </table>
 <p ng-show="interactions && !interactions.length">
-  There haven't been any recorded interactions with this trinket yet.<br />
-  Try <a ui-sref="detail.embed">adding it to your site</a> or <a ui-sref="detail.share">sharing it with others</a> to increase interactions.
+  Mit diesem Trinket hat noch niemand interagiert.<br />
+  <a ui-sref="detail.embed">Bette es ein</a> oder <a ui-sref="detail.share">teile den Link</a>.
 </p>

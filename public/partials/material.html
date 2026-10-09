@@ -3,57 +3,57 @@
     <nav class="title breadcrumbs">
       <a href="/home"><i class="fa fa-home"></i></a>
       <a ng-click="backToCourse()">{{ course.name }}</a>
-      <a class="current"><div data-tooltip class="draft-circle has-tip" title="This topic marked as draft" ng-if="lesson.isDraft">&nbsp;</div> {{ lesson.name }}</a>
+      <a class="current"><div data-tooltip class="draft-circle has-tip" title="Diese Lektion ist als Entwurf markiert" ng-if="lesson.isDraft">&nbsp;</div> {{ lesson.name }}</a>
       <a class="current"><span editable-text="material.name" onbeforesave="updateMaterial($data)">{{ material.name }}</span></a>
     </nav>
 
     <section id="autosave-message">
-      <span ng-if="saving" class="autosave-working"><i class="fa fa-circle-o-notch fa-spin"></i> Saving...</span>
-      <span ng-if="saved" class="autosave-done"><i class="fa fa-check-circle green"></i> Changes saved.</span>
-      <span ng-if="saveError" class="autosave-error"><i class="fa fa-exclamation-circle"></i> Changes not saved. {{ customError }}</span>
+      <span ng-if="saving" class="autosave-working"><i class="fa fa-circle-o-notch fa-spin"></i> Wird gespeichert …</span>
+      <span ng-if="saved" class="autosave-done"><i class="fa fa-check-circle green"></i> Gespeichert.</span>
+      <span ng-if="saveError" class="autosave-error"><i class="fa fa-exclamation-circle"></i> Nicht gespeichert. {{ customError }}</span>
     </section>
   </section>
   <div class="options-right">
-    <a href="{{classPageUrl}}#/{{lesson.slug}}/{{material.slug}}" class="button small" ng-hide="material.isDraft">view page</a>
-    <a class="button small secondary" ng-show="material.isDraft" ng-click="toggleDraft()">Publish</a>
-    <a class="button small primary" ng-hide="material.isDraft" ng-click="toggleDraft()">Mark As Draft</a>
-    <div class="label info last-saved">last saved <span id="material-last-saved">{{ material.lastUpdated | formatDate }}</span></div>
+    <a href="{{classPageUrl}}#/{{lesson.slug}}/{{material.slug}}" class="button small" ng-hide="material.isDraft">Seite ansehen</a>
+    <a class="button small secondary" ng-show="material.isDraft" ng-click="toggleDraft()">Veröffentlichen</a>
+    <a class="button small primary" ng-hide="material.isDraft" ng-click="toggleDraft()">Als Entwurf markieren</a>
+    <div class="label info last-saved">zuletzt gespeichert <span id="material-last-saved">{{ material.lastUpdated | formatDate }}</span></div>
   </div>
 </div>
 <div ng-show="material" id="material-edit" ng-file-drop="assetsEnabled && onFileSelect($files)">
   <div id="hidden-editor" class="hide"></div>
   <div class="toolbar" ng-controller="toolbarControl">
-    <a ng-click="inline('**', '**', 'strong text')" title="Bold">
+    <a ng-click="inline('**', '**', 'fetter Text')" title="Fett">
       <i class="fa fa-bold"></i>
     </a>
-    <a ng-click="inline('*', '*', 'emphasized text')" title="Italics">
+    <a ng-click="inline('*', '*', 'hervorgehobener Text')" title="Kursiv">
       <i class="fa fa-italic"></i>
     </a>
-    <a ng-click="inline('* ', '', 'list item')" title="Insert List">
+    <a ng-click="inline('* ', '', 'Listenpunkt')" title="Liste einfügen">
       <i class="fa fa-list"></i>
     </a>
-    <a ng-click="inline('[', '](http://example.com/)', 'link description goes here')" title="Insert Link">
+    <a ng-click="inline('[', '](https://beispiel.de/)', 'Linktext')" title="Link einfügen">
       <i class="fa fa-link"></i>
     </a>
-    <a ng-click="block('```', '```', 'Put your code here!')" title="Insert Static Code Block">
+    <a ng-click="block('```', '```', 'Code hier einfügen')" title="Codeblock einfügen">
       PRE
     </a>
-    <a ng-click="block('```python.run', '```', 'runnable code goes here')" title="Insert Interactive Python">
+    <a ng-click="block('```python.run', '```', 'ausführbarer Python-Code')" title="Interaktives Python einfügen">
       <i class="fa fa-code"></i>
     </a>
-    <a ng-if="assetsEnabled" data-reveal-id="fileUploadModal" data-reveal title="Upload File">
+    <a ng-if="assetsEnabled" data-reveal-id="fileUploadModal" data-reveal title="Datei hochladen">
       <i class="fa fa-cloud-upload"></i>
     </a>
-    <a ng-click="inline('![', '](http://example.com/image.png)', 'image description goes here')" title="Insert Image">
+    <a ng-click="inline('![', '](https://beispiel.de/bild.png)', 'Bildbeschreibung')" title="Bild einfügen">
       <i class="fa fa-picture-o"></i>
     </a>
-    <a ng-click="inline('![video](', ')', 'Paste a YouTube link here')" title="Insert YouTube Video">
+    <a ng-click="inline('![video](', ')', 'YouTube-Link hier einfügen')" title="YouTube-Video einfügen">
       <i class="fa fa-youtube"></i>
     </a>
-    <a ng-click="inline('![video](', ')', 'Paste a Vimeo link here')" title="Insert Vimeo Video">
+    <a ng-click="inline('![video](', ')', 'Vimeo-Link hier einfügen')" title="Vimeo-Video einfügen">
       <i class="fa fa-vimeo-square"></i>
     </a>
-    <trinket-search toolbar="true" on-select="insertSelectedTrinket" placeholder-text="search for a trinket to insert"></trinket-search>
+    <trinket-search toolbar="true" on-select="insertSelectedTrinket" placeholder-text="Trinket suchen und einfügen"></trinket-search>
   </div>
   <div class="editor">
     <div>
@@ -67,7 +67,7 @@
 
 <div ng-if="assetsEnabled" id="fileUploadModal" class="reveal-modal small" data-reveal>
   <div ng-show="uploadStarted">
-    <small>UPLOAD PROGRESS: {{uploadProgress}}%</small>
+    <small>HOCHLADEN: {{uploadProgress}}%</small>
     <div class="progress">
       <span ng-style="{width:uploadProgress+'%'}"  class="meter"></span>
     </div>
@@ -79,13 +79,13 @@
          ng-file-drop="onFileSelect($files,true)"
          style="width:100%; height:200px;">
         <i class="fa fa-cloud-upload"></i>
-        <h3>Drag &amp; drop your files here</h3>
+        <h3>Dateien hierher ziehen</h3>
     </div>
-    <div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+    <div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">Dein Browser unterstützt kein Drag &amp; Drop.</div>
     <div class="browse">
-      <p>or browse your files</p>
+      <p>oder Datei auswählen</p>
       <input type="file" ng-file-select="onFileSelect($files,true)">
-      <p>Maximum file size allowed is 10MB.</p>
+      <p>Maximal 10 MB pro Datei.</p>
     </div>
   </div>
   <a class="close-reveal-modal">&#215;</a>

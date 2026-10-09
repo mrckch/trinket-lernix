@@ -1,6 +1,6 @@
 <div ng-cloak ng-show="assignment" class="small-12 chart-wrapper">
-    <span ng-if="assignment['completed']" class="chart-segment completed" style="width: {{ assignment['completed-pct'] }}%">{{ assignment['completed'] }} <span><span class="show-for-large-up">Returned</span></span></span>
-    <span ng-if="assignment['submitted']" class="chart-segment submitted" style="width: {{ assignment['submitted-pct'] }}%">{{ assignment['submitted'] }} <span><span class="show-for-large-up">Submitted</span></span></span>
-    <span ng-if="assignment['started']" class="chart-segment started" style="width: {{assignment['started-pct'] }}%">{{ assignment['started'] }} <span><span class="show-for-large-up">Started</span></span></span>
-    <span ng-if="assignment['not-started']" ng-class="{{ assignment['not-started'] && 'rightmost' || 'class-when-false' }}" class="meter chart-segment not-started" style="width: {{assignment['not-started-pct'] }}%">{{ assignment['not-started'] }} <span><span class="show-for-large-up">Not Started</span></span></span>
+    <span ng-if="assignment['completed']" class="chart-segment completed" style="width: {{ assignment['completed-pct'] }}%">{{ assignment['completed'] }} <span><span class="show-for-large-up">Zurückgegeben</span></span></span>
+    <span ng-if="assignment['submitted']" class="chart-segment submitted" style="width: {{ assignment['submitted-pct'] }}%">{{ assignment['submitted'] }} <span><span class="show-for-large-up">Abgegeben</span></span></span>
+    <span ng-if="assignment['started']" class="chart-segment started" style="width: {{assignment['started-pct'] }}%">{{ assignment['started'] }} <span><span class="show-for-large-up">Begonnen</span></span></span>
+    <span ng-if="assignment['not-started']" ng-class="{{ assignment['not-started'] && 'rightmost' || 'class-when-false' }}" class="meter chart-segment not-started" style="width: {{assignment['not-started-pct'] }}%">{{ assignment['not-started'] }} <span><span class="show-for-large-up">Nicht begonnen</span></span></span>
 </div>

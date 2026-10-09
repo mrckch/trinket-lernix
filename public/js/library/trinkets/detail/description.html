@@ -2,26 +2,26 @@
   <form editable-form name="editableForm" ng-if="isOwner">
 
     <div>
-      <p>Give your students instructions or tasks to complete.</p>
+      <p>Gib hier eine Anleitung oder Aufgabenstellung für dieses Trinket ein.</p>
     </div>
 
     <div editable-textarea="trinket.description" onbeforesave="update('description', $data)" e-maxlength="500" e-rows="7" e-cols="40">
-      <pre>{{ trinket.description || 'No instructions available.' }}</pre>
+      <pre>{{ trinket.description || 'Keine Anleitung vorhanden.' }}</pre>
     </div>
 
     <div>
       <!-- button to show form -->
-      <a class="button small" ng-click="editableForm.$show()" ng-show="!editableForm.$visible">Edit</a>
+      <a class="button small" ng-click="editableForm.$show()" ng-show="!editableForm.$visible">Bearbeiten</a>
       <!-- buttons to submit / cancel form -->
       <span ng-show="editableForm.$visible">
-        <button class="small" type="submit" ng-disabled="editableForm.$waiting">Save</button>
-        <a class="button small caution" ng-disabled="editableForm.$waiting" ng-click="editableForm.$cancel()">Cancel</a>
+        <button class="small" type="submit" ng-disabled="editableForm.$waiting">Speichern</button>
+        <a class="button small caution" ng-disabled="editableForm.$waiting" ng-click="editableForm.$cancel()">Abbrechen</a>
       </span>
     </div>
 
   </form>
 
   <div ng-if="!isOwner">
-    <pre>{{ trinket.description || 'No instructions available.' }}</pre>
+    <pre>{{ trinket.description || 'Keine Anleitung vorhanden.' }}</pre>
   </div>
 </div>

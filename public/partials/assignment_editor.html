@@ -1,14 +1,14 @@
-<h3>{{ existing ? 'Edit Assignment' : 'New Assignment &mdash;' + lesson.name }}</h3>
+<h3>{{ existing ? 'Aufgabe bearbeiten' : 'Neue Aufgabe &mdash; ' + lesson.name }}</h3>
 <form name="edit-assignment-form">
   <div class="row">
     <div class="small-12 columns">
-      <label>Assignment name</label>
+      <label>Name der Aufgabe</label>
       <input type="text" name="assignment-name" ng-model="material.name" />
     </div>
   </div>
   <div class="row">
     <div class="small-12 columns">
-      <label>Instructions</label>
+      <label>Aufgabenstellung</label>
       <div class="instructions-container">
         <div id="trinket-instructions-editor"></div>
       </div>
@@ -22,16 +22,16 @@
   </div>
   <div class="row" ng-hide="trinket">
     <div class="small-6 columns">
-      <trinket-search on-select="addSelectedTrinket" placeholder-text="search for a trinket to add" input-id="for-assignment" search-label-id="no-search-label" no-label="true"></trinket-search>
+      <trinket-search on-select="addSelectedTrinket" placeholder-text="Trinket suchen und hinzufügen" input-id="for-assignment" search-label-id="no-search-label" no-label="true"></trinket-search>
     </div>
     <div class="small-6 columns">
-      <a class="tiny button primary dropdown no-transform" data-dropdown="edit-blank-trinket">or add a blank trinket</a>
+      <a class="tiny button primary dropdown no-transform" data-dropdown="edit-blank-trinket">oder leeres Trinket anlegen</a>
       <ul id="edit-blank-trinket" class="tiny f-dropdown text-left" data-dropdown-content>
         <li ng-repeat="type in trinketTypes">
           <a ng-click="addBlankTrinket(type)"><i class="lang-sprite lang-sprite-{{ type.lang }}"></i>{{ type.label }} <i ng-show="type.icon" class="{{ type.icon }}"></i></a>
         </li>
       </ul>
-      <a ng-if="existing" class="tiny button caution right" ng-click="keepTrinket()">cancel</a>
+      <a ng-if="existing" class="tiny button caution right" ng-click="keepTrinket()">abbrechen</a>
     </div>
   </div>
 
@@ -42,7 +42,7 @@
   </div>
   <div class="row" ng-show="trinket">
     <div class="small-12 columns">
-      <span class="trinket-list-with-lang lang-{{ trinket.lang }}"><a ng-click="changeTrinket()" title="Click to use a different trinket">{{ trinket.name }}</a></span>
+      <span class="trinket-list-with-lang lang-{{ trinket.lang }}"><a ng-click="changeTrinket()" title="Klicken, um ein anderes Trinket zu wählen">{{ trinket.name }}</a></span>
 
       <!-- todo: come up with a different UI element for this... above better? -->
       <!-- <a ng-click="changeTrinket()"><i class="fa fa-times-circle"></i> change</a> -->
@@ -53,7 +53,7 @@
   <div class="row">
     <div class="small-12 columns">
       <fieldset>
-        <legend>Dates</legend>
+        <legend>Termine</legend>
           <div class="row" id="dates-container">
             <div class="small-12 medium-6 columns"> <!-- set due date -->
 
@@ -65,13 +65,13 @@
                   </fieldset>
                 </div>
                 <div class="small-8 large-6 columns end">
-                  <label for="submissionsDueEnabled" class="inline">Use Due Date</label>
+                  <label for="submissionsDueEnabled" class="inline">Fälligkeitsdatum</label>
                 </div>
               </div>
 
               <div class="row" ng-show="submissionsDueEnabled" style="margin-bottom:0.75rem">
                 <div class="small-12 columns">
-                  <label for="submissionsDue">Due <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Submissions after this date will be marked Late"></i></label>
+                  <label for="submissionsDue">Fällig am <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Abgaben nach diesem Zeitpunkt gelten als verspätet"></i></label>
                   <input type="datetime-local" step="900" id="submissionsDue" class="assignment-datetime"
                          ng-model="submissionsDue" ng-change="setsubmissionsDue(submissionsDue)" />
                 </div>
@@ -79,9 +79,9 @@
 
               <div class="row" ng-show="submissionsDueEnabled">
                 <div class="small-12 columns">
-                  <label>Submissions Cutoff Date <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Submissions will not be accepted after this date (Optional)"></i></label>
-                  <a ng-show="!submissionsCutoffEnabled" ng-click="toggleSubmissionsCutoff()">Use Cutoff Date</a>
-                  <a ng-show="submissionsCutoffEnabled" ng-click="toggleSubmissionsCutoff()">Disable Cutoff Date</a>
+                  <label>Abgabeschluss <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Nach diesem Zeitpunkt ist keine Abgabe mehr möglich (optional)"></i></label>
+                  <a ng-show="!submissionsCutoffEnabled" ng-click="toggleSubmissionsCutoff()">Abgabeschluss setzen</a>
+                  <a ng-show="submissionsCutoffEnabled" ng-click="toggleSubmissionsCutoff()">Abgabeschluss entfernen</a>
 
                   <div ng-show="submissionsCutoffEnabled" style="margin-top:0.5rem">
                     <input type="datetime-local" step="900" id="submissionsCutoff" class="assignment-datetime"
@@ -102,13 +102,13 @@
                   </fieldset>
                 </div>
                 <div class="small-8 large-6 columns end">
-                  <label for="availableOnEnabled" class="inline">Control Visibility</label>
+                  <label for="availableOnEnabled" class="inline">Sichtbarkeit steuern</label>
                 </div>
               </div>
 
               <div class="row" ng-show="availableOnEnabled" style="margin-bottom:0.75rem">
                 <div class="small-12 columns">
-                  <label for="availableOn">Available On <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Assignment will become visible on this date"></i></label>
+                  <label for="availableOn">Sichtbar ab <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Ab diesem Zeitpunkt sehen die Schülerinnen und Schüler die Aufgabe"></i></label>
                   <input type="datetime-local" step="900" id="availableOn" class="assignment-datetime"
                          ng-model="availableOn" ng-change="setavailableOn(availableOn)" />
                 </div>
@@ -116,9 +116,9 @@
 
               <div class="row" ng-show="availableOnEnabled">
                 <div class="small-12 columns">
-                  <label>Hide Assignment After <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Assignment will be hidden from students on this date (Optional)"></i></label>
-                  <a ng-show="!hideAfterEnabled" ng-click="toggleHideAfter()">Use Hide Date</a>
-                  <a ng-show="hideAfterEnabled" ng-click="toggleHideAfter()">Disable Hide Date</a>
+                  <label>Ausblenden ab <i class="fa fa-info-circle open" data-tooltip="" aria-haspopup="true" title="Ab diesem Zeitpunkt ist die Aufgabe nicht mehr sichtbar (optional)"></i></label>
+                  <a ng-show="!hideAfterEnabled" ng-click="toggleHideAfter()">Ausblenden setzen</a>
+                  <a ng-show="hideAfterEnabled" ng-click="toggleHideAfter()">Ausblenden entfernen</a>
 
                   <div ng-show="hideAfterEnabled" style="margin-top:0.5rem">
                     <input type="datetime-local" step="900" id="hideAfter" class="assignment-datetime"
@@ -136,10 +136,10 @@
 
   <div class="row">
     <div class="small-12 text-center columns">
-      <a class="button small secondary" ng-class="{disabled:!material.name.length || !trinket}" ng-click="saveAssignment($event)"><i class="fa fa-save"></i> {{ existing ? 'Update' : 'Add' }} Assignment</a>
-      <a class="button small caution" ng-click="close()">Cancel</a>
+      <a class="button small secondary" ng-class="{disabled:!material.name.length || !trinket}" ng-click="saveAssignment($event)"><i class="fa fa-save"></i> Aufgabe {{ existing ? 'speichern' : 'anlegen' }}</a>
+      <a class="button small caution" ng-click="close()">Abbrechen</a>
     </div>
   </div>
 
 </form>
-<a class="close-reveal-modal" aria-label="Close" ng-click="close()">&#215;</a>
+<a class="close-reveal-modal" aria-label="Schließen" ng-click="close()">&#215;</a>

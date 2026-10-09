@@ -2,16 +2,16 @@
   <div ng-show="!assignmentVisible || loadingAssignment" class="overlay-wrapper">
     <div class="overlay"></div>
     <div ng-hide="loadingAssignment" class="start-assignment text-center">
-      <a ng-if="!preview" ng-click="startAssignment()" class="button primary" role="button" tabindex="0"><i class="fa fa-play-circle-o"></i> {{ userId ? "Start" : "Preview" }} Assignment</a>
-      <div ng-if="!preview && hasDueDate()" class="button secondary light disabled">Due {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}</div>
-      <div ng-if="!preview && !submissionsAllowed"><p class="submission-warning"><i class="fa fa-exclamation-circle caution"></i> Important: You must be a student in this class to submit.<br />Contact your teacher to be added.</p></div>
+      <a ng-if="!preview" ng-click="startAssignment()" class="button primary" role="button" tabindex="0"><i class="fa fa-play-circle-o"></i> Aufgabe {{ userId ? "starten" : "ansehen" }}</a>
+      <div ng-if="!preview && hasDueDate()" class="button secondary light disabled">Fällig {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}</div>
+      <div ng-if="!preview && !submissionsAllowed"><p class="submission-warning"><i class="fa fa-exclamation-circle caution"></i> Wichtig: Abgeben kannst du nur als Teilnehmer:in dieses Kurses.<br />Bitte deine Lehrkraft, dich einzutragen.</p></div>
       <div ng-if="preview">
-        <a ng-click="showAssignment()" class="button primary">Show Trinket</a>
-        <a ng-if="editLink" href="{{ editLink }}" target ="_blank" class="button primary">Edit Trinket</a>
+        <a ng-click="showAssignment()" class="button primary">Trinket anzeigen</a>
+        <a ng-if="editLink" href="{{ editLink }}" target ="_blank" class="button primary">Trinket bearbeiten</a>
       </div>
     </div>
     <div ng-show="loadingAssignment" class="loading-assignment">
-      <span><i class="fa trinket-key logo green fa-flip-horizontal fa-spin"></i> Loading</span>
+      <span><i class="fa trinket-key logo green fa-flip-horizontal fa-spin"></i> Wird geladen</span>
     </div>
   </div>
   <div class="row collapse">
@@ -23,7 +23,7 @@
     <div class="small-12 columns">
       <div class="row">
         <div class="small-6 columns end">
-          <label>Comments to your teacher</label>
+          <label>Kommentar an deine Lehrkraft</label>
           <textarea ng-model="submission.comments" ng-model-options="{ debounce : 1000 }" ng-change="autosaveComments()" ng-disabled="!canSubmit || !submissionsAllowed"></textarea>
         </div>
       </div>
@@ -32,28 +32,28 @@
           <a ng-class="{disabled:!assignmentVisible || !canSubmit || !submissionsAllowed, light:!isModified}"
              ng-click="submitAssignment()" class="button secondary small submit-button">
             <i class="fa" ng-class="submittingCode ? 'fa-circle-o-notch fa-spin' : codeSubmitted ? 'fa-check' : 'fa-cloud-upload'"></i>
-            {{ codeSubmitted ? "Submitted" : canUpdate ? "Update Your Submission" : "Submit Your Code" }}</a>
+            {{ codeSubmitted ? "Abgegeben" : canUpdate ? "Abgabe aktualisieren" : "Abgeben" }}</a>
 
           <div ng-if="assignmentVisible" class="assignment-notices">
             <span ng-if="hasDueDate() && submissionsAllowed">
               <span ng-if="beforeDue()">
                 <i class="fa fa-fw fa-clock-o"></i>
-                Submission is due by {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}
+                Abgabe bis {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}
               </span>
               <span ng-if="betweenDueAndCutoff()" class="assignment-warning">
                 <i class="fa fa-fw fa-clock-o"></i>
-                Submission was due by {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}.
-                You can submit your code late. It will be up to your teacher to review and accept your submission.
+                Die Abgabe war fällig am {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}.
+                Du kannst noch verspätet abgeben; deine Lehrkraft entscheidet, ob sie die Abgabe annimmt.
               </span>
               <span ng-if="pastCutoff()" class="assignment-error">
                 <i class="fa fa-fw fa-clock-o"></i>
-                Submission was due by {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}.
+                Die Abgabe war fällig am {{ material.trinket.submissionsDue.dateValue | amUtc | amLocal | amDateFormat:'llll' }}. Eine Abgabe ist nicht mehr möglich.
               </span>
             </span>
             <span ng-if="!submissionsAllowed || !userId" class="assignment-warning">
               <i class="fa fa-exclamation-circle"></i>
-              <span ng-if="userId">Important: You must be a student in this class to submit. Contact your teacher to be added.</span>
-              <span ng-if="!userId">Important: Your work will not be saved. <a ng-click="goto('signup')">Create an account</a> or <a ng-click="goto('login')">login</a> to begin saving your work.</span>
+              <span ng-if="userId">Wichtig: Abgeben kannst du nur als Teilnehmer:in dieses Kurses. Bitte deine Lehrkraft, dich einzutragen.</span>
+              <span ng-if="!userId">Wichtig: Deine Arbeit wird nicht gespeichert. <a ng-click="goto('login')">Melde dich an</a>, damit sie gespeichert wird.</span>
             </span>
           </div>
 
@@ -67,16 +67,16 @@
     </div>
   </div>
 
-  <div ng-show="original != null || submissions.length > 0" class="assignment-versions-container" role="complementary" role="tablist" aria-label="Submissions and Feedback">
+  <div ng-show="original != null || submissions.length > 0" class="assignment-versions-container" role="complementary" role="tablist" aria-label="Abgaben und Rückmeldungen">
 
     <div ng-repeat="submission in submissions" class="row collapse">
       <div class="small-12 columns">
         <div class="row">
           <div class="small-12 columns" role="tab" ng-click="toggleSubmission(submission)">
             <span ng-class="{'previous-label':showSubmission[submission.id]}">
-              <span>{{ submission.submissionState === 'submittedLate' ? 'Late' : 'My' }} Submission #{{ submissions.length - $index }}</span>
+              <span>{{ submission.submissionState === 'submittedLate' ? 'Verspätete Abgabe' : 'Meine Abgabe' }} {{ submissions.length - $index }}</span>
               &mdash; <span title="{{ submission[ stateDateFields[ submission.submissionState ] ] | localDate }}">{{ submission[ stateDateFields[ submission.submissionState ] ] | formatDate }}</span>
-              <span ng-if="submission.feedback" class="label success"><i class="fa fa-reply"></i> Teacher Feedback</span>
+              <span ng-if="submission.feedback" class="label success"><i class="fa fa-reply"></i> Rückmeldung</span>
             </span>
           </div>
         </div>
@@ -88,9 +88,9 @@
                         ng-if="showSubmission[submission.id]"
                         ng-src="{{ submissionSrc[ submission.id ] }}"
                         width="100%" height="400" frameborder="0" marginwidth="0" allowfullscreen
-                        tabindex="0" aria-label="Previous Submission"></iframe>
+                        tabindex="0" aria-label="Frühere Abgabe"></iframe>
 
-                <strong tabindex="0" aria-label="Your Comments">Your comments:</strong><br />{{ submission.comments[0].commentText }}
+                <strong tabindex="0" aria-label="Dein Kommentar">Dein Kommentar:</strong><br />{{ submission.comments[0].commentText }}
               </div>
             </div>
 
@@ -100,7 +100,7 @@
 
             <div class="row" ng-if="submission.feedback">
               <div class="small-12 columns">
-                <strong>Teacher Feedback:</strong>
+                <strong>Rückmeldung der Lehrkraft:</strong>
               </div>
             </div>
 
@@ -118,7 +118,7 @@
                 <span class="submission-commented" title="{{ submission.feedback.lastUpdated | localDate }}">{{ submission.feedback.comment.commented | formatDate }}</span>
               </div>
               <div class="small-8 columns">
-                <p tabindex="0" aria-label="Teacher Feedback" ng-bind-html="displayFeedback(submission.feedback.comment.commentText)"></p>
+                <p tabindex="0" aria-label="Rückmeldung der Lehrkraft" ng-bind-html="displayFeedback(submission.feedback.comment.commentText)"></p>
               </div>
             </div>
 
@@ -132,14 +132,14 @@
       <div class="small-12 columns">
         <div class="row">
           <div class="small-12 columns" role="tab" ng-click="toggleOriginal()">
-            <span ng-class="{'original-label':showOriginal}">Original Version</span>
+            <span ng-class="{'original-label':showOriginal}">Ausgangsversion</span>
           </div>
         </div>
         <div class="row collapsed" ng-class="{'show-row':showOriginal}" role="tabpanel">
           <div class="small-12 columns">
             <iframe class="original-assignment" ng-if="showOriginal" ng-src="{{ original }}"
                     width="100%" height="400" frameborder="0" marginwidth="0" allowfullscreen
-                    tabidex="0" aria-label="Original Assignment Trinket"></iframe>
+                    tabidex="0" aria-label="Ausgangsversion der Aufgabe"></iframe>
           </div>
         </div>
       </div>

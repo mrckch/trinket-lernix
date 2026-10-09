@@ -3,6 +3,7 @@ app:
   start: false
   auth:
     mode: dev   # Tests registrieren und melden sich lokal an
+    requireLogin: false   # wird in test/lib/api/access.js gezielt eingeschaltet
   plugins:
     session:
       cookieOptions:

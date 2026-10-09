@@ -188,8 +188,8 @@ $.widget('trinket.assetBrowser', {
       $controls.closest('li.asset').attr('id', 'item-' + item.id);
 
       if (item.metrics && item.metrics.trinkets) {
-        var badgeTitle = "Image used in " + item.metrics.trinkets + " ";
-        badgeTitle    += item.metrics.trinkets === 1 ? "trinket" : "trinkets";
+        var badgeTitle = "Bild wird in " + item.metrics.trinkets + " ";
+        badgeTitle    += item.metrics.trinkets === 1 ? "Trinket verwendet" : "Trinkets verwendet";
         $item.find('.thumbnail').after('<span class="trinket-stat"><div class="badge" title="' + badgeTitle + '">' + item.metrics.trinkets + '</div></span>');
 
         $controls.closest('li.asset').attr('data-used', true);

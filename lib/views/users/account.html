@@ -7,12 +7,14 @@
   <div class="large-3 small-12 columns">
     <ul class="side-nav">
       <li class="side-nav-heading">
-        <h4>Settings</h4>
+        <h4>Einstellungen</h4>
       </li>
-    {% set pages = ['Profile', 'Email', 'Password', 'Trinket-Editor', 'Data', 'Import', 'Delete-Account'] %}
+    {% set pages = ['Profile', 'Trinket-Editor', 'Data', 'Import', 'Delete-Account'] %}
+    {% if user.source != 'iserv' %}{% set pages = ['Profile', 'Email', 'Password', 'Trinket-Editor', 'Data', 'Import', 'Delete-Account'] %}{% endif %}
+    {% set labels = { 'profile': 'Profil', 'email': 'E-Mail', 'password': 'Passwort', 'trinket-editor': 'Editor', 'data': 'Daten', 'import': 'Import', 'delete-account': 'Konto löschen', 'tokens': 'API-Tokens' } %}
     {% if user.hasRole('teacher') or user.hasRole('admin') %}{% set pages = pages.concat(['Tokens']) %}{% endif %}
     {% for link in pages %}
-      <li><a {% if page == link.toLowerCase() %}class="active"{% endif %} href="/account/{{ link | lower }}">{{ link | replace('-', ' ') }}</a></li>
+      <li><a {% if page == link.toLowerCase() %}class="active"{% endif %} href="/account/{{ link | lower }}">{{ labels[link | lower] or link }}</a></li>
     {% endfor %}
     </ul>
   </div>
@@ -23,7 +25,7 @@
         <div class="small-12 columns">
           <div class="content-heading">
             {% set title = page.split('-') %}
-            <h4>{% for word in title %} {{ word | capitalize }} {% endfor %}</h4>
+            <h4>{{ labels[page] or page }}</h4>
           </div>
         </div>
       </div>
@@ -45,37 +47,37 @@ $(document).ready(function() {
   switch (email_result) {
     case 'success':
       $('#account').notify(
-        "Your email address has been updated."
+        "Deine E-Mail-Adresse wurde geändert."
         , { position : 'top center', className : 'success' }
       );
       break;
     case 'verified':
       $('#account').notify(
-        "Your email address has been verified."
+        "Deine E-Mail-Adresse wurde bestätigt."
         , { position : 'top center', className : 'success' }
       );
       break;
     case 'error':
       $('#account').notify(
-        "We had a problem updating your email address. Please try again."
+        "Die E-Mail-Adresse konnte nicht geändert werden. Bitte erneut versuchen."
         , { position : 'top center', className : 'alert' }
       );
       break;
     case 'verify_error':
       $('#account').notify(
-        "We had a problem verifying your email address. Please try again."
+        "Die E-Mail-Adresse konnte nicht bestätigt werden. Bitte erneut versuchen."
         , { position : 'top center', className : 'alert' }
       );
       break;
     case 'key_error':
       $('#account').notify(
-        "We had a problem verifying that link. Please try again."
+        "Der Link konnte nicht geprüft werden. Bitte erneut versuchen."
         , { position : 'top center', className : 'alert' }
       );
       break;
     case 'duplicate':
       $('#account').notify(
-        "Another account is using that email address. Please try entering a different address."
+        "Diese E-Mail-Adresse wird schon von einem anderen Konto benutzt."
         , { position : 'top center', className : 'alert' }
       );
       break;

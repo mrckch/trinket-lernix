@@ -375,7 +375,7 @@
         return;
       }
 
-      showCommentWarning('Since one or more selected lines has a comment, first remove any comments or move them to other lines.');
+      showCommentWarning('Mindestens eine markierte Zeile hat einen Kommentar. Entferne die Kommentare zuerst oder verschiebe sie.');
     }
 
     e.commands.addCommand({
@@ -388,7 +388,7 @@
           if (cursor.column === 0 && cursor.row > 0
           && FILE_WIDGETS[opts.index] && FILE_WIDGETS[opts.index][cursor.row]
           && (FILE_WIDGETS[opts.index][cursor.row - 1] || editor.getSession().getLine(cursor.row - 1).length)) {
-            showCommentWarning('Since this line has a comment, first remove the comment or move it to another line.');
+            showCommentWarning('Diese Zeile hat einen Kommentar. Entferne ihn zuerst oder verschiebe ihn.');
           }
           else {
             $('.comment-warning').find('.close').click();
@@ -407,10 +407,10 @@
           // if cursor at end of line and comment on this or next line
           if (cursor.column === lineLength && FILE_WIDGETS[opts.index]) {
             if (FILE_WIDGETS[opts.index][cursor.row]) {
-              showCommentWarning('Since this line has a comment, first remove the comment or move it to another line.');
+              showCommentWarning('Diese Zeile hat einen Kommentar. Entferne ihn zuerst oder verschiebe ihn.');
             }
             else if (FILE_WIDGETS[opts.index][cursor.row + 1]) {
-              showCommentWarning('Since the next line has a comment, first remove the comment or move it to another line.');
+              showCommentWarning('Die nächste Zeile hat einen Kommentar. Entferne ihn zuerst oder verschiebe ihn.');
             }
           }
           else {
@@ -428,7 +428,7 @@
 
           // if comment on this line, disable removeline command (Ctrl-D)
           if (FILE_WIDGETS[opts.index] && FILE_WIDGETS[opts.index][cursor.row]) {
-            showCommentWarning('To remove lines with comments, first remove the comment or move it to another line.');
+            showCommentWarning('Zeilen mit Kommentar lassen sich erst löschen, wenn der Kommentar entfernt oder verschoben ist.');
           }
           else {
             $('.comment-warning').find('.close').click();
@@ -972,14 +972,14 @@
   var CODE_ERROR_TAB_MARKER   = '.fa.fa-exclamation-circle.warning';
   var CODE_ERROR_TAB_CLASS    = 'fa fa-exclamation-circle warning';
 
-  var add_file_title           = $('body').data('create-text-file-title') || 'Create text file';
-  var $ADD_FILE_TEMPLATE       = $("<dd class=\"tab-button\" title='" + add_file_title + "'><a class=\"add-file-link menu-button\" data-action=\"file.add\" aria-label=\"Add new file\" role=\"button\"><i class=\"fa fa-plus\"></i></a></dd>");
+  var add_file_title           = $('body').data('create-text-file-title') || 'Textdatei anlegen';
+  var $ADD_FILE_TEMPLATE       = $("<dd class=\"tab-button\" title='" + add_file_title + "'><a class=\"add-file-link menu-button\" data-action=\"file.add\" aria-label=\"Neue Datei\" role=\"button\"><i class=\"fa fa-plus\"></i></a></dd>");
 
-  var $ADD_COMMENT_TEMPLATE    = $("<dd class=\"tab-button\" title='Add comment to current line'><a class=\"add-inline-comment menu-button\" data-action=\"inline-comment.add\"><i class=\"fa fa-comment\"></i></a></dd>");
+  var $ADD_COMMENT_TEMPLATE    = $("<dd class=\"tab-button\" title='Kommentar zur aktuellen Zeile'><a class=\"add-inline-comment menu-button\" data-action=\"inline-comment.add\"><i class=\"fa fa-comment\"></i></a></dd>");
   var ADD_INLINE_COMMENT_EVENT = "click.trinket-code-editor.add-inline-comment";
 
-  var upload_file_title        = $('body').data('upload-text-file-title') || 'Upload text file';
-  var $UPLOAD_FILE_TEMPLATE    = $("<dd class=\"tab-button\" title='" + upload_file_title + "'><a class=\"upload-file-link menu-button\" data-action=\"file.upload\" aria-label=\"Upload text file\" role=\"button\"><i class=\"fa fa-upload\"></i></a></dd>");
+  var upload_file_title        = $('body').data('upload-text-file-title') || 'Textdatei hochladen';
+  var $UPLOAD_FILE_TEMPLATE    = $("<dd class=\"tab-button\" title='" + upload_file_title + "'><a class=\"upload-file-link menu-button\" data-action=\"file.upload\" aria-label=\"Textdatei hochladen\" role=\"button\"><i class=\"fa fa-upload\"></i></a></dd>");
   var $UPLOAD_FILE_INPUT       = $("<form id='file-upload-form'><input type='file' name='file-upload' id='file-upload' class='hidden' tabindex='-1'></form>");
 
   /**
@@ -1143,7 +1143,7 @@
               }
               reader.onerror = function() {
                 self.element.find('.tab-nav').after(FILE_NAME_ERROR_TEMPLATE({
-                  message : "There was a problem reading your file. Please try again."
+                  message : "Die Datei konnte nicht gelesen werden. Bitte erneut versuchen."
                 }));
                 $(document).foundation('alert', 'reflow');
 
@@ -1155,7 +1155,7 @@
             }
             else {
               self.element.find('.tab-nav').after(FILE_NAME_ERROR_TEMPLATE({
-                message : "Only text files are currently supported."
+                message : "Nur Textdateien werden unterstützt."
               }));
               $(document).foundation('alert', 'reflow');
             }
@@ -1290,7 +1290,7 @@
           , lang         : this.options.lang
           , acceptedFiles : this.options.acceptedFiles
         });
-        this.element.find('.right-options').append("<dd class=\"tab\" title='Manage images'><a class=\"file-tab-link add-asset-link\" data-action=\"assets.view\" title=\"View and Add Images\"><i class=\"fa fa-file-image-o\"></i></a></dd>");
+        this.element.find('.right-options').append("<dd class=\"tab\" title='Bilder verwalten'><a class=\"file-tab-link add-asset-link\" data-action=\"assets.view\" title=\"Bilder ansehen und hinzufügen\"><i class=\"fa fa-file-image-o\"></i></a></dd>");
         this.assetBrowser = this.$assetBrowser.data('trinket-assetBrowser');
         this.assetBrowser.hide();
         this.element.find('.tab-nav').addClass('allow-assets');
@@ -1696,13 +1696,13 @@
           return;
         }
         else if (newName.length > 50) {
-          errorMessage = "File names must be less than 50 characters, please choose a shorter name.";
+          errorMessage = "Dateinamen dürfen höchstens 50 Zeichen lang sein.";
         }
         else if ( (self.options.lang === "python" || self.options.lang === "python3") && newName.match(/\.py$/) && !newName.match(/^[\w][\w0-9]*(\.[a-z]+)?$/)) {
-          errorMessage = "Python file names must start with a letter or underscore followed by zero or more letters, digits and underscores.";
+          errorMessage = "Python-Dateinamen beginnen mit einem Buchstaben oder Unterstrich, danach nur Buchstaben, Ziffern und Unterstriche.";
         }
         else if (!newName.match(/^\w[\w\.\-]*$/)) {
-          errorMessage = "File names must start with a letter, number, or underscore followed by zero or more letters, numbers, underscores, hyphens, and periods.";
+          errorMessage = "Dateinamen beginnen mit Buchstabe, Ziffer oder Unterstrich, danach nur Buchstaben, Ziffern, Unterstriche, Bindestriche und Punkte.";
         }
         else if ($('#' + newName).length) {
           errorMessage = "The name '" + newName + "' is reserved, please choose a different name.";
@@ -1710,7 +1710,7 @@
         else if (newName.toLowerCase() !== name.toLowerCase()) {
           self.$tabBar.find(".file-name").each(function() {
             if ($(this).text().toLowerCase() === newName.toLowerCase()) {
-              errorMessage = "There is already a file named \"" + newName + "\", please choose a different name.";
+              errorMessage = "Es gibt schon eine Datei namens \"" + newName + "\". Bitte einen anderen Namen wählen.";
               return false;
             }
           });

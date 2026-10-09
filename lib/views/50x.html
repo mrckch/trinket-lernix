@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="utf-8">
-    <title>Something went wrong</title>
-    <link href="//fonts.googleapis.com/css?family=Lato:300,900|Merriweather:300,400italic,900" rel="stylesheet" type="text/css">
+    <title>Da ist etwas schiefgelaufen</title>
+    <link href="/vendor/fonts/lato/300.css" rel="stylesheet"><link href="/vendor/fonts/lato/900.css" rel="stylesheet"><link href="/vendor/fonts/merriweather/300.css" rel="stylesheet"><link href="/vendor/fonts/merriweather/900.css" rel="stylesheet">
     <style>
         html { padding: 40px 0; }
         body { text-align: center; font-family: "Merriweather", serif; }
@@ -46,12 +46,12 @@
     </style>
 </head>
 <body>
-  <h1>Something went wrong <span>:(</span></h1>
+  <h1>Da ist etwas schiefgelaufen <span>:(</span></h1>
   <hr>
-  <p class="subheader">We encountered an unexpected error. Please try again later.</p>
+  <p class="subheader">Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später noch einmal.</p>
   {% if config.app.supportEmail %}
-  <p class="subheader">If this problem persists, please contact <a href="mailto:{{ config.app.supportEmail }}">{{ config.app.supportEmail }}</a>.</p>
+  <p class="subheader">Bleibt das Problem, melde dich bei <a href="mailto:{{ config.app.supportEmail }}">{{ config.app.supportEmail }}</a>.</p>
   {% endif %}
-  <a href="/" class="nav-link">Go to Homepage</a>
+  <a href="/" class="nav-link">Zur Startseite</a>
 </body>
 </html>

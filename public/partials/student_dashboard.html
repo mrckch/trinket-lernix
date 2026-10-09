@@ -9,8 +9,8 @@
       </nav>
     </section>
     <div class="right">
-      <a ng-disabled="!prev.student" ng-class="{disabled:!prev.student}" ng-click="viewStudent(prev.student)" class="button small">Previous</a>
-      <a ng-disabled="!next.student" ng-class="{disabled:!next.student}" ng-click="viewStudent(next.student)" class="button small">Next</a>
+      <a ng-disabled="!prev.student" ng-class="{disabled:!prev.student}" ng-click="viewStudent(prev.student)" class="button small">Zurück</a>
+      <a ng-disabled="!next.student" ng-class="{disabled:!next.student}" ng-click="viewStudent(next.student)" class="button small">Weiter</a>
     </div>
   </div>
 </header>
@@ -18,7 +18,7 @@
 <div id="course-content" class="dashboard-content dashboard-list" ui-scrollfix="45">
   <div ng-if="loading" class="row dashboard-container">
     <div class="small-12 columns text-center">
-      <h2><i class="fa fa-spinner fa-spin"></i> Loading</h2>
+      <h2><i class="fa fa-spinner fa-spin"></i> Wird geladen</h2>
     </div>
   </div>
 
@@ -26,7 +26,7 @@
     <div class="small-12 columns">
       <div class="row">
         <div class="small-12 columns">
-          <h4><div data-tooltip class="draft-circle in-dashboard has-tip" title="Marked as draft" ng-if="lesson.isDraft">&nbsp;</div> {{ lesson.name }}</h4>
+          <h4><div data-tooltip class="draft-circle in-dashboard has-tip" title="Als Entwurf markiert" ng-if="lesson.isDraft">&nbsp;</div> {{ lesson.name }}</h4>
         </div>
       </div>
 
@@ -38,7 +38,7 @@
               <i ng-if="material.type === 'assignment' && usingDates(material)" class="fa fa-clock-o fa-fw"></i>
               <i ng-switch-when="assignment" class="fa fa-pencil-square-o fa-fw"></i>
 
-              <div data-tooltip class="draft-circle in-dashboard has-tip" title="Marked as draft" ng-if="material.isDraft">&nbsp;</div>
+              <div data-tooltip class="draft-circle in-dashboard has-tip" title="Als Entwurf markiert" ng-if="material.isDraft">&nbsp;</div>
 
               <span ng-switch-when="assignment">{{ material.name }}</span>
               <span ng-switch-when="page" class="not-assignment">{{ material.name }}</span>
@@ -59,7 +59,7 @@
 
               <ul id="material-{{ material.id }}" class="f-dropdown" data-options='align:left' data-dropdown-content>
                 <li>
-                  <a ng-click="viewAssignment(lesson, material)">View Assignment</a>
+                  <a ng-click="viewAssignment(lesson, material)">Aufgabe ansehen</a>
                 </li>
               </ul>
             </div>

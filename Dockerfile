@@ -37,7 +37,10 @@ RUN curl -fsSL -o /tmp/public-components.tgz "$COMPONENTS_URL" \
     && rm /tmp/public-components.tgz \
     && test -d public/components
 
-# SCSS → public/css/*.css
+# Frontend-Bibliotheken selbst hosten (statt cdnjs/googleapis, Std 8): public/vendor/
+RUN node scripts/vendor-fetch.js
+
+# SCSS → public/css/*.css (Schriften aus public/vendor/fonts landen in public/assets/)
 RUN npm run build:css \
     && chmod +x docker/entrypoint.sh
 

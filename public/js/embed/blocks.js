@@ -361,7 +361,7 @@ window.TrinketAPI = {
     if (event) {
       api.sendAnalytics('Interaction', {
         action   : 'Click',
-        label    : 'Run'
+        label    : 'Ausführen'
       });
     }
   },
@@ -380,7 +380,7 @@ window.TrinketAPI = {
 
     api.sendAnalytics('Interaction', {
       action : 'Click',
-      label  : 'Source'
+      label  : 'Quellcode'
     });
   },
   toggleOutputView : function(event) {
@@ -399,7 +399,7 @@ window.TrinketAPI = {
     if (event) {
       api.sendAnalytics('Interaction', {
         action   : 'Click',
-        label    : 'Run'
+        label    : 'Ausführen'
       });
     }
   },
@@ -524,13 +524,13 @@ window.TrinketAPI = {
     Blockly.Xml.domToWorkspace(this.upload_xml, Blockly.mainWorkspace);
     $('#uploadModal').foundation('reveal', 'close');
     this.upload_modal_open = false;
-    this.showMessage('success', 'Your blocks have been added.');
+    this.showMessage('success', 'Deine Blöcke wurden eingefügt.');
   },
   addBlocks : function() {
     Blockly.Xml.domToWorkspace(this.upload_xml, Blockly.mainWorkspace);
     $('#uploadModal').foundation('reveal', 'close');
     this.upload_modal_open = false;
-    this.showMessage('success', 'Your blocks have been added on top of any existing blocks.');
+    this.showMessage('success', 'Deine Blöcke wurden zu den vorhandenen hinzugefügt.');
   },
   resetUpload : function() {
     this.upload_xml = "";

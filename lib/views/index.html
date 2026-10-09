@@ -6,8 +6,8 @@
 <section id="hero" style="padding: 40px 0;">
   <div class="row">
     <div class="small-12 columns text-center">
-      <img src="{{ '/img/trinket-logo-white.png' | cachePrefix }}" alt="Trinket" style="max-width: 240px;" />
-      <p style="color: white; font-size: 1.2rem; margin: 15px 0 0;">Code in Your Browser</p>
+      <img src="{{ '/img/trinket-logo-white.png' | cachePrefix }}" alt="{{ config.app.siteName }}" style="max-width: 240px;" />
+      <p style="color: white; font-size: 1.2rem; margin: 15px 0 0;">Programmieren im Browser</p>
     </div>
   </div>
 </section>
@@ -17,27 +17,27 @@
 <div class="row" style="padding: 40px 0;">
   <div class="small-12 columns text-center">
     <p class="lead" style="margin-bottom: 0.5rem;">
-      Trinket is an open source browser-based coding platform.
+      Trinket Lernix ist die Programmierumgebung unserer Schule – direkt im Browser, ohne Installation.
     </p>
     <p style="color: #666; margin-bottom: 0;">
-      Write and run Python, HTML, Java, and more. Create interactive courses. No downloads required.
+      Python, HTML, Blöcke und Web VPython schreiben und sofort ausführen. Aufgaben aus dem Unterricht bearbeiten und abgeben.
     </p>
   </div>
 </div>
 
 <div class="row" style="padding-bottom: 40px;">
   <div class="small-12 medium-5 columns medium-offset-1">
-    <h4 style="margin-bottom: 0.5rem;">For Learners</h4>
+    <h4 style="margin-bottom: 0.5rem;">Für Schülerinnen und Schüler</h4>
     <ul style="margin-bottom: 0;">
-      <li>See results instantly in your browser</li>
-      <li>Save and share your projects</li>
+      <li>Ergebnisse sofort im Browser sehen</li>
+      <li>Eigene Projekte speichern und teilen</li>
     </ul>
   </div>
   <div class="small-12 medium-5 columns end">
-    <h4 style="margin-bottom: 0.5rem;">For Educators</h4>
+    <h4 style="margin-bottom: 0.5rem;">Für Lehrkräfte</h4>
     <ul style="margin-bottom: 0;">
-      <li>Create interactive coding courses</li>
-      <li>Track student progress</li>
+      <li>Kurse mit Aufgaben für IServ-Gruppen anlegen</li>
+      <li>Lernstand im Dashboard verfolgen</li>
     </ul>
   </div>
 </div>
@@ -61,7 +61,7 @@
 {% else %}
 <div class="row" style="padding-bottom: 40px;">
   <div class="small-12 columns text-center">
-    <a href="/home" class="button success">Go to My Trinkets</a>
+    <a href="/home" class="button success">Zu meiner Übersicht</a>
   </div>
 </div>
 {% endif %}

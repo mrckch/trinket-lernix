@@ -1,10 +1,7 @@
-<p>The <code>break</code> keyword is used to exit a <code>while</code> or <code>for</code> loop before its original exit condition is met.</p>
-
-<pre><code>
-for x in range(3):
-  print x
-  if x == 1:
-    break
+<p>Mit <code>break</code> verlässt du eine <code>while</code>- oder <code>for</code>-Schleife vorzeitig.</p>
+<pre><code>for x in range(3):
+    print(x)
+    if x == 1:
+        break
 </code></pre>
-
-<p>In the code above, even though the for loop uses <code>range(3)</code>, which should iterate 3 times, only <code>0</code> and <code>1</code> will be printed. This is because in the second iteration, x will be equal to 1 so the <code>break</code> statement will exit the loop early.</p>
+<p>Obwohl <code>range(3)</code> drei Durchläufe vorsieht, werden nur <code>0</code> und <code>1</code> ausgegeben: Im zweiten Durchlauf beendet <code>break</code> die Schleife.</p>

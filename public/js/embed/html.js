@@ -8,7 +8,7 @@ var runMode_icon_classes = {
   autorun : 'fa fa-repeat'
 };
 var runMode_labels = {
-  run     : 'Click to Run',
+  run     : 'Ausführen',
   autorun : 'Autorun'
 };
 
