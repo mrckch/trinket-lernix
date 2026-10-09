@@ -239,7 +239,17 @@ Ursprünglicher Umfang:
 - Lehrkraft-Startseite: alle Kurse mit Abgabe-Zählern.
 - Branding: Name, Logo aus `.env`/`public/img`.
 
-### Phase 5 – Betrieb (½ Tag)
+### Phase 5 – Betrieb (½ Tag) — **Dokumentation fertig 2026-10-09, Deploy offen**
+
+Erledigt: `docs/lernix/BETRIEB.md` (Erstinstallation, `.env`, IServ-Client, NPM, erster Admin,
+Prüfen, Update, Backup/Restore, Aufbewahrung, Fehlersuche), `deploy/npm/README.md` +
+`advanced.conf`, deutsches `README.md`.
+
+Offen (braucht Marc): Fork pushen (`git push -u origin main`), IServ-Client anlegen,
+DNS `trinket` → 93.205.103.135, NPM-Proxy-Host, Clone und `.env` auf der Docker-VM,
+erster Login und Admin-Rolle. Die Schritte stehen in BETRIEB.md in dieser Reihenfolge.
+
+Ursprünglicher Umfang:
 - `docs/lernix/BETRIEB.md`: NPM-Proxy-Host, IServ-Client anlegen, Erststart,
   Break-Glass, Backup/Restore (`mongodump`/`mongorestore`), Update aus Upstream.
 - Deploy auf Docker-VM, NPM-Host, DNS `trinket` → 93.205.103.135.

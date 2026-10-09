@@ -1,115 +1,51 @@
-# Trinket
+# Trinket Lernix
 
-An open source, browser-based coding environment designed for education.
+Browser-Programmierumgebung für den Informatikunterricht: Python (Skulpt), HTML/CSS/JS, Blöcke
+und Web VPython laufen direkt im Browser. Anmeldung über IServ, Kurse aus IServ-Gruppen,
+Aufgaben mit Abgabe und Rückmeldung, Lernstand im Dashboard und per API.
 
-Trinket lets students and educators write and run code directly in the browser, supporting multiple programming languages including Python, HTML, Java, R, and more.
+Fork von [trinketapp/trinket-oss](https://github.com/trinketapp/trinket-oss) (CC0 1.0), der
+nach der Abschaltung von trinket.io freigegeben wurde. Betrieb unter `https://trinket.lernix.site`
+hinter dem Nginx Proxy Manager, Konfiguration ausschließlich per `.env`.
 
-## Features
-
-- **Browser-based code editor** - Write and run code without installing anything
-- **Multiple language support** - Python, HTML/CSS/JS, Java, R, GlowScript, and more
-- **Embeddable trinkets** - Embed interactive code examples in any webpage
-- **Course creation** - Build interactive coding courses and tutorials
-- **Code sharing** - Share and remix code with others
-
-## Prerequisites
-
-- Docker and Docker Compose
-- Node.js 18+ (for local development without Docker)
-- MongoDB 5.0+
-- Redis (optional - falls back to in-memory)
-
-## Quick Start (Docker)
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/trinketapp/trinket-oss.git
-   cd trinket-oss
-   ```
-
-2. Copy the example config and add your settings:
-   ```bash
-   cp config/local.example.yaml config/local.yaml
-   ```
-
-3. Start the services:
-   ```bash
-   docker-compose up
-   ```
-
-4. Visit http://localhost:3000 in your browser.
-
-## Configuration
-
-Configuration is managed through YAML files in the `config/` directory:
-
-- `default.yaml` - Base configuration (committed to repo)
-- `local.yaml` - Local overrides and secrets (not committed)
-- `production.yaml` - Production overrides (not committed)
-
-Copy `config/local.example.yaml` to `config/local.yaml` and fill in the required values.
-
-### Required Configuration
-
-| Setting | Description |
-|---------|-------------|
-| `app.plugins.session.cookieOptions.password` | Session cookie secret (min 32 chars) |
-
-### Optional Integrations
-
-| Setting | Description |
-|---------|-------------|
-| `app.mail.*` | SMTP settings for email (password reset, notifications) |
-| `aws.*` | S3 storage for user-uploaded assets |
-| `app.auth.google.*` | Google OAuth login |
-| `app.recaptcha.*` | reCAPTCHA spam protection |
-
-See [GETTING_STARTED.md](GETTING_STARTED.md) for detailed setup of optional features.
-
-## Development
-
-### Running without Docker
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Start MongoDB locally (Redis is optional)
-
-3. Run the application:
-   ```bash
-   node app.js
-   ```
-
-### Running Tests
+## Schnellstart (Produktion)
 
 ```bash
-npm test
+git clone https://github.com/mrckch/trinket-lernix.git /opt/trinket
+cd /opt/trinket
+cp .env.example .env && nano .env
+docker compose up -d --build
 ```
 
-## Architecture
+Alles Weitere – IServ-Client, NPM-Proxy-Host, erster Admin, Backup, Aufbewahrung – steht in
+[docs/lernix/BETRIEB.md](docs/lernix/BETRIEB.md).
 
-- **Backend**: Node.js with Hapi framework
-- **Database**: MongoDB with Mongoose ODM
-- **Cache/Sessions**: Redis (optional)
-- **Frontend**: AngularJS 1.x
-- **Code Execution**: Skulpt (Python in browser), server-side containers for other languages
+## Entwicklung
 
-## Contributing
+```bash
+cp .env.example .env   # NODE_ENV=development, AUTH_MODE=dev, APP_BIND=127.0.0.1
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+```
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
+Test-Anmeldung ohne IServ unter `/auth/dev`. Tests, Vendor-Bibliotheken und Stolpersteine:
+[docs/lernix/ENTWICKLUNG.md](docs/lernix/ENTWICKLUNG.md).
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Dokumentation
 
-## License
+| Datei | Inhalt |
+|---|---|
+| [docs/lernix/PLAN.md](docs/lernix/PLAN.md) | Umbauplan, Entscheidungen, Stand der Phasen |
+| [docs/lernix/adr/](docs/lernix/adr/) | Architekturentscheidungen (Konfiguration, Anmeldung, Gruppen und Aufbewahrung, Lernstand-API, Login-Pflicht/Deutsch/Vendor) |
+| [docs/lernix/openapi.yaml](docs/lernix/openapi.yaml) | Lernstand-API (`/api/v1`, Bearer-Token) |
+| [docs/lernix/BETRIEB.md](docs/lernix/BETRIEB.md) | Betrieb auf der Docker-VM |
+| [deploy/npm/](deploy/npm/) | Proxy-Host und Advanced-Snippet für den NPM |
 
-This project is released under CC0 1.0 Universal (Public Domain Dedication). See the [LICENSE](LICENSE) file for details.
+## Was anders ist als bei trinket-oss
 
-## History
+- Anmeldung nur über IServ (OIDC), Rollen Schüler:in / Lehrkraft / Admin, Notfall-Admin
+- Kurse mit IServ-Gruppen verknüpft, SuS werden beim Login eingetragen
+- Lernstand-API mit Token, Aufbewahrung je Schuljahr, Interaktions-Log ohne IP-Adressen
+- Login-Pflicht, deutsche Oberfläche, keine externen CDNs oder Google Fonts
+- Nur Browser-Sprachen (Skulpt); der `serverside/`-Stack von trinket-oss wird nicht benutzt
 
-Trinket was originally created by Elliott Hauser and Brian Marks to make coding education accessible to everyone. It is now open source and maintained by the community.
+Lizenz: CC0 1.0 wie das Original ([LICENSE](LICENSE)).
