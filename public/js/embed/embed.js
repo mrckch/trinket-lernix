@@ -540,6 +540,11 @@ $('document').ready(function() {
         // specify the class used for active dropdowns
         active_class: "open"
       }
+      // iPad: Tooltips erscheinen sonst beim Antippen und bleiben stehen
+      , tooltip: {
+        disable_for_touch : true,
+        touch_close_text  : 'Zum Schließen tippen'
+      }
     });
 
     $('#settingsModal').on('opened', function() {

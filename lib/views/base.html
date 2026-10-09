@@ -254,7 +254,7 @@
   {% endfor %}
 
   {% block foundation_init %}
-  <script>$(document).foundation()</script>
+  <script>$(document).foundation({ tooltip : { disable_for_touch : true, touch_close_text : 'Zum Schließen tippen' } })</script>
   {% endblock %}
 
   <script>
