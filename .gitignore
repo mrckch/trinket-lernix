@@ -27,6 +27,11 @@ config/local.json
 config/migration.json
 config/migrationDb.json
 
+# Secrets (Lernix): nur .env.example gehört ins Repo
+.env
+.env.*
+!.env.example
+
 npm-debug.log
 build.log
 test-*.js

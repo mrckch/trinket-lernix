@@ -1,39 +1,53 @@
-# Use Node 16 LTS (compatible with updated packages)
-FROM node:16-bullseye
+# Trinket Lernix – App-Image
+#
+# Läuft hinter dem externen Nginx Proxy Manager (TLS endet dort), siehe docs/lernix/PLAN.md.
+# Die Konfiguration kommt ausschließlich aus Umgebungsvariablen; docker/entrypoint.sh
+# erzeugt daraus beim Start config/local.yaml.
 
-SHELL ["/bin/bash", "-c"]
+FROM node:20-bookworm-slim
 
-# Install build dependencies
+# git: Abhängigkeit "marked" kommt aus einem GitHub-Fork; build-essential/python3: native Module
 RUN apt-get update \
-    && apt-get install -y python3 build-essential \
-    && apt-get -y autoclean
+    && apt-get install -y --no-install-recommends ca-certificates curl git python3 build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install global tools
-RUN npm install -g pm2@5
-
-RUN groupadd -r trinket && \
-    useradd -r -g trinket -m -c "trinket user" trinket
-
-RUN mkdir -p /usr/local/node/trinket && chown trinket:trinket /usr/local/node/trinket
-
-USER trinket
-
-COPY --chown=trinket:trinket . /usr/local/node/trinket
+RUN groupadd -r trinket \
+    && useradd -r -g trinket -m -c "trinket user" trinket \
+    && mkdir -p /usr/local/node/trinket \
+    && chown trinket:trinket /usr/local/node/trinket
 
 WORKDIR /usr/local/node/trinket
 
-# Download frontend components from GitHub release
-RUN curl -L --silent -o ./public-components.tgz \
-    https://github.com/trinketapp/trinket-oss/releases/download/v1.1.0/public-components.tgz \
-    && tar xzf public-components.tgz \
-    && rm public-components.tgz
+# Abhängigkeiten zuerst (Layer-Cache), inkl. devDependencies für den CSS-Build (vite, sass)
+COPY --chown=trinket:trinket package.json package-lock.json ./
+RUN npm ci --legacy-peer-deps --include=dev \
+    && npm cache clean --force
 
-RUN npm install --legacy-peer-deps
+COPY --chown=trinket:trinket . .
 
-ARG COMMIT_ID
-ARG NODE_ENV
-ENV NODE_ENV=$NODE_ENV
+# Frontend-Komponenten (Ace, Skulpt, Blockly, GlowScript …) liegen nicht im Repo,
+# sondern als Tarball im GitHub-Release. Überschreibbar mit --build-arg COMPONENTS_URL=…
+ARG COMPONENTS_URL=https://github.com/trinketapp/trinket-oss/releases/download/v1.1.0/public-components.tgz
+RUN curl -fsSL -o /tmp/public-components.tgz "$COMPONENTS_URL" \
+    && tar xzf /tmp/public-components.tgz \
+    && rm /tmp/public-components.tgz \
+    && test -d public/components \
+    && chown -R trinket:trinket public
+
+# SCSS → public/css/*.css
+RUN npm run build:css \
+    && chown -R trinket:trinket public/css \
+    && chmod +x docker/entrypoint.sh
+
+ENV NODE_ENV=production \
+    NODE_CONFIG_PERSIST_ON_CHANGE=N
+
+USER trinket
 
 EXPOSE 3000
 
-CMD ["pm2-docker", "start", "app.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD curl -fsS http://localhost:3000/healthz || exit 1
+
+ENTRYPOINT ["/usr/local/node/trinket/docker/entrypoint.sh"]
+CMD ["node", "app.js"]

@@ -1,0 +1,12 @@
+# Immer LF – CRLF in Shell-Skripten legt den Container lahm.
+* text=auto eol=lf
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.tgz binary

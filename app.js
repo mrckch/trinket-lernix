@@ -300,6 +300,14 @@ const init = async () => {
   // Register helpers
   Helpers.register(server);
 
+  // Health check for Docker/NPM – no session, no template, no database access
+  server.route({
+    method: 'GET',
+    path: '/healthz',
+    options: { auth: false },
+    handler: (request, h) => h.response('ok\n').type('text/plain')
+  });
+
   // Register routes
   server.route(config.routes);
 

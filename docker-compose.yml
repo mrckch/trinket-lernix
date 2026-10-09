@@ -1,40 +1,125 @@
+# Trinket Lernix – Betrieb. Siehe docs/lernix/PLAN.md.
+#
+# TLS terminiert der externe Nginx Proxy Manager. Die App veröffentlicht genau
+# einen Port (APP_PORT); per Host-Firewall nur für den NPM öffnen. MongoDB und
+# Redis sind nur im internen Netz erreichbar.
+#
+#   docker compose up -d --build                                   Betrieb
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build   Entwicklung
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   app:
     build: .
-    image: trinket/app:latest
-    ports:
-      - 3000:3000
-    container_name: trinket
-    volumes:
-      - .:/usr/local/node/trinket
-      - node_modules:/usr/local/node/trinket/node_modules
-      - public_components:/usr/local/node/trinket/public/components
+    image: trinket-lernix/app:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-trinket}-app
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      AUTH_MODE: ${AUTH_MODE:-iserv}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      SITE_NAME: ${SITE_NAME:-Trinket Lernix}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.1}
+      ADMIN_IP_ALLOWLIST: ${ADMIN_IP_ALLOWLIST:-127.0.0.1/32}
+      ISERV_ISSUER: ${ISERV_ISSUER:-}
+      ISERV_CLIENT_ID: ${ISERV_CLIENT_ID:-}
+      ISERV_CLIENT_SECRET: ${ISERV_CLIENT_SECRET:-}
+      ISERV_TEACHER_MARKERS: ${ISERV_TEACHER_MARKERS:-lehrer,teacher,kollegium}
+      BREAKGLASS_EMAIL: ${BREAKGLASS_EMAIL:-}
+      BREAKGLASS_PASSWORD: ${BREAKGLASS_PASSWORD:-}
+      MONGO_HOST: mongodb
+      MONGO_DB: ${MONGO_DB:-trinket}
+      MONGO_USER: ${MONGO_USER:-trinket}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      REDIS_ENABLED: "true"
+      REDIS_HOST: redis
     networks:
-      - trinket
-    links:
-      - redis
-      - mongodb
-  redis:
-    image: redis:latest
+      - internal
     ports:
-      - 16379:6379
-    container_name: redis
-    networks:
-      - trinket
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-8090}:3000"
+    logging: *logging
+
   mongodb:
-    image: mongo:5
-    ports:
-      - 17017:27017
-    container_name: mongodb
-    volumes:
-      - mongodb_data:/data/db
+    image: mongo:7
+    container_name: ${COMPOSE_PROJECT_NAME:-trinket}-db
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-trinket}
+      MONGO_DB: ${MONGO_DB:-trinket}
+      MONGO_USER: ${MONGO_USER:-trinket}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
     networks:
-      - trinket
+      - internal
+    volumes:
+      - mongo-data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/01-app-user.js:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' | grep -q 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    logging: *logging
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-trinket}-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - internal
+    volumes:
+      - redis-data:/data
+    logging: *logging
+
+  # Tägliches mongodump ins Volume backups, 30 Tage Aufbewahrung (Muster wie LeFo).
+  db-backup:
+    image: mongo:7
+    container_name: ${COMPOSE_PROJECT_NAME:-trinket}-backup
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_DB: ${MONGO_DB:-trinket}
+      MONGO_USER: ${MONGO_USER:-trinket}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+    networks:
+      - internal
+    volumes:
+      - backups:/backups
+    entrypoint:
+      - sh
+      - -c
+      - |
+        while true; do
+          ts=$$(date +%Y%m%d-%H%M);
+          echo "[backup] dump $$ts";
+          mongodump --host mongodb --db "$$MONGO_DB" \
+            --username "$$MONGO_USER" --password "$$MONGO_PASSWORD" \
+            --archive="/backups/trinket-$$ts.archive.gz" --gzip --quiet;
+          find /backups -name 'trinket-*.archive.gz' -mtime +30 -delete;
+          sleep 86400;
+        done
+    logging: *logging
+
 networks:
-  trinket:
-    driver: bridge
+  internal:
+
 volumes:
-  shared-cache:
-  node_modules:
-  public_components:
-  mongodb_data:
+  mongo-data:
+  redis-data:
+  backups:

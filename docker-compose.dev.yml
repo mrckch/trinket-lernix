@@ -1,0 +1,28 @@
+# Lokale Entwicklung – NICHT auf Produktions-Hosts verwenden.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+#
+# Quellcode wird in den Container gemountet (Änderungen an Templates/JS sofort
+# sichtbar, Node-Code nach `docker compose restart app`). Dev-Login ohne IServ.
+
+services:
+  app:
+    environment:
+      NODE_ENV: development
+      AUTH_MODE: dev
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8090}
+    volumes:
+      - .:/usr/local/node/trinket
+      # Aus dem Image übernehmen, nicht vom Host überdecken:
+      - /usr/local/node/trinket/node_modules
+      - /usr/local/node/trinket/public/components
+      - /usr/local/node/trinket/public/css
+    # Port kommt aus der Basis-Datei; in der .env für Entwicklung APP_BIND=127.0.0.1 setzen.
+    # (Ein zweiter ports-Eintrag hier würde angehängt, nicht ersetzt → "address already in use".)
+
+  mongodb:
+    ports:
+      - "127.0.0.1:27017:27017"
+
+  db-backup:
+    profiles: ["backup"]   # im Dev-Betrieb nicht starten
