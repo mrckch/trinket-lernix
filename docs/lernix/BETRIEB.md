@@ -219,7 +219,7 @@ Editor-Beschriftungen („[Blank Python Trinket]“) sind noch englisch.
 - Testinstanz `trinkete2e` (nur `127.0.0.1:8091`, Test-Login) läuft auf der VM; Aufbau und Abbau in
   ENTWICKLUNG.md. Sie berührt Produktion nicht (eigenes Projekt, eigene Volumes, Image-Tag `:e2e`).
 - Kurs „TurtleCoder-Reihe Klasse 6 (Blöcke) – Vorlage“ (12 Lektionen, 105 Materialien) per API in Marcs
-  Konto importiert; Quelle und Generator: `C:\Coding\TurtleCoder_Reihe	ools	rinket_export.py`,
+  Konto importiert; Quelle und Generator: `C:\Coding\TurtleCoder_Reihe\tools\trinket_export.py`,
   Anleitung `TRINKET.md` dort.
 - SchulAssistent: Werkzeuge `trinket_*` (Rückmeldung als Entwurf, Senden nur nach Bestätigung);
   Token einmalig mit `python -m apps_konnektor token trinket` hinterlegen.
