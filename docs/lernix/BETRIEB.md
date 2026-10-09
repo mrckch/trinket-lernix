@@ -177,6 +177,7 @@ docker compose logs app | grep -i "iserv\|fehler\|error" | tail -50
 | Editor-Feld bleibt leer, Konsole: `$.widget is not a function` | jQuery UI nicht geladen → `docker compose exec app node scripts/vendor-fetch.js --check`; Pfade in `config/default.yaml` → `components` |
 | Image-Bau bricht mit „externe CDN-Verweise“ ab | neuer CDN-Link im Code → Datei in `config/vendor.json` aufnehmen, Verweis auf `/vendor/…` ändern (ADR 0005) |
 | `trinket.lernix.site` im Heimnetz „nicht gefunden“ | Pi-hole-Cache (siehe Abschnitt 6) |
+| *Einstellungen → Daten → Export* bleibt hängen | Bekannt: Der Export eigener Trinkets lädt nach Amazon S3 hoch (`lib/workers/exports.js`), das es hier nicht gibt. Noch nicht repariert; Kurs-Export für Lehrkräfte ist geplant |
 
 ## 11. Inbetriebnahme 2026-10-09 – Protokoll
 
