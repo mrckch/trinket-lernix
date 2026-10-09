@@ -1,6 +1,13 @@
 app:
   usersubdomains: false
   start: false
+  auth:
+    mode: dev   # Tests registrieren und melden sich lokal an
+  plugins:
+    session:
+      cookieOptions:
+        password: 'test-session-secret-nur-fuer-mocha-mindestens-32-zeichen'
+        isSecure: false
   log:
     level: error
   trinketLibraryUser: testlibraryuser
@@ -9,3 +16,5 @@ db:
     host: localhost
     port: 27017
     database: test
+  redis:
+    enabled: false   # In-Memory-Store, kein Redis im Test nötig

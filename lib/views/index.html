@@ -46,12 +46,15 @@
 <div class="row" style="padding-bottom: 40px;">
   <div class="small-12 medium-6 medium-offset-3 columns text-center">
     <div class="row">
-      <div class="small-6 columns">
-        <a href="/signup" class="button success expand" style="margin-bottom: 0;">Sign Up</a>
+      {% if config.app.auth.mode == 'iserv' and config.app.auth.iserv.clientID %}
+      <div class="small-12 columns">
+        <a href="/auth/iserv" class="button success expand" style="margin-bottom: 0;"><i class="fa fa-sign-in"></i> Mit IServ anmelden</a>
       </div>
-      <div class="small-6 columns">
-        <a href="/login" class="button expand" style="margin-bottom: 0;">Log In</a>
+      {% else %}
+      <div class="small-12 columns">
+        <a href="/login" class="button expand" style="margin-bottom: 0;">Anmelden</a>
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

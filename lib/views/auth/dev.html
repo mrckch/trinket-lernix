@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+  <div class="row">
+    <div class="medium-8 medium-offset-2 small-12 columns">
+      <h2 class="text-center">Test-Anmeldung (nur Entwicklung)</h2>
+      <p class="text-center">Legt ein Konto ohne IServ an oder meldet es an. Nur mit <code>AUTH_MODE=dev</code> erreichbar.</p>
+      {% if flash.failure.message %}
+        <small class="error">{{ flash.failure.message }}</small>
+      {% endif %}
+    </div>
+  </div>
+
+  <form id="dev-login-form" action="/auth/dev" method="post">
+    <div class="row">
+      <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
+        <label>E-Mail
+          <input type="text" name="email" value="{{ flash.payload.email or 'lehrkraft@schule.test' }}" required />
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
+        <label>Anzeigename
+          <input type="text" name="fullname" value="{{ flash.payload.fullname or 'Test-Lehrkraft' }}" required />
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
+        <label>Rolle
+          <select name="role">
+            {% for role in roles %}
+            <option value="{{ role }}" {% if role == 'teacher' %}selected{% endif %}>{{ role }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
+        <input class="button primary" type="submit" value="Anmelden" />
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

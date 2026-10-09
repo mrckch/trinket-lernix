@@ -1,22 +1,29 @@
-{% if config.app.auth.google and config.app.auth.google.clientID %}
+{# Anmeldewege: IServ (Produktion) bzw. Test-Login (Entwicklung) #}
+{% if config.app.auth.mode == 'iserv' %}
 <div class="row">
   <div class="small-12 columns text-center login-div">
-    <a
-      class="login-button save-form"
-      {% if not skipAuthInit %}data-auth-init="Google"{% endif %}
-      href="/auth/google{% if loginNext %}?next={{ loginNext }}{% endif %}"
-    >
-      <img
-        class="plain" id="google-image"
-        src="{{ '/img/icons/google/btn_google_signin_dark_normal_web@2x.png' | cachePrefix }}"
-        alt="Sign In with Google" title="Sign In with Google"
-      />
+    {% if config.app.auth.iserv.clientID %}
+    <a class="button large primary" href="/auth/iserv">
+      <i class="fa fa-sign-in"></i> Mit IServ anmelden
+    </a>
+    {% else %}
+    <div data-alert class="alert-box warning radius">
+      Die IServ-Anmeldung ist noch nicht eingerichtet. Bitte an die Administration wenden.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% elif config.app.auth.mode == 'dev' %}
+<div class="row">
+  <div class="small-12 columns text-center login-div">
+    <a class="button large secondary" href="/auth/dev">
+      <i class="fa fa-flask"></i> Test-Anmeldung (Entwicklung)
     </a>
   </div>
 </div>
 <div class="row">
   <div class="medium-8 medium-offset-2 small-12 columns text-center">
-    <p class="decorated"><span>or</span></p>
+    <p class="decorated"><span>oder</span></p>
   </div>
 </div>
 {% endif %}

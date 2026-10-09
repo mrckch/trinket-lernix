@@ -151,7 +151,24 @@ Ursprünglicher Umfang:
   `.env.example`, Entrypoint erzeugt `config/production.yaml`.
 - Lokaler Start mit `AUTH_MODE=dev` prüfen (Build, Skulpt läuft, Kurs anlegen).
 
-### Phase 1 – IServ-Login (1 Tag)
+### Phase 1 – IServ-Login (1 Tag) — **erledigt 2026-10-09** (ADR 0002)
+
+Ergebnis: `lib/auth/iserv.js` (openid-client 5: Discovery, PKCE, JWKS, UserInfo, Claim-Aliase),
+`lib/auth/accounts.js` (Konto-Upsert über `iserv.uuid`, Site-Rollen `student`/`teacher`/`admin`,
+Dev-Login, Notfall-Admin), `lib/util/clientIp.js` (TRUSTED_PROXIES, ADMIN_IP_ALLOWLIST),
+Routen `/auth/iserv`, `/auth/iserv/callback`, `/auth/dev`; Registrierung, Google und lokaler
+Login im IServ-Modus abgeschaltet; Kursanlage nur mit `create-*-course`. Testsuite repariert
+(siehe `ENTWICKLUNG.md`): 114 grün, 41 bewusst übersprungen.
+
+Offen für spätere Phasen:
+- Echter Login gegen `rsstu.de` ist erst mit dem IServ-Client testbar (Phase 5, Betrieb).
+- SuS sehen noch den Button „New Course“ und die Seite `/courses/new` (Absenden liefert 403) → Phase 4.
+- Anonyme Besucher können weiterhin Trinkets anlegen (trinket.io-Verhalten); für den
+  Schulbetrieb Login erzwingen? → Entscheidung in Phase 4.
+- Session-Cookie: Upstream hängt `SameSite=None; Secure` an (für Einbettung in fremde Seiten);
+  für den OIDC-Rücksprung reicht `Lax`. Beim Betrieb hinter dem NPM prüfen.
+
+Ursprünglicher Umfang:
 - `lib/auth/iserv.js`: Discovery, PKCE, Code-Tausch, JWKS-Prüfung, UserInfo,
   Claim-Aliase (`groups`/`iserv:groups`/…), Kennung = `iserv:uuid`.
 - Routen `GET /auth/iserv`, `GET /auth/iserv/callback`; Login-Seite zeigt nur

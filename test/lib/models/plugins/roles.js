@@ -4,7 +4,9 @@ var _        = require('underscore'),
     defaults = require('../../../helpers/defaults'),
     plugin   = require('../../../../lib/models/plugins/roles');
 
-describe('roles plugin', function() {
+// Trinket Lernix: Die Abo-Rollen (trinket-code, trinket-connect, limits/thru) gibt es nicht mehr,
+// Site-Rollen werden über lib/auth/accounts.js gesetzt (test/lib/api/auth.js). Suite bleibt als Referenz.
+describe.skip('roles plugin', function() {
   describe('class methods', function() {
     var user;
 

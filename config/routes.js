@@ -525,23 +525,71 @@ routes = [
     route : 'GET /docs/colors pages.index',
     html  : 'docs/colors.html'
   },
+  // --- Anmeldung über IServ (Trinket Lernix) ---------------------------------
   {
-    route : 'GET /auth/google auth.google',
+    route : 'GET /auth/iserv auth.iserv',
+    cookie : true,
+    fail : {
+      redirect : '/login'
+    },
+    config : {
+      auth : false,
+      validate : {
+        query : {
+          next : Joi.string().optional()
+        }
+      }
+    }
+  },
+  {
+    route : 'GET /auth/iserv/callback auth.iservCallback',
+    cookie  : true,
+    success : {
+      redirect : '{redirectTo}'
+    },
+    fail : {
+      redirect : '/login'
+    },
+    config : {
+      auth : false,
+      validate : {
+        query : {
+          code              : Joi.string().optional(),
+          state             : Joi.string().optional(),
+          error             : Joi.string().optional(),
+          error_description : Joi.string().optional(),
+          scope             : Joi.string().optional(),
+          iss               : Joi.string().optional()
+        }
+      }
+    }
+  },
+  // --- Test-Anmeldung ohne IServ (nur AUTH_MODE=dev) ---------------------------
+  {
+    route : 'GET /auth/dev auth.devForm',
+    html  : 'auth/dev.html',
     config : {
       auth : false
     }
   },
   {
-    route : 'GET /auth/google/callback auth.googleCallback',
+    route : 'POST /auth/dev auth.devLogin',
     cookie  : true,
-    success: {
-      redirect:  '{redirectTo}'
+    success : {
+      redirect : '{redirectTo}'
     },
-    fail: {
-      redirect: '/signup'
+    fail : {
+      redirect : '/auth/dev'
     },
     config : {
-      auth : false
+      auth : false,
+      validate : {
+        payload : {
+          email    : Joi.string().max(200).regex(/^[^@\s]+@[^@\s]+$/).required(),
+          fullname : Joi.string().max(80).required(),
+          role     : Joi.string().valid('student', 'teacher', 'admin').required()
+        }
+      }
     }
   },
 ];

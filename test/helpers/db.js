@@ -6,7 +6,10 @@ var _            = require('underscore'),
 
 function DB() {
   this._isConnected = false;
-  _.bindAll(this, 'ensureConnection', 'reset');
+  // Nicht _.bindAll: gebundene Funktionen haben Arity 0, dann übergibt Mocha kein `done`.
+  var self = this;
+  this.ensureConnection = function(done) { return DB.prototype.ensureConnection.call(self, done); };
+  this.reset            = function(done) { return DB.prototype.reset.call(self, done); };
 }
 
 _.extend(DB.prototype, {

@@ -37,6 +37,8 @@ try {
 const mailer         = require('./lib/util/mailer');
 const viewEngine     = require('./lib/util/nunjucks');
 const CatboxMongoose = require('./lib/util/catbox-mongoose');
+const clientIp       = require('./lib/util/clientIp');
+const accounts       = require('./lib/auth/accounts');
 const fs             = require('fs');
 const path           = require('path');
 
@@ -286,6 +288,15 @@ const init = async () => {
   // Make session auth the default but don't require it
   server.auth.default({ strategy: 'session', mode: 'try' });
 
+  // Admin-Bereich nur aus ADMIN_IP_ALLOWLIST (fail closed). Die App ist maßgeblich,
+  // ein allow/deny im Nginx Proxy Manager kommt nur zusätzlich (LeFo ADR 0002).
+  server.ext('onPreAuth', (request, h) => {
+    if (clientIp.isAdminPath(request.path) && !clientIp.isAdminIp(request)) {
+      throw Boom.forbidden('Der Admin-Bereich ist aus diesem Netz nicht erreichbar.');
+    }
+    return h.continue;
+  });
+
   // Load models (global for backwards compatibility)
   User     = require('./lib/models/user');
   Course   = require('./lib/models/course');
@@ -296,6 +307,13 @@ const init = async () => {
   Interaction = require('./lib/models/interaction');
   Folder   = require('./lib/models/folder');
   CourseInvitation = require('./lib/models/courseInvitation');
+
+  // Lokalen Notfall-Admin aus BREAKGLASS_EMAIL/BREAKGLASS_PASSWORD sicherstellen
+  try {
+    await accounts.ensureBreakglass();
+  } catch (err) {
+    log.error('Notfall-Admin konnte nicht angelegt werden: ' + (err.stack || err));
+  }
 
   // Register helpers
   Helpers.register(server);
@@ -317,6 +335,11 @@ const init = async () => {
     log.info('Server started on port: ' + server.info.port);
 
     detectLeaks();
+  }
+  else {
+    // Tests (config.app.start = false): Caches/Plugins initialisieren, ohne einen Port zu öffnen –
+    // sonst ist der Session-Cache "Disconnected" und jede Anfrage endet mit 500.
+    await server.initialize();
   }
 
   return server;

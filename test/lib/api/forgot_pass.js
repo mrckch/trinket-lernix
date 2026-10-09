@@ -6,7 +6,8 @@ var sinon         = require('sinon'),
     defaults      = require('../../helpers/defaults');
 
 module.exports = function() {
-  describe('Forgot Password', function() {
+  // Trinket Lernix: Mail ist aus (ADR 0002), Passwort-Reset entfällt mit dem IServ-Login.
+  describe.skip('Forgot Password', function() {
     describe('When entering an invalid email address', function() {
       before(function(done) {
         flow.switchUser('');

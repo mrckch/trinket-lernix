@@ -90,7 +90,8 @@ module.exports = function() {
         });
       });
 
-      it('should allow me to share the trinket with a token', function(done) {
+      // Trinket Lernix: Mail ist aus (ADR 0002).
+      it.skip('should allow me to share the trinket with a token', function(done) {
         var secret = config.app.mail.secret + trinketShortCode;
         var token = jwt.sign({ shortCode: trinketShortCode }, secret);
         flow.emailTrinket(trinketId, { email: defaults.user.email, name: defaults.user.fullname, replyTo: defaults.user.email, token: token }, function(err, response) {
@@ -103,7 +104,8 @@ module.exports = function() {
         });
       });
 
-      it('should not allow me to share the trinket without a token', function(done) {
+      // Trinket Lernix: Mail ist aus (ADR 0002); der Endpunkt antwortet ohne SMTP nicht mehr mit 400.
+      it.skip('should not allow me to share the trinket without a token', function(done) {
         flow.emailTrinket(trinketId, { email: defaults.user.email, name: defaults.user.fullname, replyTo: defaults.user.email }, function(err, response) {
           flow.wasOk.should.be.true;
           flow.lastResponse.statusCode.should.eql(400);

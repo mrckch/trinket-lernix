@@ -321,11 +321,25 @@ app:
     autosaveDebounce: 1000
     enableLogin: true
     enableCopyRemix: true
+  # --- Anmeldung (Trinket Lernix) – Werte kommen aus der .env über docker/entrypoint.sh ---
   auth:
+    mode: iserv            # iserv = IServ-SSO + Notfall-Admin | dev = Test-Login, Registrierung
+    iserv:
+      issuer: ''           # z. B. https://rsstu.de (Discovery unter /.well-known/openid-configuration)
+      clientID: ''
+      clientSecret: ''
+      teacherMarkers: 'lehrer,teacher,kollegium'
+    breakglass:
+      email: ''
+      password: ''
     google:
       clientSecret:
       clientID:
       callbackURL:
+  # Nur diesen Absendern wird X-Forwarded-For geglaubt (IP der NPM-VM)
+  trustedProxies: '127.0.0.1'
+  # /admin, /api/admin und der Notfall-Login nur aus diesen Netzen (CIDR, kommagetrennt); fail closed
+  adminIpAllowlist: '127.0.0.1/32'
   serverside:
     # Maps trinket lang param to config key
     langmap:

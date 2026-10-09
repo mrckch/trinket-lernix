@@ -27,7 +27,8 @@ module.exports = function() {
         user.remove(done);
       });
 
-      it('should allow me to update my username, name and avatar', function(done) {
+      // Trinket Lernix: config.cloud (Avatar-Container) gibt es in trinket-oss nicht mehr.
+      it.skip('should allow me to update my username, name and avatar', function(done) {
         var updates = {
           username : 'hanz',
           name : 'hanz',

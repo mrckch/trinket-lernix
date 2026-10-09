@@ -18,6 +18,10 @@ RUN groupadd -r trinket \
 
 WORKDIR /usr/local/node/trinket
 
+# Ab hier als App-Benutzer, damit node_modules, Komponenten und CSS ihm gehören
+# (nötig für `npm install` im Dev-Container mit gemountetem Quellcode).
+USER trinket
+
 # Abhängigkeiten zuerst (Layer-Cache), inkl. devDependencies für den CSS-Build (vite, sass)
 COPY --chown=trinket:trinket package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps --include=dev \
@@ -31,18 +35,14 @@ ARG COMPONENTS_URL=https://github.com/trinketapp/trinket-oss/releases/download/v
 RUN curl -fsSL -o /tmp/public-components.tgz "$COMPONENTS_URL" \
     && tar xzf /tmp/public-components.tgz \
     && rm /tmp/public-components.tgz \
-    && test -d public/components \
-    && chown -R trinket:trinket public
+    && test -d public/components
 
 # SCSS → public/css/*.css
 RUN npm run build:css \
-    && chown -R trinket:trinket public/css \
     && chmod +x docker/entrypoint.sh
 
 ENV NODE_ENV=production \
     NODE_CONFIG_PERSIST_ON_CHANGE=N
-
-USER trinket
 
 EXPOSE 3000
 

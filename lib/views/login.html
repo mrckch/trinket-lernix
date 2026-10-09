@@ -12,17 +12,27 @@
         <a href="#" class="close">&times;</a>
       </div>
       {% endif %}
-      <h2 class="text-center">Log In</h2>
+      <h2 class="text-center">Anmelden</h2>
     </div>
   </div>
 
   {% include "includes/login-buttons.html" %}
 
-  <form id="login-form" action="/login" method="post">
+  {% set localLogin = config.app.auth.mode != 'iserv' %}
+
+  {% if not localLogin %}
+  <div class="row">
+    <div class="medium-8 medium-offset-2 small-12 columns text-center">
+      <p><a href="#" id="show-breakglass" class="text-link">Notfallzugang (nur Administration)</a></p>
+    </div>
+  </div>
+  {% endif %}
+
+  <form id="login-form" action="/login" method="post" {% if not localLogin %}style="display:none"{% endif %}>
     <div class="row">
       <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
         <label
-          {% if flash.validation.email %}class="error"{% endif %}>Email address or username
+          {% if flash.validation.email %}class="error"{% endif %}>{% if localLogin %}E-Mail oder Benutzername{% else %}E-Mail des Notfall-Admins{% endif %}
           <input type="text" name="email" value="{{ flash.payload.email }}" required />
         </label>
         {% if flash.validation.email %}
@@ -33,36 +43,34 @@
 
     <div class="row">
       <div class="medium-6 medium-offset-3 small-10 small-offset-1 columns">
-        <label>Password
+        <label>Passwort
           <input id="password-box" type="password" name="password" required />
-          {% if emailEnabled %}<div id="forgot-label">Forgot your password? <a href="/forgot-pass">Get reset instructions.</a></div>{% endif %}
+          {% if emailEnabled and localLogin %}<div id="forgot-label">Passwort vergessen? <a href="/forgot-pass">Zurücksetzen</a></div>{% endif %}
         </label>
       </div>
     </div>
 
     <div class="row">
       <div class="medium-2 medium-offset-3 small-4 small-offset-1 columns">
-        <input class="button primary" type="submit" value="log in"/>
+        <input class="button primary" type="submit" value="Anmelden"/>
       </div>
     </div>
 
+    {% if localLogin %}
     <div class="row">
       <div class="small-12 columns text-center">
-        <p>Need to create an account? <a href="/signup">Sign Up</a></p>
+        <p>Noch kein Konto? <a href="/signup">Registrieren</a></p>
       </div>
     </div>
-
+    {% endif %}
   </form>
 </div>
 
 {% if flash.courseInvitation %}
 <div id="courseInvitationModal" class="reveal-modal small" data-reveal>
-  <h2>Login to Trinket</h2>
-  <p>To join <strong>{{ flash.courseInvitation.course.name }}</strong>, you'll need to login or create a free account first.</p>
-  <hr>
-  <p>If you already have a Trinket account, just login below and you'll be automatically added to your course.</p>
-  <p>Don't have a Trinket account? Sign up <a href="/signup">here</a> to create your account.</p>
-  <p>Questions? Click the <i class="fa fa-question-circle"></i> Help link at the top of the page or contact your instructor.</p>
+  <h2>Anmelden</h2>
+  <p>Um <strong>{{ flash.courseInvitation.course.name }}</strong> beizutreten, melde dich zuerst an.</p>
+  <p>Fragen? Klicke oben auf <i class="fa fa-question-circle"></i> Hilfe oder wende dich an deine Lehrkraft.</p>
   <a class="close-reveal-modal">&#215;</a>
 </div>
 {% endif %}
@@ -72,6 +80,14 @@
 <script>
 {% if flash.courseInvitation %}
   $("#courseInvitationModal").foundation('reveal', 'open');
+{% endif %}
+  $("#show-breakglass").on("click", function(e) {
+    e.preventDefault();
+    $("#login-form").show();
+    $(this).hide();
+  });
+{% if flash.failure.message and not localLogin %}
+  $("#login-form").show(); $("#show-breakglass").hide();
 {% endif %}
 </script>
 {% endblock %}

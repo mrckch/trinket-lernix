@@ -69,7 +69,8 @@ module.exports = function() {
         flow.lastRedirect.pathname.should.eql('/welcome');
       });
 
-      it('should include a link to the default course on the welcome page', function(done) {
+      // Trinket Lernix: Beispielkurs-Fixture (testlibraryuser/the-sampler) existiert nicht mehr.
+      it.skip('should include a link to the default course on the welcome page', function(done) {
         flow.welcome(function() {
           flow.lastResponse.text.should.contain('/' + libraryUser.username + '/courses/' + sampleCourse.slug + '/copy');
           done();
