@@ -215,6 +215,19 @@ module.exports = function() {
         });
       });
 
+      it('sperrt ein altes Notfall-Konto, wenn BREAKGLASS_EMAIL geändert wurde', function(done) {
+        config.app.auth.mode = 'iserv';
+        config.app.adminIpAllowlist = '127.0.0.1/32,::1/128';
+        config.app.auth.breakglass = { email : 'neu-notfall@schule.test', password : 'Notfall-Passwort-2' };
+        flow.switchUser('breakglass3');
+        flow.login({ email : 'notfall@schule.test', password : 'Notfall-Passwort-1' }, function(err, res) {
+          config.app.auth.breakglass = { email : 'notfall@schule.test', password : 'Notfall-Passwort-1' };
+          res.statusCode.should.eql(302);
+          flow.lastRedirect.pathname.should.eql('/login');
+          done();
+        });
+      });
+
       it('wird aus einem fremden Netz abgewiesen', function(done) {
         config.app.auth.mode = 'iserv';
         config.app.adminIpAllowlist = '10.99.0.0/16';

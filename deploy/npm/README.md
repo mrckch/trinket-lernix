@@ -19,9 +19,10 @@ ist überall vertrauenswürdig).
 
 ## 2. Admin-Bereich zusätzlich absichern
 
-Inhalt von [`advanced.conf`](advanced.conf) in den Reiter **Advanced** kopieren und die
-`allow`-Zeilen an das Verwaltungsnetz anpassen (gleiche Werte wie `ADMIN_IP_ALLOWLIST`).
-Maßgeblich bleibt die App; der NPM weist nur früher ab.
+Optional, nur wenn `ADMIN_IP_ALLOWLIST` ein Netz einschränkt (im Betrieb ist sie `*`, dann
+diesen Schritt weglassen): Inhalt von [`advanced.conf`](advanced.conf) in den Reiter **Advanced**
+kopieren und die `allow`-Zeilen anpassen. Maßgeblich bleibt die App; der NPM weist nur früher ab.
+Achtung: Clients aus dem Heimnetz kommen per Hairpin-NAT mit der Router-Adresse `192.168.1.1` an.
 
 ## 3. `.env` auf der Docker-VM
 
@@ -29,12 +30,13 @@ Maßgeblich bleibt die App; der NPM weist nur früher ab.
 - `ADMIN_IP_ALLOWLIST` – Verwaltungsnetz (CIDR, kommagetrennt).
 - `PUBLIC_BASE_URL=https://trinket.lernix.site` – muss zum Proxy Host und zur IServ-Redirect-URI passen.
 
-## 4. Port abschotten
+## 4. DNS und Port
 
-```bash
-ufw allow from 192.168.1.20 to any port 8090 proto tcp
-ufw deny 8090/tcp
-```
+- Namecheap: **CNAME** Host `trinket` → `lernix.site.` (Host-Feld ist relativ). Erst wenn der Name
+  auflöst, das Zertifikat anfordern.
+- Port 8090: Auf dockervm2 gibt es kein `ufw`, Docker-Ports umgehen es ohnehin. Entschieden
+  (2026-10-09): Port bleibt im Heimnetz offen wie bei den anderen Apps. Variante „nur NPM“ siehe
+  BETRIEB.md Abschnitt 4 (`DOCKER-USER`-Regel).
 
 ## 5. Prüfen
 

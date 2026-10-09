@@ -10,7 +10,7 @@
 | Direkt im Heimnetz | `http://192.168.1.41:8090` |
 | NPM-VM | `192.168.1.20` (= `TRUSTED_PROXIES`) |
 | Anmeldung | `AUTH_MODE=iserv` — SuS und Lehrkräfte über IServ (`rsstu.de`), sonst nur der Notfall-Admin |
-| Admin-Bereich `/admin` | nur aus `ADMIN_IP_ALLOWLIST` (Default `192.168.1.0/24`) |
+| Admin-Bereich `/admin` | nur mit Admin-Rolle; IP-Sperre per `ADMIN_IP_ALLOWLIST` – im Betrieb `*` (keine IP-Beschränkung, Entscheidung Marc 2026-10-09) |
 | Container | `trinket-app`, `trinket-db`, `trinket-redis`, `trinket-backup`, `trinket-maintenance` |
 | Volumes | `trinket_mongo-data` (alle Daten), `trinket_redis-data` (Cache, verzichtbar), `trinket_backups` (tägliche Dumps, 30 Tage) |
 
@@ -36,7 +36,7 @@ braucht beim Bau Internet (GitHub-Release mit Ace/Skulpt/Blockly, cdnjs, npm).
 |---|---|
 | `APP_PORT` | `8090` (8070 ist das Glossar) |
 | `TRUSTED_PROXIES` | `192.168.1.20` |
-| `ADMIN_IP_ALLOWLIST` | `192.168.1.0/24` – Heimnetz; für Zugriff aus der Schule die öffentliche Schul-IP ergänzen |
+| `ADMIN_IP_ALLOWLIST` | Im Betrieb `*` (Admin-Bereich und Notfallzugang von überall, geschützt durch Admin-Rolle bzw. 24-stelliges Zufallspasswort). Alternative: CIDR-Liste, z. B. `192.168.1.0/24` – aus dem Heimnetz kommt die App über den NPM mit **`192.168.1.1`** an (Hairpin-NAT des Routers), nicht mit der PC-Adresse |
 | `PUBLIC_BASE_URL` | `https://trinket.lernix.site` – daraus entsteht die IServ-Redirect-URI |
 | `SESSION_SECRET` | `openssl rand -hex 32` |
 | `AUTH_MODE` | `iserv` |
@@ -73,13 +73,18 @@ oder falsch eingestufte Anmeldungen stehen im Log mit den gelieferten Claim-*Nam
 
 Siehe [deploy/npm/README.md](../../deploy/npm/README.md): Proxy Host `trinket.lernix.site` →
 `http://192.168.1.41:8090`, Block Common Exploits, Force SSL, HTTP/2, Websockets **aus**.
-DNS: A-Record `trinket` → `93.205.103.135` wie die anderen lernix-Subdomains.
+DNS bei Namecheap: **CNAME** Host `trinket` → `lernix.site.` wie `glossar` und `lefo` (folgt der
+dynamischen Heim-IP). Das Host-Feld ist relativ – `trinket.lernix.site` als Host ergäbe
+`trinket.lernix.site.lernix.site`. Das Let's-Encrypt-Zertifikat erst anfordern, wenn der Name auflöst.
 
-Den App-Port nur für den NPM öffnen:
+**Port 8090 / Firewall:** Auf dockervm2 ist kein `ufw` installiert, und von Docker veröffentlichte
+Ports umgehen `ufw` ohnehin. Entscheidung (Marc, 2026-10-09): Port 8090 bleibt im Heimnetz
+erreichbar wie bei Glossar (8070) und Learning-Apps (8060); die App schützt sich selbst
+(Login-Pflicht, Rollen). Wer ihn doch nur für den NPM öffnen will, braucht eine Regel in der
+Docker-Kette `DOCKER-USER` (betrifft nur diesen Port, muss persistent gemacht werden):
 
 ```bash
-ufw allow from 192.168.1.20 to any port 8090 proto tcp
-ufw deny 8090/tcp
+iptables -I DOCKER-USER -p tcp -m conntrack --ctorigdstport 8090 --ctdir ORIGINAL ! -s 192.168.1.20 -j DROP
 ```
 
 ## 5. Erster Admin
@@ -93,11 +98,14 @@ ufw deny 8090/tcp
 ## 6. Prüfen
 
 - `https://trinket.lernix.site/healthz` → `ok`
+- Löst der Name im Heimnetz nicht auf, obwohl er öffentlich existiert: Der Pi-hole (`192.168.1.10`)
+  hat die frühere NXDOMAIN-Antwort bis zu 1 h im Cache → *Settings → System → Restart DNS resolver*
+  (oder `pihole restartdns`), danach am PC `ipconfig /flushdns`.
 - `https://trinket.lernix.site/` zeigt „Mit IServ anmelden“; Anmeldung als Lehrkraft und als
   Schüler:in testen (Rolle unter `/admin` sichtbar).
 - Ohne Anmeldung ist `/python` nicht erreichbar (Umleitung zum Login), eine Einbettung
   `/embed/python/<id>` eines vorhandenen Trinkets schon.
-- `/admin` von außerhalb der Allowlist → 403.
+- `/admin` von außerhalb der Allowlist → 403 (entfällt bei `ADMIN_IP_ALLOWLIST=*`).
 - Keine Verbindungen zu fremden Hosts: Browser-Netzwerkansicht zeigt nur `trinket.lernix.site`.
 
 ## 7. Update
@@ -120,6 +128,10 @@ Täglich schreibt `trinket-backup` einen komprimierten Dump nach `/backups` im V
 docker run --rm -v trinket_backups:/backups -v /root:/out alpine \
   sh -c 'cp /backups/$(ls -t /backups | head -1) /out/'
 ```
+
+Der erste automatische Dump direkt nach der Erstinstallation ist leer (DB noch ohne Daten).
+Einen frischen Dump ins Volume auslösen: `docker compose restart db-backup` (dumpt beim Start,
+dann alle 24 h).
 
 Manuell vor Updates:
 
@@ -162,3 +174,35 @@ docker compose logs app | grep -i "iserv\|fehler\|error" | tail -50
 | `/admin` → 403 | Absender nicht in `ADMIN_IP_ALLOWLIST`, oder `TRUSTED_PROXIES` ≠ NPM-IP (dann zählt die NPM-IP als Client) |
 | Seite ohne Styles | CSS-Build fehlt im Image → `docker compose build --no-cache app` |
 | Python läuft nicht | `public/components/skulpt` fehlt → Komponenten-Tarball im Bau prüfen (`COMPONENTS_URL`) |
+| Editor-Feld bleibt leer, Konsole: `$.widget is not a function` | jQuery UI nicht geladen → `docker compose exec app node scripts/vendor-fetch.js --check`; Pfade in `config/default.yaml` → `components` |
+| Image-Bau bricht mit „externe CDN-Verweise“ ab | neuer CDN-Link im Code → Datei in `config/vendor.json` aufnehmen, Verweis auf `/vendor/…` ändern (ADR 0005) |
+| `trinket.lernix.site` im Heimnetz „nicht gefunden“ | Pi-hole-Cache (siehe Abschnitt 6) |
+
+## 11. Inbetriebnahme 2026-10-09 – Protokoll
+
+| | |
+|---|---|
+| Stand | `/opt/trinket`, Branch `main`, `COMPOSE_PROJECT_NAME=trinket`, `APP_PORT=8090`, `APP_BIND=0.0.0.0` |
+| DNS | CNAME `trinket` → `lernix.site` (→ dynamische Heim-IP, am 09.10. `217.249.90.124`) |
+| NPM | Proxy-Host `trinket.lernix.site` → `http://192.168.1.41:8090`, Let's Encrypt, Force SSL, HSTS |
+| IServ-Client | „trinket.lernix.site“, vertrauenswürdig, Scopes `openid profile email iserv:uuid iserv:groups iserv:roles`, beschränkt auf Gruppen/Rollen Lehrer + Schüler |
+| Client-IP hinter NPM | aus dem Heimnetz `192.168.1.1` (Hairpin-NAT), `TRUSTED_PROXIES=192.168.1.20` greift |
+| `ADMIN_IP_ALLOWLIST` | `*` (Entscheidung Marc) |
+| Firewall | keine Änderung, Port 8090 im LAN offen wie die anderen Apps |
+| Notfall-Admin | Adresse und Passwort nur in der `.env` (`grep BREAKGLASS /opt/trinket/.env`); keine IServ-Adresse. Nach Änderung `docker compose up -d` – die App legt das Konto beim Start an bzw. setzt das Passwort neu |
+| Erster Admin | `marc.hoetten-loens@rsstu.de` (IServ, als Lehrkraft erkannt, per `make-admin`) |
+
+Live geprüft: Startseite/Login/Hilfe offen, `/python` → Login, `HEAD /` 200, Schriften unter
+`/assets/` ohne Anmeldung, IServ-Login mit Rolle Lehrkraft und 42 IServ-Gruppen in der Session,
+`/admin`, Kurs mit IServ-Gruppe `6aIF_06`, Lektion + Aufgabe (leeres Python-Trinket), Python im
+Editor (Skulpt), keine Anfragen an fremde Hosts (auch nicht im Editor-iframe), Einbettung eines
+vorhandenen Trinkets ohne Anmeldung, Token-Seite (Anlegen, Widerrufen), `/api/v1/me`,
+`/api/v1/courses`, `/api/v1/courses/<id>/lernstand` (auch über den NPM), 401 ohne/mit
+widerrufenem Token, Wartungs-Probelauf, Backup-Dump im Volume.
+
+Beim Deploy behoben (Commits auf `main`): Login-Rücksprung auf eine Schriftdatei nach dem
+IServ-Login, 500er auf `/login` für Angemeldete, Editor ohne jQuery UI, Dropzone-CSS vom CDN.
+
+Offen: Anmeldung mit einem Schülerkonto (Rolle Schüler:in, automatische Aufnahme in den Kurs der
+IServ-Gruppe) – es gab kein Test-Konto. Die Admin-Oberfläche (`/admin`) und einige
+Editor-Beschriftungen („[Blank Python Trinket]“) sind noch englisch.
