@@ -208,3 +208,19 @@ IServ-Login, 500er auf `/login` für Angemeldete, Editor ohne jQuery UI, Dropzon
 Offen: Anmeldung mit einem Schülerkonto (Rolle Schüler:in, automatische Aufnahme in den Kurs der
 IServ-Gruppe) – es gab kein Test-Konto. Die Admin-Oberfläche (`/admin`) und einige
 Editor-Beschriftungen („[Blank Python Trinket]“) sind noch englisch.
+
+### Nachtrag 2026-10-09/10 – Schreib-API, Export, iPad, TurtleCoder
+
+- Live: Schreib-API (ADR 0006), Kurs-Export (`abgaben.zip` / `export.zip`), S3 aus, iPad-Korrekturen,
+  Blöcke „schaue nach …“/„setze Stiftdicke auf“. Vor dem Deploy: Sicherung
+  `/root/trinket-vor-api-2026-10-09-2323.archive.gz`.
+- Lehrkräfte müssen sich nach dem Deploy einmal neu per IServ anmelden, damit die Token-API ihre
+  IServ-Gruppen kennt.
+- Testinstanz `trinkete2e` (nur `127.0.0.1:8091`, Test-Login) läuft auf der VM; Aufbau und Abbau in
+  ENTWICKLUNG.md. Sie berührt Produktion nicht (eigenes Projekt, eigene Volumes, Image-Tag `:e2e`).
+- Kurs „TurtleCoder-Reihe Klasse 6 (Blöcke) – Vorlage“ (12 Lektionen, 105 Materialien) per API in Marcs
+  Konto importiert; Quelle und Generator: `C:\Coding\TurtleCoder_Reihe	ools	rinket_export.py`,
+  Anleitung `TRINKET.md` dort.
+- SchulAssistent: Werkzeuge `trinket_*` (Rückmeldung als Entwurf, Senden nur nach Bestätigung);
+  Token einmalig mit `python -m apps_konnektor token trinket` hinterlegen.
+
