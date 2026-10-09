@@ -95,6 +95,12 @@
         scope.submittingCode = true;
         latestSubmission     = null;
 
+        // Kommentarfeld hat debounce 1000 ms: wer tippt und sofort abgibt, verlöre sonst den Kommentar
+        var commentField = element.find('textarea');
+        if (commentField.length) {
+          scope.submission.comments = commentField.val();
+        }
+
         angular.forEach(scope.submissions, function(submission, index) {
           if (submission.submissionState === "submitted" || submission.submissionState === "submittedLate") {
             latestSubmission = index;
