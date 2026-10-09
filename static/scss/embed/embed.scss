@@ -29,4 +29,9 @@
 @import "testoutput";
 @import "inline_comment";
 @import "Rlogo";
-@import "pygamelogo"
+@import "pygamelogo";
+
+// Lernix (iPad): Tooltips erscheinen auf Touch-Geräten beim Antippen und bleiben stehen
+@media (hover: none) {
+  .tooltip { display: none !important; }
+}

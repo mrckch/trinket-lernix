@@ -95,3 +95,10 @@ trinket-assignment {
 
   @import "assignments-common";
 }
+
+// Lernix (iPad): Editor in Aufgaben höher als die festen 400 px – Blöcke brauchen Platz
+.trinket-assignment iframe {
+  height: 70vh;
+  min-height: 400px;
+  max-height: 720px;
+}

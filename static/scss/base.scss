@@ -32,3 +32,8 @@
 @import "assignments";
 @import "dashboard";
 @import "modals";
+
+// Lernix (iPad): keine Tooltips auf Touch-Geräten
+@media (hover: none) {
+  .tooltip { display: none !important; }
+}
