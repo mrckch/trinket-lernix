@@ -239,15 +239,24 @@ Ursprünglicher Umfang:
 - Lehrkraft-Startseite: alle Kurse mit Abgabe-Zählern.
 - Branding: Name, Logo aus `.env`/`public/img`.
 
-### Phase 5 – Betrieb (½ Tag) — **Dokumentation fertig 2026-10-09, Deploy offen**
+### Phase 5 – Betrieb (½ Tag) — **erledigt 2026-10-09** (live unter https://trinket.lernix.site)
 
 Erledigt: `docs/lernix/BETRIEB.md` (Erstinstallation, `.env`, IServ-Client, NPM, erster Admin,
-Prüfen, Update, Backup/Restore, Aufbewahrung, Fehlersuche), `deploy/npm/README.md` +
-`advanced.conf`, deutsches `README.md`.
+Prüfen, Update, Backup/Restore, Aufbewahrung, Fehlersuche, Protokoll der Inbetriebnahme in
+Abschnitt 11), `deploy/npm/README.md` + `advanced.conf`, deutsches `README.md`.
 
-Offen (braucht Marc): Fork pushen (`git push -u origin main`), IServ-Client anlegen,
-DNS `trinket` → 93.205.103.135, NPM-Proxy-Host, Clone und `.env` auf der Docker-VM,
-erster Login und Admin-Rolle. Die Schritte stehen in BETRIEB.md in dieser Reihenfolge.
+Deploy 2026-10-09 auf dockervm2 (`/opt/trinket`, Port 8090), DNS-CNAME `trinket` → `lernix.site`,
+NPM mit Let's Encrypt, IServ-Client „trinket.lernix.site“. Live getestet: IServ-Login als
+Lehrkraft, Admin per `make-admin`, Notfallzugang, Kurs mit IServ-Gruppe, Lektion/Aufgabe, Python
+im Editor, keine CDN-Anfragen, Lernstand-API mit Token, Wartungs-Probelauf, Backup.
+Entscheidungen: Port 8090 im LAN offen (kein ufw auf der VM), `ADMIN_IP_ALLOWLIST=*`.
+
+Beim Deploy behobene Fehler: Login-Rücksprung auf Schriftdatei (`/assets` öffentlich, kein
+`next` für Unterressourcen), 500er auf `/login` für Angemeldete, jQuery UI im Editor (404),
+Dropzone-CSS vom CDN (+ CDN-Prüfung im Image-Bau), altes Notfall-Konto nach Adresswechsel.
+
+Offen: Test mit einem Schülerkonto (Rolle, automatische Kursaufnahme über IServ-Gruppe);
+Admin-Oberfläche und einige Editor-Texte noch englisch.
 
 Ursprünglicher Umfang:
 - `docs/lernix/BETRIEB.md`: NPM-Proxy-Host, IServ-Client anlegen, Erststart,
