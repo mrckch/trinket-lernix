@@ -53,6 +53,8 @@ module.exports = function() {
       access.isPublic('head', '/healthz').should.be.true;
       access.isPublic('HEAD', '/python').should.be.false;
       access.isPublic('GET', '/embed/python/abc123').should.be.true;
+      access.isPublic('GET', '/embed/blocks-iframe').should.be.true;
+      access.isPublic('GET', '/embed/glowscript-blocks-iframe').should.be.true;
       access.isPublic('GET', '/api/trinkets/abc123').should.be.true;
       access.isPublic('GET', '/api/v1/courses').should.be.true;
       access.isPublic('GET', '/embed/python').should.be.false;
@@ -120,6 +122,24 @@ module.exports = function() {
         flow.switchUser('');
         done();
       }));
+    });
+
+    it('lässt die Besitzerin ihr Trinket speichern', function(done) {
+      flow.switchUser('ateacher');
+      // wie der Editor: mit ?library=true angelegt → Besitzerin ist die angemeldete Lehrkraft
+      flow.post('/api/trinkets?library=true').set('Accept', 'application/json').set('Content-Type', 'application/json')
+        .send({ name : 'Eigenes', lang : 'python', code : 'print(1)' })
+        .end(flow.setLastResponse(function(err, res) {
+          if (err) return done(err);
+          var t = res.body.data || res.body;
+          flow.put('/api/trinkets/' + (t.id || t._id) + '/code').set('Accept', 'application/json').set('Content-Type', 'application/json')
+            .send({ code : 'print(2)' })
+            .end(flow.setLastResponse(function(err, res) {
+              flow.switchUser('');
+              res.statusCode.should.eql(200);
+              done();
+            }));
+        }));
     });
 
     it('schickt Angemeldete von /login weiter nach /home', function(done) {
