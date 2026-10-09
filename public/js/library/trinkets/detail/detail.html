@@ -2,7 +2,7 @@
   <section class="page-menu">
     <div class="editable-error alert-box warning" ng-show="$error" ng-bind="$error" data-alert></div>
     <section class="options-right">
-      <a class="button small" ng-if="isAdmin" ng-click="smile()"><i ng-class="{'fa fa-spinner fa-spin':isSnapping, 'fa fa-camera':!isSnapping}"></i></a>
+      <a class="button small" ng-if="isAdmin && assetsEnabled" ng-click="smile()"><i ng-class="{'fa fa-spinner fa-spin':isSnapping, 'fa fa-camera':!isSnapping}"></i></a>
       <a class="button small" ng-if="isOwner" data-reveal-id="addToFolderModal"><i class='fa fa-folder'></i></a>
       <a class="button small" ng-if="isOwner && canCopy" ng-click="copy()"><span class="label-container"><i class='fa fa-files-o label-icon'></i> <span class='show-for-large-up label-text'>Kopieren</span></span></a>
 

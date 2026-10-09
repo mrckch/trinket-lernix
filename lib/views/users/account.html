@@ -13,9 +13,10 @@
     {% if user.source != 'iserv' %}{% set pages = ['Profile', 'Email', 'Password', 'Trinket-Editor', 'Data', 'Import', 'Delete-Account'] %}{% endif %}
     {% set labels = { 'profile': 'Profil', 'email': 'E-Mail', 'password': 'Passwort', 'trinket-editor': 'Editor', 'data': 'Daten', 'import': 'Import', 'delete-account': 'Konto löschen', 'tokens': 'API-Tokens' } %}
     {% if user.hasRole('teacher') or user.hasRole('admin') %}{% set pages = pages.concat(['Tokens']) %}{% endif %}
-    {% for link in pages %}
+    {# „Daten“ (Export) braucht S3 – nur mit features.assets #}
+    {% for link in pages %}{% if link != 'Data' or config.features.assets %}
       <li><a {% if page == link.toLowerCase() %}class="active"{% endif %} href="/account/{{ link | lower }}">{{ labels[link | lower] or link }}</a></li>
-    {% endfor %}
+    {% endif %}{% endfor %}
     </ul>
   </div>
   <div class="content-column large-9 small-12 columns">

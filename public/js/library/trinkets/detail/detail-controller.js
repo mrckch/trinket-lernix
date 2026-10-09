@@ -19,6 +19,7 @@ TrinketIO.export('library.trinkets.detail.controller', [
   $scope.saveError  = false;
 
   $scope.isAdmin    = $scope.role === 'admin' ? true : false;
+  $scope.assetsEnabled = !!trinketConfig.get('assetsEnabled');   // Vorschaubilder brauchen S3
   $scope.isSnapping = false;
   $scope.emailEnabled = config.get('emailEnabled');
 
