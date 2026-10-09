@@ -14,8 +14,16 @@
         </block>
       </value>
     </block>
+    <block type="draw_heading"></block>
     <block type="draw_shape"></block>
     <block type="draw_pen"></block>
+    <block type="draw_pensize">
+      <value name="VALUE">
+        <block type="math_number">
+          <field name="NUM">3</field>
+        </block>
+      </value>
+    </block>
     <block type="draw_color">
       <value name="COLOR">
         <block type="colour_picker"></block>

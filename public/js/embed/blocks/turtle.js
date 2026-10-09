@@ -236,3 +236,45 @@ Blockly.Python['draw_pos'] = function(block) {
   Blockly.Python.definitions_['import_turtle'] = 'import turtle';
   return ['turtle.pos()', Blockly.Python.ORDER_ATOMIC];
 };
+
+// Lernix: Blickrichtung setzen – TurtleCoder startet nach oben, die Python-Turtle nach rechts
+Blockly.Blocks['draw_heading'] = {
+  init : function() {
+    var RICHTUNGEN =
+      [['oben ↑', '90'],
+       ['rechts →', '0'],
+       ['unten ↓', '270'],
+       ['links ←', '180']];
+    this.setColour(160);
+    this.appendDummyInput()
+      .appendField('schaue nach')
+      .appendField(new Blockly.FieldDropdown(RICHTUNGEN), 'DIR');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+  }
+};
+
+Blockly.Python['draw_heading'] = function(block) {
+  Blockly.Python.definitions_['import_turtle'] = 'import turtle';
+  var dir = parseInt(block.getFieldValue('DIR'), 10);
+  if ([0, 90, 180, 270].indexOf(dir) < 0) dir = 90;
+  return 'turtle.setheading(' + dir + ')\n';
+};
+
+// Lernix: Stiftdicke (TurtleCoder: setPenSize 1–9)
+Blockly.Blocks['draw_pensize'] = {
+  init : function() {
+    this.setColour(160);
+    this.appendValueInput('VALUE')
+      .setCheck('Number')
+      .appendField('setze Stiftdicke auf');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+  }
+};
+
+Blockly.Python['draw_pensize'] = function(block) {
+  Blockly.Python.definitions_['import_turtle'] = 'import turtle';
+  var value = Blockly.Python.valueToCode(block, 'VALUE', Blockly.Python.ORDER_NONE) || '1';
+  return 'turtle.pensize(' + value + ')\n';
+};
