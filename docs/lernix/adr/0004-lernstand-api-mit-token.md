@@ -1,7 +1,7 @@
 # ADR 0004 — Lernstand-API mit Bearer-Token
 
 Datum: 2026-10-09
-Status: **angenommen**
+Status: **angenommen** (Schreibrechte: ADR 0006)
 
 ## Kontext
 

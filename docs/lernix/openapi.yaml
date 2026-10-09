@@ -1,22 +1,53 @@
 openapi: 3.0.3
 info:
-  title: Trinket Lernix – Lernstand-API
-  version: "1.0"
+  title: Trinket Lernix – Token-API
+  version: "2.0"
   description: |
-    Lesender Zugriff auf Kurse, Aufgaben, Teilnehmende und Abgaben für externe Programme
-    (z. B. SchulAssistent). Authentifizierung ausschließlich per Bearer-Token, das eine Lehrkraft
-    unter `/account/tokens` anlegt. Wirksame Rechte = Scopes des Tokens ∩ Rechte der Rolle.
-    Fehler kommen im Hapi/Boom-Format `{ statusCode, error, message }`.
+    Zugriff auf Kurse, Inhalte, Teilnehmende, Abgaben und Rückmeldungen für externe Programme
+    (z. B. SchulAssistent). Lesend seit ADR 0004, schreibend seit ADR 0006.
+
+    **Authentifizierung** ausschließlich per Bearer-Token (`Authorization: Bearer tl_…`), das eine
+    Lehrkraft unter „Einstellungen → API-Tokens“ (`/account/tokens`) anlegt. Cookies werden auf
+    `/api/v1` nie ausgewertet. Wirksame Rechte = Scopes des Tokens ∩ Rechte der Rolle; zusätzlich
+    gelten die Kursrechte der Oberfläche (Kursleitung/Kurs-Admin, Inhalte auch Mitarbeitende).
+    Ein Token wirkt nie in fremden Kursen.
+
+    **Fehler** im Hapi/Boom-Format `{ statusCode, error, message }`, bei Eingabefehlern zusätzlich
+    `details: [{ path, message }]`. Unbekannte Felder werden abgelehnt (400).
+
+    **Grenzen:** Anfragen bis 1 MB, bei Code/Material 2 MB, beim Reihen-Import 5 MB (sonst 413);
+    120 Schreibzugriffe je Token und Minute (sonst 429 mit `Retry-After`). Jeder Schreibzugriff
+    wird mit Person und Token protokolliert.
+
+    **Daten** sind dieselben wie in der Oberfläche: Code wird wie im Editor gespeichert
+    (Editor-Sprachen als Dateiliste, Blöcke als Blockly-XML); Block-Trinkets liefern zusätzlich
+    `pythonCode` – erzeugt mit denselben Generatoren wie die Python-Ansicht im Editor.
 servers:
   - url: https://trinket.lernix.site
 security:
   - bearer: []
+tags:
+  - { name: Konto, description: Token und IServ-Gruppen }
+  - { name: Kurse, description: "Kurse lesen (courses:read) und verwalten (courses:write)" }
+  - { name: Inhalte, description: "Lektionen, Seiten, Aufgaben (content:write)" }
+  - { name: Teilnehmende, description: "Mitglieder lesen (courses:read) und verwalten (students:manage)" }
+  - { name: Abgaben, description: "Lernstand und Abgaben lesen (submissions:read)" }
+  - { name: Rückmeldungen, description: "Abgaben zurückgeben (submissions:write)" }
+  - { name: Trinkets, description: "Code lesen (trinkets:read), eigene Bibliothek (trinkets:write)" }
 components:
   securitySchemes:
     bearer:
       type: http
       scheme: bearer
-      description: "Authorization: Bearer tl_… (Scopes courses:read, submissions:read, trinkets:read)"
+      description: |
+        `Authorization: Bearer tl_…`. Scopes: courses:read, submissions:read, trinkets:read,
+        courses:write, content:write, submissions:write, trinkets:write, students:manage.
+  parameters:
+    courseId: { name: courseId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
+    lessonId: { name: lessonId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
+    materialId: { name: materialId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
+    userId: { name: userId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
+    trinketId: { name: trinketId, in: path, required: true, description: ID oder shortCode, schema: { type: string } }
   schemas:
     Error:
       type: object
@@ -24,11 +55,25 @@ components:
         statusCode: { type: integer }
         error: { type: string }
         message: { type: string }
+        details:
+          type: array
+          items: { type: object, properties: { path: { type: string }, message: { type: string } } }
     DateFlag:
       type: object
       properties:
         enabled: { type: boolean }
         at: { type: string, format: date-time, nullable: true }
+    DateInput:
+      type: string
+      format: date-time
+      nullable: true
+      description: ISO-Zeitpunkt setzt und aktiviert das Datum, `null` schaltet es ab, weglassen lässt es unverändert.
+    IservGroup:
+      type: object
+      nullable: true
+      properties:
+        act: { type: string, description: IServ-Gruppenkennung }
+        name: { type: string }
     CourseSummary:
       type: object
       properties:
@@ -39,12 +84,7 @@ components:
         owner: { type: string, description: Benutzername der Kursleitung }
         archived: { type: boolean }
         courseType: { type: string, enum: [public, private, open, demo] }
-        iservGroup:
-          type: object
-          nullable: true
-          properties:
-            act: { type: string, description: IServ-Gruppenkennung }
-            name: { type: string }
+        iservGroup: { $ref: '#/components/schemas/IservGroup' }
         studentCount: { type: integer }
         created: { type: string, format: date-time }
         lastUpdated: { type: string, format: date-time }
@@ -69,6 +109,26 @@ components:
             submissionsCutoff: { $ref: '#/components/schemas/DateFlag' }
             availableOn: { $ref: '#/components/schemas/DateFlag' }
             hideAfter: { $ref: '#/components/schemas/DateFlag' }
+    MaterialDetail:
+      allOf:
+        - $ref: '#/components/schemas/Material'
+        - type: object
+          properties:
+            content: { type: string, description: Markdown (Seite) bzw. Aufgabenstellung }
+            assignment:
+              type: object
+              nullable: true
+              properties:
+                starter:
+                  nullable: true
+                  allOf:
+                    - $ref: '#/components/schemas/Code'
+                    - type: object
+                      properties:
+                        id: { type: string }
+                        shortCode: { type: string }
+                        lang: { type: string }
+                        name: { type: string }
     Lesson:
       type: object
       properties:
@@ -78,6 +138,13 @@ components:
         materials:
           type: array
           items: { $ref: '#/components/schemas/Material' }
+    LessonRef:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        isDraft: { type: boolean }
+        materialIds: { type: array, items: { type: string } }
     Student:
       type: object
       properties:
@@ -87,6 +154,13 @@ components:
         email: { type: string }
         joinedVia: { type: string, nullable: true, enum: [owner, iserv, code, invite, manual] }
         onDashboard: { type: boolean }
+    Member:
+      allOf:
+        - $ref: '#/components/schemas/Student'
+        - type: object
+          properties:
+            role: { type: string, enum: [owner, admin, collaborator, associate, student] }
+            deleted: { type: boolean, description: Konto wurde gelöscht }
     Submission:
       type: object
       description: Zustand einer SuS zu einer Aufgabe (zusammengefasst über alle Versuche)
@@ -106,6 +180,37 @@ components:
         started: { type: integer }
         submitted: { type: integer }
         completed: { type: integer }
+    File:
+      type: object
+      required: [name, content]
+      properties:
+        name: { type: string, maxLength: 100, example: main.py }
+        content: { type: string }
+        hidden: { type: boolean }
+    CodeInput:
+      type: object
+      description: Entweder `code` (Hauptdatei bzw. Blockly-XML) oder `files` (Editor-Sprachen), nicht beides.
+      properties:
+        code: { type: string, maxLength: 500000 }
+        files: { type: array, maxItems: 20, items: { $ref: '#/components/schemas/File' } }
+    Code:
+      type: object
+      properties:
+        code: { type: string, description: gespeicherter Rohwert (Dateiliste als JSON bzw. Blockly-XML) }
+        files: { type: array, items: { $ref: '#/components/schemas/File' } }
+        pythonCode: { type: string, nullable: true, description: "nur lang=blocks: Python wie in der Python-Ansicht des Editors" }
+        pythonError: { type: string, nullable: true, description: "nur Block-Trinkets: Grund, falls die Umwandlung scheitert" }
+    Feedback:
+      type: object
+      properties:
+        text: { type: string, nullable: true, description: zuletzt gesendete Rückmeldung (Markdown) }
+        at: { type: string, format: date-time, nullable: true }
+        author: { type: string, nullable: true }
+        revisionTrinketId: { type: string, nullable: true, description: Überarbeitung der Lehrkraft }
+        draft: { type: string, nullable: true, description: Entwurf (füllt das Formular in der Oberfläche) }
+        studentComment: { type: string, nullable: true }
+        includeRevision: { type: boolean }
+        allowResubmit: { type: boolean }
     TrinketSummary:
       type: object
       properties:
@@ -127,31 +232,105 @@ components:
     Trinket:
       allOf:
         - $ref: '#/components/schemas/TrinketSummary'
+        - $ref: '#/components/schemas/Code'
         - type: object
           properties:
-            code: { type: string, description: Quelltext der Hauptdatei }
+            description: { type: string }
+            feedback: { $ref: '#/components/schemas/Feedback' }
             comments:
               type: array
               items:
                 type: object
                 properties:
+                  id: { type: string, nullable: true }
                   author: { type: string, nullable: true }
-                  type: { type: string, nullable: true, description: feedback (Lehrkraft) oder Kommentar der SuS }
+                  type: { type: string, nullable: true, enum: [student, feedback, feedback-draft, null] }
                   text: { type: string }
                   at: { type: string, format: date-time, nullable: true }
+                  revisionTrinketId: { type: string }
+                  revisionShortCode: { type: string }
+    LibraryTrinket:
+      type: object
+      properties:
+        id: { type: string }
+        shortCode: { type: string }
+        name: { type: string }
+        description: { type: string }
+        lang: { type: string }
+        created: { type: string, format: date-time }
+        lastUpdated: { type: string, format: date-time }
+    StarterInput:
+      type: object
+      description: |
+        Vorlage einer Aufgabe: `trinketId` (eigenes Bibliotheks-Trinket) **oder** `lang` mit
+        optionalem `code`/`files`. Beim Ändern ohne `lang` wird der Code der bisherigen Vorlage
+        ersetzt (wenn sie dir gehört), sonst entsteht eine neue leere Vorlage.
+      properties:
+        trinketId: { type: string }
+        lang: { type: string, enum: [python, blocks, html, glowscript, glowscript-blocks, python3, console, music, java, R, pygame], description: nur Sprachen, die hier freigeschaltet sind }
+        code: { type: string }
+        files: { type: array, items: { $ref: '#/components/schemas/File' } }
+    MaterialCreate:
+      type: object
+      required: [type, name]
+      properties:
+        type: { type: string, enum: [page, assignment] }
+        name: { type: string, maxLength: 140 }
+        content: { type: string, maxLength: 200000, description: Markdown }
+        isDraft: { type: boolean, description: "Default: Kurs-Einstellung contentDefault" }
+        index: { type: integer, minimum: 0, description: Position in der Lektion (Default ans Ende) }
+        starter: { $ref: '#/components/schemas/StarterInput' }
+        submissionsDue: { $ref: '#/components/schemas/DateInput' }
+        submissionsCutoff: { $ref: '#/components/schemas/DateInput' }
+        availableOn: { $ref: '#/components/schemas/DateInput' }
+        hideAfter: { $ref: '#/components/schemas/DateInput' }
+      example:
+        type: assignment
+        name: Quadrat zeichnen
+        content: "Zeichne mit einer Schleife ein Quadrat."
+        starter: { lang: python, code: "import turtle\n" }
+        availableOn: "2026-10-12T07:45:00Z"
+        submissionsDue: "2026-10-19T07:45:00Z"
   responses:
+    NoContent: { description: erledigt }
+    BadRequest:
+      description: Eingabe ungültig
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
     Unauthorized:
       description: Token fehlt, ist ungültig oder widerrufen
       content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
     Forbidden:
-      description: Scope fehlt oder kein Zugriff auf den Kurs
+      description: Scope fehlt, Rolle reicht nicht oder kein Recht im Kurs
       content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
     NotFound:
-      description: Kurs, Person oder Trinket nicht gefunden
+      description: Kurs, Lektion, Material, Person oder Trinket nicht gefunden
       content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    Conflict:
+      description: Zustand passt nicht (z. B. Abgabe noch nicht abgegeben, Vorlage in Benutzung)
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    TooMany:
+      description: Schreibbremse – zu viele Schreibzugriffe mit diesem Token
+      headers: { Retry-After: { schema: { type: integer } } }
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    CourseOut:
+      description: OK
+      content: { application/json: { schema: { type: object, properties: { course: { $ref: '#/components/schemas/CourseSummary' } } } } }
+    LessonOut:
+      description: OK
+      content: { application/json: { schema: { type: object, properties: { lesson: { $ref: '#/components/schemas/LessonRef' } } } } }
+    MaterialOut:
+      description: OK
+      content: { application/json: { schema: { type: object, properties: { material: { $ref: '#/components/schemas/MaterialDetail' } } } } }
+    TrinketOut:
+      description: OK
+      content: { application/json: { schema: { type: object, properties: { trinket: { $ref: '#/components/schemas/Trinket' } } } } }
+    MemberOut:
+      description: OK
+      content: { application/json: { schema: { type: object, properties: { member: { $ref: '#/components/schemas/Member' } } } } }
 paths:
   /api/v1/me:
     get:
+      tags: [Konto]
       summary: Identität und wirksame Scopes des Tokens
       responses:
         "200":
@@ -173,9 +352,26 @@ paths:
                       name: { type: string }
                       scopes: { type: array, items: { type: string } }
         "401": { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/iserv/groups:
+    get:
+      tags: [Konto]
+      summary: Eigene IServ-Gruppen vom letzten Login (zum Verknüpfen von Kursen) (courses:read)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups: { type: array, items: { $ref: '#/components/schemas/IservGroup' } }
+                  updatedAt: { type: string, format: date-time, nullable: true, description: letzter Login; leer → einmal neu anmelden }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
   /api/v1/courses:
     get:
-      summary: Kurse, deren Abgaben die Lehrkraft sehen darf (Scope courses:read)
+      tags: [Kurse]
+      summary: Kurse, deren Abgaben die Lehrkraft sehen darf (courses:read)
       responses:
         "200":
           description: OK
@@ -187,11 +383,39 @@ paths:
                   courses: { type: array, items: { $ref: '#/components/schemas/CourseSummary' } }
         "401": { $ref: '#/components/responses/Unauthorized' }
         "403": { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Kurse]
+      summary: Kurs anlegen, optional mit eigener IServ-Gruppe (courses:write)
+      description: Die anlegende Person wird Kursleitung. SuS der verknüpften Gruppe werden beim nächsten Login aufgenommen.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, maxLength: 140 }
+                description: { type: string, maxLength: 500 }
+                courseType: { type: string, enum: [public, private, open], default: public }
+                contentDefault: { type: string, enum: [publish, draft], default: publish, description: "neue Lektionen/Materialien als Entwurf?" }
+                iservGroup:
+                  type: object
+                  required: [act]
+                  properties: { act: { type: string }, name: { type: string } }
+            example: { name: "Informatik 9a", courseType: private, iservGroup: { act: "klasse.9a" } }
+      responses:
+        "201": { $ref: '#/components/responses/CourseOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "409": { $ref: '#/components/responses/Conflict' }
+        "429": { $ref: '#/components/responses/TooMany' }
   /api/v1/courses/{courseId}:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
     get:
-      summary: Kurs mit Gliederung (Lektionen, Seiten, Aufgaben) (Scope courses:read)
-      parameters:
-        - { name: courseId, in: path, required: true, schema: { type: string } }
+      tags: [Kurse]
+      summary: Kurs mit Gliederung (Lektionen, Seiten, Aufgaben) (courses:read)
       responses:
         "200":
           description: OK
@@ -205,11 +429,288 @@ paths:
         "401": { $ref: '#/components/responses/Unauthorized' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
-  /api/v1/courses/{courseId}/students:
-    get:
-      summary: Teilnehmende mit Rolle course-student (Scope courses:read)
+    patch:
+      tags: [Kurse]
+      summary: Kurs ändern, archivieren oder reaktivieren (courses:write)
+      description: Nicht genannte Felder bleiben unverändert. `archived` nur für die Kursleitung.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                name: { type: string, maxLength: 140 }
+                description: { type: string, maxLength: 500 }
+                courseType: { type: string, enum: [public, private, open] }
+                contentDefault: { type: string, enum: [publish, draft] }
+                archived: { type: boolean }
+            example: { archived: true }
+      responses:
+        "200": { $ref: '#/components/responses/CourseOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
+    delete:
+      tags: [Kurse]
+      summary: Kurs löschen – nur Kursleitung, nur mit confirm=true (courses:write)
+      description: Wie in der Oberfläche; Abgaben der SuS bleiben als Trinkets erhalten. Für das Schuljahresende lieber archivieren.
       parameters:
-        - { name: courseId, in: path, required: true, schema: { type: string } }
+        - { name: confirm, in: query, required: true, schema: { type: boolean, enum: [true] } }
+      responses:
+        "204": { $ref: '#/components/responses/NoContent' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/copy:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    post:
+      tags: [Kurse]
+      summary: Eigenen Kurs mit allen Lektionen, Seiten und Aufgaben kopieren (courses:write)
+      description: Ohne Teilnehmende, Abgaben und IServ-Gruppe; Vorlagen werden mitkopiert.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [name], properties: { name: { type: string, maxLength: 140 } } }
+            example: { name: "Informatik 10a (2027/28)" }
+      responses:
+        "201": { $ref: '#/components/responses/CourseOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
+  /api/v1/courses/{courseId}/iserv-group:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    put:
+      tags: [Kurse]
+      summary: Kurs mit einer eigenen IServ-Gruppe verknüpfen (courses:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [act], properties: { act: { type: string }, name: { type: string } } }
+      responses:
+        "200": { $ref: '#/components/responses/CourseOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Kurse]
+      summary: Verknüpfung lösen (courses:write)
+      responses:
+        "200": { $ref: '#/components/responses/CourseOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/access-code:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    get:
+      tags: [Kurse]
+      summary: Zugangscode lesen (courses:read, Recht „Zugang verwalten“)
+      responses:
+        "200":
+          description: OK
+          content: { application/json: { schema: { type: object, properties: { accessCode: { type: string, nullable: true } } } } }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+    post:
+      tags: [Kurse]
+      summary: Neuen Zugangscode erzeugen – der alte gilt dann nicht mehr (courses:write)
+      responses:
+        "200":
+          description: OK
+          content: { application/json: { schema: { type: object, properties: { accessCode: { type: string, example: "kP7mQ2" } } } } }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/lessons:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    post:
+      tags: [Inhalte]
+      summary: Lektion anlegen (content:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, maxLength: 140 }
+                isDraft: { type: boolean }
+                index: { type: integer, minimum: 0, description: Position (Default ans Ende) }
+      responses:
+        "201": { $ref: '#/components/responses/LessonOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/lessons/order:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    put:
+      tags: [Inhalte]
+      summary: Reihenfolge der Lektionen setzen – genau alle Lektionen des Kurses (content:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [lessonIds], properties: { lessonIds: { type: array, items: { type: string } } } }
+      responses:
+        "200":
+          description: OK
+          content: { application/json: { schema: { type: object, properties: { lessonIds: { type: array, items: { type: string } } } } } }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+  /api/v1/courses/{courseId}/lessons/{lessonId}:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/lessonId' }]
+    patch:
+      tags: [Inhalte]
+      summary: Lektion umbenennen, veröffentlichen oder verbergen (content:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, minProperties: 1, properties: { name: { type: string, maxLength: 140 }, isDraft: { type: boolean } } }
+      responses:
+        "200": { $ref: '#/components/responses/LessonOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Inhalte]
+      summary: Lektion löschen (content:write)
+      responses:
+        "204": { $ref: '#/components/responses/NoContent' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/lessons/{lessonId}/materials:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/lessonId' }]
+    post:
+      tags: [Inhalte]
+      summary: Seite (Markdown) oder Aufgabe mit Vorlage und Daten anlegen (content:write)
+      description: |
+        Aufgaben ohne `starter` bekommen eine leere Python-Vorlage. Daten nur bei Aufgaben;
+        `submissionsCutoff` braucht `submissionsDue`, `hideAfter` muss nach `availableOn` liegen.
+        Sichtbarkeit für SuS wie in der Oberfläche: Entwürfe nie, Aufgaben nur zwischen
+        `availableOn` und `hideAfter`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MaterialCreate' }
+      responses:
+        "201": { $ref: '#/components/responses/MaterialOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/lessons/{lessonId}/materials/order:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/lessonId' }]
+    put:
+      tags: [Inhalte]
+      summary: Reihenfolge der Materialien setzen; Materialien anderer Lektionen werden hierher verschoben (content:write)
+      description: Die Liste muss alle bisherigen Materialien der Lektion enthalten.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [materialIds], properties: { materialIds: { type: array, items: { type: string } } } }
+      responses:
+        "200": { $ref: '#/components/responses/LessonOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+  /api/v1/courses/{courseId}/materials/{materialId}:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/materialId' }]
+    get:
+      tags: [Inhalte]
+      summary: Seite oder Aufgabe mit Inhalt und Vorlage samt Code (courses:read)
+      responses:
+        "200": { $ref: '#/components/responses/MaterialOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Inhalte]
+      summary: Seite/Aufgabe ändern – Text, Entwurf, Daten, Vorlage (content:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                name: { type: string, maxLength: 140 }
+                content: { type: string }
+                isDraft: { type: boolean }
+                starter: { $ref: '#/components/schemas/StarterInput' }
+                submissionsDue: { $ref: '#/components/schemas/DateInput' }
+                submissionsCutoff: { $ref: '#/components/schemas/DateInput' }
+                availableOn: { $ref: '#/components/schemas/DateInput' }
+                hideAfter: { $ref: '#/components/schemas/DateInput' }
+            example: { isDraft: false, availableOn: "2026-10-12T07:45:00Z", hideAfter: null }
+      responses:
+        "200": { $ref: '#/components/responses/MaterialOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Inhalte]
+      summary: Seite/Aufgabe löschen (content:write)
+      responses:
+        "204": { $ref: '#/components/responses/NoContent' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/import:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    post:
+      tags: [Inhalte]
+      summary: Ganze Reihe importieren – Lektionen mit Seiten und Aufgaben, angehängt ans Kursende (content:write)
+      description: Wird vollständig geprüft, dann der Reihe nach angelegt (max. 50 Lektionen, je 100 Materialien).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [lessons]
+              properties:
+                lessons:
+                  type: array
+                  minItems: 1
+                  maxItems: 50
+                  items:
+                    type: object
+                    required: [name]
+                    properties:
+                      name: { type: string }
+                      isDraft: { type: boolean }
+                      materials: { type: array, maxItems: 100, items: { $ref: '#/components/schemas/MaterialCreate' } }
+            example:
+              lessons:
+                - name: "Schleifen"
+                  materials:
+                    - { type: page, name: "Einstieg", content: "# Wiederholen\n…" }
+                    - { type: assignment, name: "Quadrat", starter: { lang: blocks } }
+      responses:
+        "201":
+          description: Angelegt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lessons:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        name: { type: string }
+                        materials: { type: array, items: { type: object, properties: { id: { type: string }, name: { type: string }, type: { type: string } } } }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "413": { description: Anfrage zu groß }
+  /api/v1/courses/{courseId}/students:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    get:
+      tags: [Teilnehmende]
+      summary: Teilnehmende mit Rolle course-student (courses:read)
       responses:
         "200":
           description: OK
@@ -223,11 +724,77 @@ paths:
         "401": { $ref: '#/components/responses/Unauthorized' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
-  /api/v1/courses/{courseId}/lernstand:
+    post:
+      tags: [Teilnehmende]
+      summary: Konto als SuS aufnehmen – per Benutzername oder E-Mail (students:manage)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [login], properties: { login: { type: string } } }
+      responses:
+        "201":
+          description: Aufgenommen
+          content: { application/json: { schema: { type: object, properties: { member: { $ref: '#/components/schemas/Member' }, alreadyListed: { type: boolean } } } } }
+        "200":
+          description: War schon im Kurs (alreadyListed true)
+          content: { application/json: { schema: { type: object, properties: { member: { $ref: '#/components/schemas/Member' }, alreadyListed: { type: boolean } } } } }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/members:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
     get:
-      summary: Lernstand-Matrix SuS × Aufgabe mit Zusammenfassungen (Scope submissions:read)
-      parameters:
-        - { name: courseId, in: path, required: true, schema: { type: string } }
+      tags: [Teilnehmende]
+      summary: Alle Mitglieder mit Kursrolle (courses:read, Recht „Zugang verwalten“)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course: { $ref: '#/components/schemas/CourseSummary' }
+                  members: { type: array, items: { $ref: '#/components/schemas/Member' } }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/members/{userId}:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/userId' }]
+    patch:
+      tags: [Teilnehmende]
+      summary: Im Dashboard aus-/einblenden oder Kursrolle ändern (students:manage)
+      description: Kursleitung und eigenes Konto lassen sich so nicht ändern (409).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                onDashboard: { type: boolean }
+                role: { type: string, enum: [student, collaborator, admin, associate] }
+            example: { onDashboard: false }
+      responses:
+        "200": { $ref: '#/components/responses/MemberOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
+    delete:
+      tags: [Teilnehmende]
+      summary: Aus dem Kurs entfernen (students:manage)
+      description: Über IServ eingetragene SuS kommen beim nächsten Login wieder, solange die Gruppe verknüpft ist – dann lieber ausblenden.
+      responses:
+        "204": { $ref: '#/components/responses/NoContent' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
+  /api/v1/courses/{courseId}/lernstand:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    get:
+      tags: [Abgaben]
+      summary: Lernstand-Matrix SuS × Aufgabe mit Zusammenfassungen (submissions:read)
       responses:
         "200":
           description: OK
@@ -264,12 +831,48 @@ paths:
         "401": { $ref: '#/components/responses/Unauthorized' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
-  /api/v1/courses/{courseId}/students/{userId}/submissions:
+  /api/v1/courses/{courseId}/assignments/{materialId}/submissions:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/materialId' }]
     get:
-      summary: Alle Abgabe-Trinkets einer SuS im Kurs (Scope submissions:read)
+      tags: [Abgaben]
+      summary: Je SuS das maßgebliche Trinket zu einer Aufgabe, optional mit Code (submissions:read)
+      description: |
+        Auswahl wie im Dashboard der Aufgabe: verspätet abgegeben > abgegeben > zurückgegeben >
+        angefangen. Auch angefangene, noch nicht abgegebene Arbeit (aktueller Stand) erscheint.
       parameters:
-        - { name: courseId, in: path, required: true, schema: { type: string } }
-        - { name: userId, in: path, required: true, schema: { type: string } }
+        - { name: includeCode, in: query, schema: { type: boolean, default: false }, description: "Code, Dateien und – bei Blöcken – pythonCode mitliefern" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course: { $ref: '#/components/schemas/CourseSummary' }
+                  assignment: { type: object, properties: { id: { type: string }, name: { type: string } } }
+                  submissions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        student: { $ref: '#/components/schemas/Student' }
+                        state: { type: string, enum: [not-started, started, submitted, completed] }
+                        attempts: { type: integer, description: Zahl der Trinkets zu dieser Aufgabe }
+                        trinket:
+                          nullable: true
+                          allOf:
+                            - $ref: '#/components/schemas/TrinketSummary'
+                            - $ref: '#/components/schemas/Code'
+                            - type: object
+                              properties: { feedback: { $ref: '#/components/schemas/Feedback' } }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/courses/{courseId}/students/{userId}/submissions:
+    parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/userId' }]
+    get:
+      tags: [Abgaben]
+      summary: Alle Abgabe-Trinkets einer SuS im Kurs (submissions:read)
       responses:
         "200":
           description: OK
@@ -283,20 +886,141 @@ paths:
         "401": { $ref: '#/components/responses/Unauthorized' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
-  /api/v1/trinkets/{trinketId}:
+  /api/v1/trinkets:
     get:
-      summary: Ein Trinket mit Code und Rückmeldungen (Scope trinkets:read; eigene oder aus eigenen Kursen)
+      tags: [Trinkets]
+      summary: Eigene Bibliothek (trinkets:read)
       parameters:
-        - { name: trinketId, in: path, required: true, schema: { type: string } }
+        - { name: lang, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content: { application/json: { schema: { type: object, properties: { trinkets: { type: array, items: { $ref: '#/components/schemas/LibraryTrinket' } } } } } }
+        "403": { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Trinkets]
+      summary: Trinket in der eigenen Bibliothek anlegen (trinkets:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CodeInput'
+                - type: object
+                  required: [lang]
+                  properties:
+                    lang: { type: string }
+                    name: { type: string, maxLength: 50 }
+                    description: { type: string, maxLength: 10000 }
+            example: { lang: python, name: "Vorlage Schleifen", files: [{ name: main.py, content: "import turtle\n" }] }
+      responses:
+        "201": { $ref: '#/components/responses/TrinketOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "413": { description: Anfrage zu groß }
+  /api/v1/trinkets/{trinketId}:
+    parameters: [{ $ref: '#/components/parameters/trinketId' }]
+    get:
+      tags: [Trinkets]
+      summary: Ein Trinket mit Code und Rückmeldungen (trinkets:read; eigene oder aus eigenen Kursen)
+      parameters:
+        - name: format
+          in: query
+          schema: { type: string, enum: [json, python], default: json }
+          description: "`python` liefert reinen Python-Text: bei Blöcken den umgewandelten Code, bei Python-Trinkets die Hauptdatei"
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  trinket: { $ref: '#/components/schemas/Trinket' }
+              schema: { type: object, properties: { trinket: { $ref: '#/components/schemas/Trinket' } } }
+            text/x-python:
+              schema: { type: string }
+        "400": { $ref: '#/components/responses/BadRequest' }
         "401": { $ref: '#/components/responses/Unauthorized' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
+        "422": { description: Blöcke ließen sich nicht umwandeln (Meldung in message) }
+    patch:
+      tags: [Trinkets]
+      summary: Eigenes Bibliotheks-Trinket ändern (trinkets:write)
+      description: Abgaben von SuS lassen sich so nicht ändern (403).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CodeInput'
+                - type: object
+                  properties:
+                    name: { type: string, maxLength: 50 }
+                    description: { type: string, maxLength: 10000 }
+      responses:
+        "200": { $ref: '#/components/responses/TrinketOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Trinkets]
+      summary: Eigenes Trinket in den Papierkorb (trinkets:write)
+      responses:
+        "204": { $ref: '#/components/responses/NoContent' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
+  /api/v1/trinkets/{trinketId}/feedback:
+    parameters: [{ $ref: '#/components/parameters/trinketId' }]
+    post:
+      tags: [Rückmeldungen]
+      summary: Abgabe mit Rückmeldung zurückgeben – wie „Rückmeldung senden“ (submissions:write)
+      description: |
+        Nur für abgegebene (`submitted`) oder schon zurückgegebene (`completed`) Abgaben; erneutes
+        Senden ändert die bestehende Rückmeldung. Danach Zustand `completed`. Ohne `revision` wird der
+        Code der Abgabe als Überarbeitung abgelegt und `includeRevision` ist `false`; mit `revision`
+        sehen SuS die Überarbeitung (außer `includeRevision: false`). `allowResubmit` erlaubt eine
+        neue Abgabe (Default: bisheriger Wert, sonst `false`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment: { type: string, maxLength: 20000, description: Markdown }
+                allowResubmit: { type: boolean }
+                includeRevision: { type: boolean }
+                revision: { $ref: '#/components/schemas/CodeInput' }
+            example: { comment: "Gut gelöst! Nutze für die Seitenlänge noch eine Variable.", allowResubmit: true }
+      responses:
+        "200": { $ref: '#/components/responses/TrinketOut' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
+  /api/v1/trinkets/{trinketId}/feedback-draft:
+    parameters: [{ $ref: '#/components/parameters/trinketId' }]
+    put:
+      tags: [Rückmeldungen]
+      summary: Entwurf der Rückmeldung speichern – erscheint vorausgefüllt im Dashboard (submissions:write)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [comment], properties: { comment: { type: string, maxLength: 20000 } } }
+      responses:
+        "200": { $ref: '#/components/responses/TrinketOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+  /api/v1/trinkets/{trinketId}/accept:
+    parameters: [{ $ref: '#/components/parameters/trinketId' }]
+    post:
+      tags: [Rückmeldungen]
+      summary: Verspätete Abgabe annehmen (submittedLate → submitted) (submissions:write)
+      responses:
+        "200": { $ref: '#/components/responses/TrinketOut' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+        "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }

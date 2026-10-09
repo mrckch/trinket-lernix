@@ -36,6 +36,48 @@ curl -H "Authorization: Bearer tl_…" http://127.0.0.1:8075/api/v1/courses/<id>
 
 Beschreibung aller Endpunkte: `docs/lernix/openapi.yaml`.
 
+## Schreib-API ausprobieren (ADR 0006)
+
+Unter „Einstellungen → API-Tokens“ ein Token mit den nötigen Schreibrechten anlegen (Schreib-Scopes
+sind nicht vorausgewählt). Im Dev-Stack Blöcke ggf. per `.env`/`config` freischalten.
+
+```bash
+T="Authorization: Bearer tl_…"; U=http://127.0.0.1:8075/api/v1; J="Content-Type: application/json"
+
+# Kurs mit eigener IServ-Gruppe anlegen (Gruppen: GET $U/iserv/groups, nach dem Login gespeichert)
+curl -s -H "$T" -H "$J" -X POST $U/courses -d '{"name":"Informatik 9a","courseType":"private","iservGroup":{"act":"klasse.9a"}}'
+
+# Lektion und Aufgabe mit Python-Vorlage und Fälligkeit
+curl -s -H "$T" -H "$J" -X POST $U/courses/<kurs>/lessons -d '{"name":"Schleifen"}'
+curl -s -H "$T" -H "$J" -X POST $U/courses/<kurs>/lessons/<lektion>/materials   -d '{"type":"assignment","name":"Quadrat","content":"Zeichne ein Quadrat.","starter":{"lang":"python","code":"import turtle
+"},"submissionsDue":"2026-10-19T07:45:00Z"}'
+
+# ganze Reihe auf einmal
+curl -s -H "$T" -H "$J" -X POST $U/courses/<kurs>/import   -d '{"lessons":[{"name":"Variablen","materials":[{"type":"page","name":"Einstieg","content":"# Variablen"}]}]}'
+
+# Abgaben einer Aufgabe mit Code (Blöcke zusätzlich als pythonCode), eine Abgabe als Python-Text
+curl -s -H "$T" "$U/courses/<kurs>/assignments/<aufgabe>/submissions?includeCode=true"
+curl -s -H "$T" "$U/trinkets/<abgabe>?format=python"
+
+# Entwurf vorbereiten (erscheint im Dashboard) oder direkt zurückgeben
+curl -s -H "$T" -H "$J" -X PUT  $U/trinkets/<abgabe>/feedback-draft -d '{"comment":"Gut gelöst!"}'
+curl -s -H "$T" -H "$J" -X POST $U/trinkets/<abgabe>/feedback -d '{"comment":"Gut gelöst!","allowResubmit":false}'
+
+# Aufgabe ab Montag sichtbar, Kurs archivieren, Kurs löschen (nur mit confirm)
+curl -s -H "$T" -H "$J" -X PATCH $U/courses/<kurs>/materials/<aufgabe> -d '{"availableOn":"2026-10-12T07:45:00Z"}'
+curl -s -H "$T" -H "$J" -X PATCH $U/courses/<kurs> -d '{"archived":true}'
+curl -s -H "$T" -X DELETE "$U/courses/<kurs>?confirm=true"
+```
+
+- Fehler kommen als `{ statusCode, error, message, details? }`; unbekannte Felder → 400.
+- Jeder Schreibzugriff steht im App-Log (`API-Schreibzugriff …`), z. B.
+  `docker compose logs app | grep API-Schreibzugriff`.
+- Schreibbremse: 120 Schreibzugriffe je Token und Minute (`app.api.writeLimitPerMinute`), sonst 429.
+- Die Umwandlung Blöcke → Python braucht `public/components/blockly` (kommt mit dem Image). Neue
+  Referenzausgaben für `test/data/blocks/*.py` entstehen, indem man das XML im Editor lädt bzw. mit
+  `blockly_compressed.js` + `python_compressed.js` übersetzt (`disableInitVariables_ = true`).
+- Anleitung für den SchulAssistent nach Anwendungsfällen: `docs/lernix/API-SchulAssistent.md`.
+
 ## Wartungslauf (Aufbewahrung, ADR 0003)
 
 ```bash
@@ -71,6 +113,10 @@ docker run --rm --network container:trinket-testdb --volumes-from trinketdev-app
 - `test/lib/api/auth.js` – Dev-Login, Rollen `student`/`teacher`/`admin`, Sperren im
   IServ-Modus, Notfall-Admin, Admin-IP-Allowlist, `X-Forwarded-For` nur vom NPM.
 - `test/lib/util/iserv.js` – Claim-Auswertung (UUID, Lehrkraft-Marker, Gruppen), CIDR-Prüfung.
+- `test/lib/api/apiv1.js`, `test/lib/api/apiv1-write.js` – Token-API lesend/schreibend, Token-Trennung
+  zwischen Lehrkräften, Rechte (Scope, fremder Kurs, SuS-Token, widerrufen), Gleichlauf mit der Oberfläche.
+- `test/lib/util/blocks.js` – Blöcke → Python, zeichengleich mit dem Editor (`test/data/blocks`); wird
+  übersprungen, wenn `public/components` fehlt.
 - Übersprungen (`describe.skip`/`it.skip`, je mit Begründung im Code): Abo-Rollen aus trinket.io,
   Mail-Funktionen (Mail ist aus), Datei-Upload (S3 aus), Beispielkurs-Fixture, einige Kurs-Tests mit
   veralteter Antwortform – letztere werden in Phase 3 beim API-Ausbau neu geschrieben.
