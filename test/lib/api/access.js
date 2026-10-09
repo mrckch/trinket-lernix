@@ -48,6 +48,10 @@ module.exports = function() {
       access.isPublic('GET', '/js/trinket.js').should.be.true;
       access.isPublic('GET', '/vendor/cdnjs/jquery/2.2.4/jquery.min.js').should.be.true;
       access.isPublic('GET', '/cache-prefix-123/css/base.css').should.be.true;
+      access.isPublic('GET', '/assets/lato-latin-300-normal.woff2').should.be.true;
+      access.isPublic('HEAD', '/').should.be.true;
+      access.isPublic('head', '/healthz').should.be.true;
+      access.isPublic('HEAD', '/python').should.be.false;
       access.isPublic('GET', '/embed/python/abc123').should.be.true;
       access.isPublic('GET', '/api/trinkets/abc123').should.be.true;
       access.isPublic('GET', '/api/v1/courses').should.be.true;
@@ -68,6 +72,15 @@ module.exports = function() {
           flow.lastRedirect.pathname.should.eql('/login');
           done();
         }));
+      }));
+    });
+
+    it('merkt sich Unterressourcen nicht als Rücksprungziel', function(done) {
+      flow.get('/python').set('Sec-Fetch-Dest', 'font').end(flow.setLastResponse(function(err, res) {
+        res.statusCode.should.eql(302);
+        flow.lastRedirect.pathname.should.eql('/login');
+        String(flow.lastRedirect.query || '').should.not.contain('next=');
+        done();
       }));
     });
 
@@ -104,6 +117,16 @@ module.exports = function() {
       flow.switchUser('ateacher');
       flow.get('/python').end(flow.setLastResponse(function(err, res) {
         res.statusCode.should.eql(200);
+        flow.switchUser('');
+        done();
+      }));
+    });
+
+    it('schickt Angemeldete von /login weiter nach /home', function(done) {
+      flow.switchUser('ateacher');
+      flow.get('/login').end(flow.setLastResponse(function(err, res) {
+        res.statusCode.should.eql(302);
+        flow.lastRedirect.pathname.should.eql('/home');
         flow.switchUser('');
         done();
       }));
