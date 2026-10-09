@@ -275,7 +275,7 @@ Ergebnis im Branch: Scopes `courses:write`, `content:write`, `submissions:write`
 (`lib/services/blocks`, zeichengleich getestet); Joi ohne unbekannte Felder, Größengrenzen,
 Schreibbremse (429), Protokollzeile je Schreibzugriff; Token-Seite mit Lese-/Schreibrechten und
 Menüpunkt „API-Tokens“; Lehrkräfte merken sich ihre IServ-Gruppen am Konto (nur für die Token-API).
-Integrationsanleitung `docs/lernix/API-SchulAssistent.md`. Tests: 211 grün, 42 übersprungen.
+Integrationsanleitung `docs/lernix/API-SchulAssistent.md`. Security-Review eingearbeitet (Grenzen der Block-Umwandlung, confirm bei Abgaben, Import ohne Halbzustand, nur SuS-Konten aufnehmen). Tests: 220 grün, 42 übersprungen.
 
 Vor dem Merge: Review, Entscheidung zur Gruppenspeicherung bei Lehrkräften (Abweichung von ADR 0002),
 nach dem Deploy einmal neu anmelden (sonst kennt die Token-API die Gruppen nicht).

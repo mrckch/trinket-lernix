@@ -69,14 +69,26 @@ Position). Einstellungen wie im Editor: `disableInitVariables_`, `oneBasedIndex`
   Text, Farben, Diagramme, deaktivierte und freie Blöcke).
 - Sicherheit: SuS-XML wird nur mit einem eigenen kleinen Parser gelesen (keine DTD/Entitäten,
   Grenzen für Größe 1 MB, Tiefe, 3000 Blöcke), nie ausgeführt; in den `vm`-Kontext kommen nur
-  Dateien aus dem Image.
+  Dateien aus dem Image. Gegen Rechenzeit-Angriffe (Security-Review): Blocktypen nur aus der Liste
+  der echten Generatoren (nicht `__proto__`, `constructor`, `init` …), Felder/Eingänge in Objekten
+  ohne Prototyp; Zahlen aus Mutationen (`items`, `elseif`) höchstens 20 Plätze hinter dem letzten
+  belegten Eingang und nie über 200, höchstens 200 Parameter; Variablen über Maps und höchstens
+  1000; Kommentare höchstens 2000 Zeichen je Block und 20 000 insgesamt, Zeilen über 200 Wörter
+  werden nicht umbrochen; Budget je Umwandlung (50 000 Generator-Aufrufe, etwa 1 s), danach
+  `pythonError`; Stapelüberlauf aus dem `vm`-Kontext wird erkannt.
+- Umgewandelt wird nur auf Wunsch (`python=true`, `format=python`, `includeCode=true`); Ergebnisse
+  liegen in einem LRU-Speicher (500 Einträge, Schlüssel Trinket-ID + `lastUpdated`).
 - Grenzen: nur `lang = blocks` (GlowScript-Blöcke haben einen eigenen Blockly-Fork → `pythonError`);
   ohne `public/components` (lokal ohne Tarball) gibt es nur `pythonError`; Kommentare an Wertblöcken
   werden in XML-Reihenfolge gesammelt – bei Blockly-XML dieselbe wie im Editor, nur bei von Hand
   geschriebenem XML kann die Reihenfolge der Kommentarzeilen abweichen; fehlen in solchem XML Felder,
   fehlen deren Standardwerte aus der Blockdefinition (Ausgabe kann dann abweichen oder scheitern).
 
-### IServ-Gruppen ohne Session
+### IServ-Gruppen ohne Session (Abweichung von ADR 0002)
+
+ADR 0002 sagt: Gruppen werden nicht gespeichert. Davon weicht diese Entscheidung **nur für
+Lehrkräfte und Admins** ab: gespeichert werden ausschließlich Kennung (`act`) und Name der eigenen
+Gruppen; bei allen anderen Konten entfernt jeder Login die Felder (`$unset`).
 
 Die Token-API hat keine Session, die IServ-Gruppen lagen bisher nur dort (ADR 0002/0003). Für
 Lehrkräfte und Admins speichert der Login jetzt die **eigene** Gruppenliste (nur Kennung und Name,
@@ -94,8 +106,16 @@ Lehrkräfte nur gespeicherte eigene. Nach dem Update muss sich jede Lehrkraft ei
   mit `Retry-After` (im Speicher des Prozesses).
 - Protokoll: eine Zeile je Schreibzugriff (`API-Schreibzugriff METHODE Pfad → Status von <Benutzer>
   (Token <Anfang>… „Name“): was`), auch für abgelehnte Versuche.
-- Kurs löschen nur mit `?confirm=true`; Bibliotheks-Trinkets, die Vorlage einer Aufgabe sind, lassen
-  sich nicht löschen (409).
+- Kurs löschen nur mit `?confirm=true`; Lektion/Material mit Abgaben oder angefangener Arbeit nur
+  mit `?confirm=true` (sonst 409). Eine Lektion nimmt per API ihre Materialien mit (die Oberfläche
+  lässt sie verwaist zurück). Bibliotheks-Trinkets, die Vorlage einer Aufgabe in einer Lektion sind,
+  lassen sich nicht löschen (409); verwaiste Materialien zählen nicht.
+- Reihen-Import prüft alle Vorlagen (Sprache, XML, Besitz) und Daten vor dem ersten Schreiben.
+- Teilnehmende: aufnehmen nur SuS-Konten (unbekannt/Lehrkraft → dieselbe 404, Antwort ohne E-Mail);
+  Rollen außer `student` nur für Lehrkraft-/Admin-Konten (SuS nicht befördern).
+- Vorlagen: Ändern einer von mehreren Aufgaben genutzten Vorlage erzeugt eine eigene Kopie für diese
+  Aufgabe (Copy-on-Write).
+- Rückmeldung erneut ohne `revision`: vorhandene Überarbeitung und `includeRevision` bleiben.
 
 ### Endpunkte
 

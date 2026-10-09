@@ -13,9 +13,24 @@ function fixture(name) {
   return fs.readFileSync(path.join(DIR, name), 'utf8');
 }
 
+var COMPONENTS = path.join(__dirname, '..', '..', '..', 'public', 'components', 'blockly', 'generators', 'python.js');
+
+function rep(text, n) { return new Array(n + 1).join(text); }
+
+/** Umwandlung muss schnell mit Fehlermeldung (oder Ergebnis) enden – nie hängen oder abstürzen. */
+function fast(xmlText) {
+  var started = Date.now(),
+      result  = blocks.convert(xmlText);
+  (Date.now() - started).should.be.below(1000);
+  return result;
+}
+
 describe('Blöcke → Python', function() {
   before(function() {
-    if (!blocks.isAvailable()) this.skip();   // ohne public/components (nur im Image vorhanden)
+    if (blocks.isAvailable()) return;
+    // Liegt public/components vor, darf die Umwandlung nicht still übersprungen werden
+    if (fs.existsSync(COMPONENTS)) throw new Error('Blockly-Generatoren vorhanden, aber nicht ladbar.');
+    this.skip();   // nur ohne Komponenten-Tarball (lokal)
   });
 
   fs.readdirSync(DIR).filter(function(f) { return /\.xml$/.test(f); }).forEach(function(file) {
@@ -59,7 +74,52 @@ describe('Blöcke → Python', function() {
 
   it('begrenzt die Zahl der Blöcke', function() {
     var many = '<xml>' + new Array(3002).join('<block type="math_number"><field name="NUM">1</field></block>') + '</xml>';
-    blocks.convert(many).pythonError.should.contain('Zu viele Blöcke');
+    fast(many).pythonError.should.contain('Zu viele Blöcke');
+  });
+
+  describe('feindliches XML endet schnell', function() {
+    it('riesige Zahlen in Mutationen (Listen, Text, if/elif)', function() {
+      fast('<xml><block type="lists_create_with"><mutation items="2000000000"></mutation></block></xml>').pythonCode.split('None').length.should.be.below(30);
+      fast('<xml><block type="text_print"><value name="TEXT"><block type="text_join"><mutation items="999999999"></mutation></block></value></block></xml>').pythonCode.length.should.be.below(500);
+      fast('<xml><block type="controls_if"><mutation elseif="2000000000" else="7"></mutation></block></xml>').pythonCode.split('elif').length.should.be.below(30);
+      var high = '<xml><block type="lists_create_with"><mutation items="2000000000"></mutation><value name="ADD100000"><block type="math_number"><field name="NUM">1</field></block></value></block></xml>';
+      fast(high).pythonCode.split('None').length.should.be.below(300);
+      fast('<xml><block type="procedures_callnoreturn"><mutation name="f">' + rep('<arg name="a"></arg>', 300) + '</mutation></block></xml>').pythonError.should.contain('Parameter');
+    });
+
+    it('leere Plätze am Ende bleiben wie im Editor', function() {
+      fast('<xml><block type="lists_create_with"><mutation items="3"></mutation><value name="ADD0"><block type="math_number"><field name="NUM">1</field></block></value></block></xml>')
+        .pythonCode.should.eql('[1, None, None]\n');
+    });
+
+    it('1 MB Kommentar und viele lange Kommentare', function() {
+      var big = '<xml><block type="text_print"><comment>' + rep('wort ', 200000) + '</comment></block></xml>';
+      big.length.should.be.below(xml.MAX_LENGTH);
+      should.exist(fast(big).pythonCode);
+      var many = '<xml>' + rep('<block type="text_print"><comment>' + rep('wort ', 380) + '</comment></block>', 500) + '</xml>';
+      should.exist(fast(many).pythonCode);
+    });
+
+    it('5000 Variablen', function() {
+      var vars = '<xml><variables>' + Array.from({ length : 5000 }, function(_, i) { return '<variable id="v' + i + '">v' + i + '</variable>'; }).join('') + '</variables></xml>';
+      fast(vars).pythonError.should.contain('Zu viele Variablen');
+    });
+
+    it('__proto__, constructor, init … als Blocktyp oder Feldname', function() {
+      ['__proto__', 'constructor', 'init', 'finish', 'workspaceToCode', 'blockToCode', 'scrub_', 'toString', 'hasOwnProperty'].forEach(function(type) {
+        fast('<xml><block type="' + type + '"></block></xml>').pythonError.should.contain('Unbekannter Block');
+      });
+      fast('<xml><block type="text"><field name="__proto__">x</field><field name="constructor">y</field><field name="TEXT">ok</field></block></xml>')
+        .pythonCode.should.eql("'ok'\n");
+      fast('<xml><variables><variable id="__proto__">__proto__</variable></variables><block type="variables_set"><field name="VAR" id="__proto__">__proto__</field></block></xml>')
+        .pythonCode.should.contain('= 0');
+    });
+
+    it('tiefe Verschachtelung', function() {
+      var deep = '<xml>' + rep('<block type="math_single"><field name="OP">NEG</field><value name="NUM">', 900) + rep('</value></block>', 900) + '</xml>';
+      var result = fast(deep);
+      (result.pythonCode || result.pythonError).should.be.a('string');
+    });
   });
 });
 

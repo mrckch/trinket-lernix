@@ -20,8 +20,10 @@ info:
     wird mit Person und Token protokolliert.
 
     **Daten** sind dieselben wie in der Oberfläche: Code wird wie im Editor gespeichert
-    (Editor-Sprachen als Dateiliste, Blöcke als Blockly-XML); Block-Trinkets liefern zusätzlich
-    `pythonCode` – erzeugt mit denselben Generatoren wie die Python-Ansicht im Editor.
+    (Editor-Sprachen als Dateiliste, Blöcke als Blockly-XML). Block-Trinkets liefern `pythonCode`
+    (dieselben Generatoren wie die Python-Ansicht im Editor) nur auf ausdrücklichen Wunsch:
+    `?python=true` bzw. `?format=python` beim Trinket, `?python=true` beim Material,
+    `?includeCode=true` bei den Abgaben einer Aufgabe. Ergebnisse werden je Trinket-Stand zwischengespeichert.
 servers:
   - url: https://trinket.lernix.site
 security:
@@ -43,6 +45,8 @@ components:
         `Authorization: Bearer tl_…`. Scopes: courses:read, submissions:read, trinkets:read,
         courses:write, content:write, submissions:write, trinkets:write, students:manage.
   parameters:
+    python: { name: python, in: query, schema: { type: boolean, default: false }, description: "Blöcke zusätzlich als pythonCode umwandeln" }
+    confirm: { name: confirm, in: query, schema: { type: boolean }, description: "nötig, wenn es schon Abgaben oder angefangene Arbeiten von SuS gibt (sonst 409)" }
     courseId: { name: courseId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
     lessonId: { name: lessonId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
     materialId: { name: materialId, in: path, required: true, schema: { type: string, pattern: "^[0-9a-f]{24}$" } }
@@ -198,8 +202,8 @@ components:
       properties:
         code: { type: string, description: gespeicherter Rohwert (Dateiliste als JSON bzw. Blockly-XML) }
         files: { type: array, items: { $ref: '#/components/schemas/File' } }
-        pythonCode: { type: string, nullable: true, description: "nur lang=blocks: Python wie in der Python-Ansicht des Editors" }
-        pythonError: { type: string, nullable: true, description: "nur Block-Trinkets: Grund, falls die Umwandlung scheitert" }
+        pythonCode: { type: string, nullable: true, description: "nur lang=blocks und nur mit python=true/includeCode=true: Python wie in der Python-Ansicht des Editors" }
+        pythonError: { type: string, nullable: true, description: "nur Block-Trinkets (mit python=true/includeCode=true): Grund, falls die Umwandlung scheitert (ungültiges XML, unbekannter Block, Grenzen: 3000 Blöcke, 1000 Variablen, 200 Plätze je Block, 1 s)" }
     Feedback:
       type: object
       properties:
@@ -264,7 +268,9 @@ components:
       description: |
         Vorlage einer Aufgabe: `trinketId` (eigenes Bibliotheks-Trinket) **oder** `lang` mit
         optionalem `code`/`files`. Beim Ändern ohne `lang` wird der Code der bisherigen Vorlage
-        ersetzt (wenn sie dir gehört), sonst entsteht eine neue leere Vorlage.
+        ersetzt, wenn sie dir gehört und keine andere Aufgabe sie nutzt; wird sie geteilt, bekommt
+        diese Aufgabe eine eigene Kopie (die gemeinsame Vorlage bleibt). Andernfalls entsteht eine
+        neue Vorlage.
       properties:
         trinketId: { type: string }
         lang: { type: string, enum: [python, blocks, html, glowscript, glowscript-blocks, python3, console, music, java, R, pygame], description: nur Sprachen, die hier freigeschaltet sind }
@@ -575,11 +581,14 @@ paths:
         "404": { $ref: '#/components/responses/NotFound' }
     delete:
       tags: [Inhalte]
-      summary: Lektion löschen (content:write)
+      summary: Lektion samt ihren Seiten und Aufgaben löschen (content:write)
+      description: Gibt es schon Abgaben/angefangene Arbeiten, nur mit `confirm=true`; die Trinkets der SuS bleiben erhalten.
+      parameters: [{ $ref: '#/components/parameters/confirm' }]
       responses:
         "204": { $ref: '#/components/responses/NoContent' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
   /api/v1/courses/{courseId}/lessons/{lessonId}/materials:
     parameters: [{ $ref: '#/components/parameters/courseId' }, { $ref: '#/components/parameters/lessonId' }]
     post:
@@ -620,6 +629,7 @@ paths:
     get:
       tags: [Inhalte]
       summary: Seite oder Aufgabe mit Inhalt und Vorlage samt Code (courses:read)
+      parameters: [{ $ref: '#/components/parameters/python' }]
       responses:
         "200": { $ref: '#/components/responses/MaterialOut' }
         "403": { $ref: '#/components/responses/Forbidden' }
@@ -652,16 +662,22 @@ paths:
     delete:
       tags: [Inhalte]
       summary: Seite/Aufgabe löschen (content:write)
+      description: Gibt es schon Abgaben/angefangene Arbeiten, nur mit `confirm=true`.
+      parameters: [{ $ref: '#/components/parameters/confirm' }]
       responses:
         "204": { $ref: '#/components/responses/NoContent' }
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
+        "409": { $ref: '#/components/responses/Conflict' }
   /api/v1/courses/{courseId}/import:
     parameters: [{ $ref: '#/components/parameters/courseId' }]
     post:
       tags: [Inhalte]
       summary: Ganze Reihe importieren – Lektionen mit Seiten und Aufgaben, angehängt ans Kursende (content:write)
-      description: Wird vollständig geprüft, dann der Reihe nach angelegt (max. 50 Lektionen, je 100 Materialien).
+      description: |
+        Wird vollständig geprüft – Felder, Daten, Sprachen, Blockly-XML und Besitz der Vorlagen –, erst
+        dann der Reihe nach angelegt (max. 50 Lektionen, je 100 Materialien). Ein 400/403 hinterlässt
+        nichts; die Meldung nennt Lektion und Material.
       requestBody:
         required: true
         content:
@@ -726,7 +742,8 @@ paths:
         "404": { $ref: '#/components/responses/NotFound' }
     post:
       tags: [Teilnehmende]
-      summary: Konto als SuS aufnehmen – per Benutzername oder E-Mail (students:manage)
+      summary: SuS-Konto aufnehmen – per Benutzername oder E-Mail (students:manage)
+      description: Nur Konten mit Site-Rolle SuS; unbekannte Konten und Lehrkräfte bekommen dieselbe 404. Die Antwort enthält keine E-Mail.
       requestBody:
         required: true
         content:
@@ -763,7 +780,9 @@ paths:
     patch:
       tags: [Teilnehmende]
       summary: Im Dashboard aus-/einblenden oder Kursrolle ändern (students:manage)
-      description: Kursleitung und eigenes Konto lassen sich so nicht ändern (409).
+      description: |
+        Kursleitung und eigenes Konto lassen sich so nicht ändern (409). Rollen außer `student`
+        nur für Konten mit Lehrkraft-/Admin-Rolle – SuS lassen sich nicht befördern (403).
       requestBody:
         required: true
         content:
@@ -929,6 +948,7 @@ paths:
           in: query
           schema: { type: string, enum: [json, python], default: json }
           description: "`python` liefert reinen Python-Text: bei Blöcken den umgewandelten Code, bei Python-Trinkets die Hauptdatei"
+        - $ref: '#/components/parameters/python'
       responses:
         "200":
           description: OK
@@ -977,10 +997,12 @@ paths:
       summary: Abgabe mit Rückmeldung zurückgeben – wie „Rückmeldung senden“ (submissions:write)
       description: |
         Nur für abgegebene (`submitted`) oder schon zurückgegebene (`completed`) Abgaben; erneutes
-        Senden ändert die bestehende Rückmeldung. Danach Zustand `completed`. Ohne `revision` wird der
-        Code der Abgabe als Überarbeitung abgelegt und `includeRevision` ist `false`; mit `revision`
-        sehen SuS die Überarbeitung (außer `includeRevision: false`). `allowResubmit` erlaubt eine
-        neue Abgabe (Default: bisheriger Wert, sonst `false`).
+        Senden ändert die bestehende Rückmeldung. Danach Zustand `completed`. Mit `revision` sehen SuS
+        die Überarbeitung (außer `includeRevision: false`). Ohne `revision` bleiben eine vorhandene
+        Überarbeitung und `includeRevision` unverändert (`includeRevision` lässt sich dann nur
+        umschalten); beim ersten Senden ohne `revision` wird der Code der Abgabe abgelegt und
+        `includeRevision` ist `false`. `allowResubmit` erlaubt eine neue Abgabe (Default: bisheriger
+        Wert, sonst `false`).
       requestBody:
         required: true
         content:

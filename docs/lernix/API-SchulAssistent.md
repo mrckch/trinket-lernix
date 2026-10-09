@@ -55,11 +55,11 @@ SuS einer verknüpften Gruppe landen beim nächsten IServ-Login automatisch im K
 
 | Schritt | Aufruf | Scope |
 |---|---|---|
-| ganze Reihe | `POST /courses/{id}/import { lessons: [{ name, isDraft?, materials: [Material…] }] }` → 201 mit allen IDs | content:write |
+| ganze Reihe | `POST /courses/{id}/import { lessons: [{ name, isDraft?, materials: [Material…] }] }` → 201 mit allen IDs; wird vorher komplett geprüft, ein Fehler hinterlässt nichts | content:write |
 | Lektion | `POST /courses/{id}/lessons { name, isDraft?, index? }` · `PATCH …/lessons/{lid} { name?, isDraft? }` · `DELETE …` | content:write |
 | Seite/Aufgabe | `POST /courses/{id}/lessons/{lid}/materials` (Material, s. u.) | content:write |
-| ändern/löschen | `PATCH /courses/{id}/materials/{mid}` · `DELETE …` | content:write |
-| lesen | `GET /courses/{id}/materials/{mid}` (Inhalt + Vorlage mit Code) | courses:read |
+| ändern/löschen | `PATCH /courses/{id}/materials/{mid}` · `DELETE …` (mit Abgaben nur `?confirm=true`, sonst 409; eine Lektion nimmt ihre Materialien mit) | content:write |
+| lesen | `GET /courses/{id}/materials/{mid}` (Inhalt + Vorlage mit Code; `?python=true` für Blöcke als Python) | courses:read |
 | sortieren | `PUT /courses/{id}/lessons/order { lessonIds }` · `PUT …/lessons/{lid}/materials/order { materialIds }` (holt Material aus anderen Lektionen) | content:write |
 | Vorlagen-Bibliothek | `GET /trinkets?lang=` · `POST /trinkets { lang, name, code \| files }` · `PATCH`/`DELETE /trinkets/{id}` | trinkets:read / trinkets:write |
 
@@ -75,6 +75,7 @@ SuS einer verknüpften Gruppe landen beim nächsten IServ-Login automatisch im K
 
 - `content` ist Markdown (bei Aufgaben die Aufgabenstellung).
 - `starter`: entweder `{ trinketId }` (eigenes Bibliotheks-Trinket) oder `{ lang, code | files }`.
+  Wird eine geteilte Vorlage per `PATCH` geändert, bekommt nur diese Aufgabe eine eigene Kopie.
   Sprachen wie freigeschaltet: `python`, `blocks`, `html`, `glowscript`, `glowscript-blocks`.
   `code` = Hauptdatei bzw. Blockly-XML; `files` = `[{ name, content, hidden? }]`.
 - Sichtbarkeit wie in der Oberfläche: Entwürfe (`isDraft`) sehen SuS nie, Aufgaben nur zwischen
@@ -88,13 +89,15 @@ SuS einer verknüpften Gruppe landen beim nächsten IServ-Login automatisch im K
 | Überblick | `GET /courses/{id}/lernstand` (Matrix SuS × Aufgabe, Zählungen) | submissions:read |
 | eine Aufgabe, alle SuS | `GET /courses/{id}/assignments/{mid}/submissions?includeCode=true` | submissions:read |
 | eine SuS, alle Versuche | `GET /courses/{id}/students/{uid}/submissions` | submissions:read |
-| ein Trinket | `GET /trinkets/{tid}` (Code, Dateien, Rückmeldungen) · `GET /trinkets/{tid}?format=python` (reiner Python-Text) | trinkets:read |
+| ein Trinket | `GET /trinkets/{tid}` (Code, Dateien, Rückmeldungen; `?python=true` für `pythonCode`) · `GET /trinkets/{tid}?format=python` (reiner Python-Text) | trinkets:read |
 
 Je SuS liefert die Aufgaben-Übersicht `state` (`not-started`, `started`, `submitted`, `completed`),
 `attempts` und das maßgebliche `trinket` (verspätet > abgegeben > zurückgegeben > angefangen) mit
 `files`, `feedback.studentComment` und – bei Blöcken – `pythonCode`. Auch angefangene Arbeit zeigt den
 aktuellen Stand (Autosave). `pythonCode` stammt aus denselben Generatoren wie die Python-Ansicht im
-Editor; scheitert die Umwandlung, steht der Grund in `pythonError` (bei `format=python` → 422).
+Editor und wird nur auf Wunsch erzeugt (`includeCode=true`, `python=true`, `format=python`);
+scheitert die Umwandlung, steht der Grund in `pythonError` (bei `format=python` → 422). Grenzen:
+3000 Blöcke, 1000 Variablen, 200 Plätze je Block, etwa 1 s je Programm.
 Ausführen muss der SchulAssistent den Code selbst (z. B. in einer Sandbox); Turtle-Programme laufen
 nur mit einer Turtle-Attrappe.
 
@@ -107,7 +110,8 @@ nur mit einer Turtle-Attrappe.
 | verspätete Abgabe annehmen | `POST /trinkets/{tid}/accept` (erst danach Rückmeldung) | submissions:write |
 
 - `tid` ist das `trinket.id` aus der Abgaben-Übersicht. Rückmeldung nur zu `submitted`/`completed`;
-  erneutes Senden ändert die bestehende Rückmeldung (kein Duplikat).
+  erneutes Senden ändert die bestehende Rückmeldung (kein Duplikat); ohne `revision` bleibt eine
+  vorhandene Überarbeitung samt `includeRevision` erhalten.
 - `revision` = korrigierte Fassung, die SuS sehen (`includeRevision` sonst `false`).
   `allowResubmit: true` erlaubt eine neue Abgabe.
 - Es gibt keine Noten/Punkte im Datenmodell – bei Bedarf in den Kommentartext.
@@ -119,9 +123,9 @@ nur mit einer Turtle-Attrappe.
 | Schritt | Aufruf | Scope |
 |---|---|---|
 | Liste | `GET /courses/{id}/students` (nur SuS) · `GET /courses/{id}/members` (alle mit Rolle) | courses:read |
-| aufnehmen | `POST /courses/{id}/students { login }` (Benutzername oder E-Mail) → 201, schon da → 200 `alreadyListed` | students:manage |
+| aufnehmen | `POST /courses/{id}/students { login }` (Benutzername oder E-Mail, nur SuS-Konten; sonst 404) → 201, schon da → 200 `alreadyListed` | students:manage |
 | ausblenden | `PATCH /courses/{id}/members/{uid} { onDashboard: false }` | students:manage |
-| Rolle | `PATCH /courses/{id}/members/{uid} { role: student \| collaborator \| admin \| associate }` | students:manage |
+| Rolle | `PATCH /courses/{id}/members/{uid} { role: student \| collaborator \| admin \| associate }` (außer `student` nur für Lehrkräfte) | students:manage |
 | entfernen | `DELETE /courses/{id}/members/{uid}` (über IServ eingetragene SuS kommen beim nächsten Login wieder – dann ausblenden) | students:manage |
 
 ## Vorschlag für MCP-Werkzeuge
