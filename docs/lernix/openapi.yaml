@@ -809,6 +809,24 @@ paths:
         "403": { $ref: '#/components/responses/Forbidden' }
         "404": { $ref: '#/components/responses/NotFound' }
         "409": { $ref: '#/components/responses/Conflict' }
+  /api/v1/courses/{courseId}/export.zip:
+    parameters: [{ $ref: '#/components/parameters/courseId' }]
+    get:
+      tags: [Abgaben]
+      summary: Alle Abgaben des Kurses als ZIP (submissions:read)
+      description: >-
+        Wie „Abgaben exportieren“ im Dashboard. Inhalt: LIESMICH.txt, lernstand.csv (Semikolon, UTF-8
+        mit BOM) und je Schüler:in ein Ordner mit der maßgeblichen Fassung jeder Aufgabe (Dateien; bei
+        Blöcken bloecke.xml und programm.py) sowie info.txt (Status, Daten, Kommentar, Rückmeldung).
+      responses:
+        "200":
+          description: ZIP-Datei
+          content:
+            application/zip:
+              schema: { type: string, format: binary }
+        "401": { description: Token fehlt oder ist ungültig }
+        "403": { description: Scope fehlt oder kein Zugriff auf die Abgaben dieses Kurses }
+        "404": { description: Kurs nicht gefunden }
   /api/v1/courses/{courseId}/lernstand:
     parameters: [{ $ref: '#/components/parameters/courseId' }]
     get:

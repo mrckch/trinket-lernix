@@ -135,6 +135,7 @@ nur mit einer Turtle-Attrappe.
 | `trinket_kurse` | `GET /courses`, `GET /courses/{id}` |
 | `trinket_kurs_anlegen` | `GET /iserv/groups`, `POST /courses` |
 | `trinket_reihe_importieren` | `POST /courses/{id}/import` |
+| `trinket_export` | `GET /courses/{id}/export.zip` |
 | `trinket_aufgabe_stellen` / `_aendern` | `POST …/materials`, `PATCH /courses/{id}/materials/{mid}` |
 | `trinket_freischalten` | `PATCH …/materials/{mid} { isDraft, availableOn, hideAfter }` |
 | `trinket_lernstand` | `GET /courses/{id}/lernstand` |
