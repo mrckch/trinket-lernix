@@ -457,6 +457,10 @@ _.extend(Flow.prototype, {
 
   del : function(url) {
     return createRequest(this, 'del', url);
+  },
+
+  patch : function(url) {
+    return createRequest(this, 'patch', url);
   }
 });
 
