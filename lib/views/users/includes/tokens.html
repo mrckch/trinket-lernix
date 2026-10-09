@@ -1,8 +1,14 @@
-{# API-Token für die Lernstand-API (/api/v1) – nur Lehrkräfte/Admins, siehe docs/lernix/openapi.yaml #}
+{# API-Token für die Token-API (/api/v1) – nur Lehrkräfte/Admins, siehe docs/lernix/openapi.yaml (ADR 0004/0006) #}
 <p>
-  Mit einem API-Token können externe Programme (zum Beispiel der SchulAssistent) den Lernstand deiner
-  Kurse <strong>lesen</strong>. Das Token wird nur <strong>einmal</strong> angezeigt – bitte sofort
-  sicher ablegen. Aufruf: <code>Authorization: Bearer &lt;Token&gt;</code> gegen <code>/api/v1/…</code>.
+  Mit einem API-Token können externe Programme (zum Beispiel der SchulAssistent) mit deinen Kursen
+  arbeiten: den Lernstand <strong>lesen</strong> und – wenn du Schreibrechte ankreuzt – Kurse, Inhalte
+  und Rückmeldungen <strong>ändern</strong>. Ein Token kann nie mehr als du selbst und wirkt nur in
+  Kursen, die du leitest oder verwaltest. Du siehst und widerrufst hier nur deine eigenen Token.
+</p>
+<p>
+  Das Token wird nur <strong>einmal</strong> angezeigt – bitte sofort sicher ablegen. Aufruf:
+  <code>Authorization: Bearer &lt;Token&gt;</code> gegen <code>/api/v1/…</code>. Gib einem Programm nur
+  die Rechte, die es wirklich braucht.
 </p>
 
 <div id="token-secret" class="panel callout radius" style="display:none">
@@ -22,8 +28,13 @@
   <div class="row">
     <div class="small-12 columns">
       <label>Rechte</label>
-      {% for scope, description in data.scopes %}
-      <label><input type="checkbox" class="token-scope" value="{{ scope }}" checked /> <code>{{ scope }}</code> – {{ description }}</label>
+      {% for group in data.scopeGroups %}
+      <fieldset class="token-scope-group">
+        <legend>{{ group.title }}</legend>
+        {% for scope in group.scopes %}
+        <label><input type="checkbox" class="token-scope" value="{{ scope.name }}" {% if scope.checked %}checked{% endif %} /> <code>{{ scope.name }}</code> – {{ scope.description }}</label>
+        {% endfor %}
+      </fieldset>
       {% endfor %}
     </div>
   </div>

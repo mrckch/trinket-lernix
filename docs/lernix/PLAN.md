@@ -263,6 +263,24 @@ Ursprünglicher Umfang:
   Break-Glass, Backup/Restore (`mongodump`/`mongorestore`), Update aus Upstream.
 - Deploy auf Docker-VM, NPM-Host, DNS `trinket` → 93.205.103.135.
 
+### Phase 6 – Schreib-API (1–2 Tage) — **fertig im Branch `api-ausbau`** (ADR 0006, noch nicht in `main`)
+
+Ziel: den Unterrichtsablauf aus dem SchulAssistent steuern – Kurse und Reihen anlegen, Aufgaben
+stellen und freischalten, Abgaben auswerten (auch Blöcke als Python), Rückmeldung geben.
+
+Ergebnis im Branch: Scopes `courses:write`, `content:write`, `submissions:write`, `trinkets:write`,
+`students:manage` (Token-Scopes ∩ Rolle, Kursrechte wie die Oberfläche); 31 neue Endpunkte unter
+`/api/v1` (`docs/lernix/openapi.yaml`); Services `kursverwaltung`, `rueckmeldung`, `trinkets`
+(Rückmeldung der Oberfläche nutzt denselben Service); Blöcke → Python mit den Generatoren des Editors
+(`lib/services/blocks`, zeichengleich getestet); Joi ohne unbekannte Felder, Größengrenzen,
+Schreibbremse (429), Protokollzeile je Schreibzugriff; Token-Seite mit Lese-/Schreibrechten und
+Menüpunkt „API-Tokens“; Lehrkräfte merken sich ihre IServ-Gruppen am Konto (nur für die Token-API).
+Integrationsanleitung `docs/lernix/API-SchulAssistent.md`. Tests: 211 grün, 42 übersprungen.
+
+Vor dem Merge: Review, Entscheidung zur Gruppenspeicherung bei Lehrkräften (Abweichung von ADR 0002),
+nach dem Deploy einmal neu anmelden (sonst kennt die Token-API die Gruppen nicht).
+Danach: passende MCP-Werkzeuge im SchulAssistent.
+
 ## 8. Entscheidungen zu den Rückfragen (Marc, 2026-10-09)
 
 1. **Kein Einrichtungsassistent.** Konfiguration nur per `.env`, Verwaltung über

@@ -2,6 +2,14 @@ var Joi          = require('joi'),
     helpers      = require('../lib/util/helpers'),
     config       = require('config');
 
+// Token-API /api/v1: nur Bearer, nie Cookies; Grenzen für Anfragegrößen (Default von Hapi: 1 MB)
+var V1_CODE_BYTES   = 2 * 1024 * 1024,
+    V1_IMPORT_BYTES = 5 * 1024 * 1024;
+
+function v1(extra) {
+  return Object.assign({ auth : { strategy : 'bearer' } }, extra || {});
+}
+
 // Make recaptcha optional when not configured
 var recaptchaValidation = (config.app.recaptcha && config.app.recaptcha.secretkey)
   ? Joi.string().required()
@@ -53,34 +61,159 @@ module.exports = [
     route : 'DELETE /api/tokens/{tokenId} tokens.revoke',
     config : { auth: 'session' }
   },
-  // --- Lernstand-API /api/v1 (nur Bearer-Token, lesend; docs/lernix/openapi.yaml) --------
+  // --- Token-API /api/v1 (nur Bearer-Token; docs/lernix/openapi.yaml, ADR 0004/0006) -------
+  // Scopes, Eingabeprüfung (Joi), Schreibbremse und Protokoll: lib/controllers/apiv1.js
   {
     route : 'GET /api/v1/me apiv1.me',
-    config : { auth: { strategy: 'bearer' } }
+    config : v1()
+  },
+  {
+    route : 'GET /api/v1/iserv/groups apiv1.iservGroups',
+    config : v1()
   },
   {
     route : 'GET /api/v1/courses apiv1.courses',
-    config : { auth: { strategy: 'bearer' } }
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/courses apiv1.createCourse',
+    config : v1()
   },
   {
     route : 'GET /api/v1/courses/{courseId} apiv1.course',
-    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+    config : v1({ pre : ['course(params.courseId)'] })
+  },
+  {
+    route : 'PATCH /api/v1/courses/{courseId} apiv1.updateCourse',
+    config : v1()
+  },
+  {
+    route : 'DELETE /api/v1/courses/{courseId} apiv1.deleteCourse',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/courses/{courseId}/copy apiv1.copyCourse',
+    config : v1()
+  },
+  {
+    route : 'PUT /api/v1/courses/{courseId}/iserv-group apiv1.setIservGroup',
+    config : v1()
+  },
+  {
+    route : 'DELETE /api/v1/courses/{courseId}/iserv-group apiv1.removeIservGroup',
+    config : v1()
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/access-code apiv1.getAccessCode',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/courses/{courseId}/access-code apiv1.rotateAccessCode',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/courses/{courseId}/lessons apiv1.createLesson',
+    config : v1()
+  },
+  {
+    route : 'PUT /api/v1/courses/{courseId}/lessons/order apiv1.reorderLessons',
+    config : v1()
+  },
+  {
+    route : 'PATCH /api/v1/courses/{courseId}/lessons/{lessonId} apiv1.updateLesson',
+    config : v1()
+  },
+  {
+    route : 'DELETE /api/v1/courses/{courseId}/lessons/{lessonId} apiv1.deleteLesson',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/courses/{courseId}/lessons/{lessonId}/materials apiv1.createMaterial',
+    config : v1({ payload : { maxBytes : V1_CODE_BYTES } })
+  },
+  {
+    route : 'PUT /api/v1/courses/{courseId}/lessons/{lessonId}/materials/order apiv1.reorderMaterials',
+    config : v1()
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/materials/{materialId} apiv1.material',
+    config : v1()
+  },
+  {
+    route : 'PATCH /api/v1/courses/{courseId}/materials/{materialId} apiv1.updateMaterial',
+    config : v1({ payload : { maxBytes : V1_CODE_BYTES } })
+  },
+  {
+    route : 'DELETE /api/v1/courses/{courseId}/materials/{materialId} apiv1.deleteMaterial',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/courses/{courseId}/import apiv1.importSeries',
+    config : v1({ payload : { maxBytes : V1_IMPORT_BYTES } })
   },
   {
     route : 'GET /api/v1/courses/{courseId}/students apiv1.students',
-    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+    config : v1({ pre : ['course(params.courseId)'] })
+  },
+  {
+    route : 'POST /api/v1/courses/{courseId}/students apiv1.addStudent',
+    config : v1()
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/members apiv1.members',
+    config : v1()
+  },
+  {
+    route : 'PATCH /api/v1/courses/{courseId}/members/{userId} apiv1.updateMember',
+    config : v1()
+  },
+  {
+    route : 'DELETE /api/v1/courses/{courseId}/members/{userId} apiv1.removeMember',
+    config : v1()
   },
   {
     route : 'GET /api/v1/courses/{courseId}/lernstand apiv1.lernstand',
-    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+    config : v1({ pre : ['course(params.courseId)'] })
   },
   {
     route : 'GET /api/v1/courses/{courseId}/students/{userId}/submissions apiv1.studentSubmissions',
-    config : { auth: { strategy: 'bearer' }, pre : ['course(params.courseId)'] }
+    config : v1({ pre : ['course(params.courseId)'] })
+  },
+  {
+    route : 'GET /api/v1/courses/{courseId}/assignments/{materialId}/submissions apiv1.assignmentSubmissions',
+    config : v1()
+  },
+  {
+    route : 'GET /api/v1/trinkets apiv1.library',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/trinkets apiv1.createTrinket',
+    config : v1({ payload : { maxBytes : V1_CODE_BYTES } })
   },
   {
     route : 'GET /api/v1/trinkets/{trinketId} apiv1.trinket',
-    config : { auth: { strategy: 'bearer' }, pre : ['trinket(params.trinketId)'] }
+    config : v1({ pre : ['trinket(params.trinketId)'] })
+  },
+  {
+    route : 'PATCH /api/v1/trinkets/{trinketId} apiv1.updateTrinket',
+    config : v1({ payload : { maxBytes : V1_CODE_BYTES } })
+  },
+  {
+    route : 'DELETE /api/v1/trinkets/{trinketId} apiv1.deleteTrinket',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/trinkets/{trinketId}/feedback apiv1.sendFeedback',
+    config : v1({ payload : { maxBytes : V1_CODE_BYTES } })
+  },
+  {
+    route : 'PUT /api/v1/trinkets/{trinketId}/feedback-draft apiv1.saveFeedbackDraft',
+    config : v1()
+  },
+  {
+    route : 'POST /api/v1/trinkets/{trinketId}/accept apiv1.acceptSubmission',
+    config : v1()
   },
   {
     // IServ-Gruppen der angemeldeten Person (Session)
