@@ -1,6 +1,6 @@
 # Trinket Lernix: Token-API für den SchulAssistent
 
-Stand: 09.10.2026, Branch `api-ausbau` (ADR 0006, noch nicht ausgerollt). Vollständige Beschreibung:
+Stand: 09.10.2026, live auf https://trinket.lernix.site (ADR 0006). Vollständige Beschreibung:
 `docs/lernix/openapi.yaml`. Diese Seite ordnet die Endpunkte nach Unterrichtsschritten, damit der
 SchulAssistent passende MCP-Werkzeuge bekommt.
 

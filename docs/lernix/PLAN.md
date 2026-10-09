@@ -263,7 +263,7 @@ Ursprünglicher Umfang:
   Break-Glass, Backup/Restore (`mongodump`/`mongorestore`), Update aus Upstream.
 - Deploy auf Docker-VM, NPM-Host, DNS `trinket` → 93.205.103.135.
 
-### Phase 6 – Schreib-API (1–2 Tage) — **fertig im Branch `api-ausbau`** (ADR 0006, noch nicht in `main`)
+### Phase 6 – Schreib-API (1–2 Tage) — **erledigt und live 2026-10-09** (ADR 0006)
 
 Ziel: den Unterrichtsablauf aus dem SchulAssistent steuern – Kurse und Reihen anlegen, Aufgaben
 stellen und freischalten, Abgaben auswerten (auch Blöcke als Python), Rückmeldung geben.
@@ -277,9 +277,24 @@ Schreibbremse (429), Protokollzeile je Schreibzugriff; Token-Seite mit Lese-/Sch
 Menüpunkt „API-Tokens“; Lehrkräfte merken sich ihre IServ-Gruppen am Konto (nur für die Token-API).
 Integrationsanleitung `docs/lernix/API-SchulAssistent.md`. Security-Review eingearbeitet (Grenzen der Block-Umwandlung, confirm bei Abgaben, Import ohne Halbzustand, nur SuS-Konten aufnehmen). Tests: 220 grün, 42 übersprungen.
 
-Vor dem Merge: Review, Entscheidung zur Gruppenspeicherung bei Lehrkräften (Abweichung von ADR 0002),
-nach dem Deploy einmal neu anmelden (sonst kennt die Token-API die Gruppen nicht).
-Danach: passende MCP-Werkzeuge im SchulAssistent.
+Gruppenspeicherung bei Lehrkräften (nur ID + Name, nur Lehrkräfte/Admins) übernommen – Marc wollte
+die volle Steuerung über die API. Nach dem Deploy einmal neu per IServ anmelden, sonst kennt die
+Token-API die Gruppen nicht. Danach: passende MCP-Werkzeuge im SchulAssistent.
+
+### Phase 7 – Export, iPad, TurtleCoder-Reihe — **live 2026-10-09** (Reihe: Import vorbereitet)
+
+- Kurs-Export als ZIP (Dashboard „Abgaben exportieren“, `GET /api/v1/courses/{id}/export.zip`):
+  `lernstand.csv`, je SuS die maßgebliche Fassung jeder Aufgabe, Blöcke als XML + Python, `info.txt`.
+- S3 komplett abgeschaltet (`features.assets: false`): Export eigener Trinkets, Vorschaubilder, Uploads.
+- iPad (Mobile First, die SuS haben iPads): Editor in Aufgaben 70vh, Gliederung auf Touch-Geräten
+  eingeklappt, keine Tooltips auf Touch, Kommentar geht bei schneller Abgabe nicht verloren,
+  Blöcke-Einbettung ohne Login, Schüler-Kursseite relativ (kein Port-Verlust).
+- Blöcke „schaue nach …“ (setheading) und „setze Stiftdicke auf“ für die TurtleCoder-Reihe
+  (TurtleCoder startet nach oben, die Python-Turtle nach rechts).
+- E2E-Test in der Testinstanz (`AUTH_MODE=dev`, ENTWICKLUNG.md): Lehrkraft legt per API Kurs mit
+  IServ-Gruppe und Reihe an → SuS (iPad) landet automatisch im Kurs, startet, führt aus, gibt ab →
+  Lehrkraft holt die Abgabe als Python und gibt Rückmeldung → SuS sieht sie. Bestanden.
+- Security-Review der Schreib-API (u. a. Absturz durch präpariertes Blöcke-XML) vor dem Deploy behoben.
 
 ## 8. Entscheidungen zu den Rückfragen (Marc, 2026-10-09)
 

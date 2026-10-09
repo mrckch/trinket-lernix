@@ -171,7 +171,8 @@
       <figure>
         <h3>Blöcke mit Turtle (Klasse 5/6)</h3>
         <img src="anleitung-bilder/blocks.png" alt="Blöcke-Editor mit verschachtelten Schleifen und gezeichnetem Quadrat-Mandala">
-        <figcaption>Blöcke per Drag &amp; Drop: „wiederhole“, „gehe vorwärts um“, „drehe nach rechts um“. Unter <i>Python-Code</i> sieht man den erzeugten Python-Text.</figcaption>
+        <figcaption>Blöcke per Drag &amp; Drop: „wiederhole“, „gehe vorwärts um“, „drehe nach rechts um“, „setze Farbe/Stiftdicke auf“,
+          „schaue nach oben“. Unter <i>Python-Code</i> sieht man den erzeugten Python-Text.</figcaption>
       </figure>
       <figure>
         <h3>Python mit Turtle-Grafik</h3>
@@ -207,7 +208,8 @@
     </figure>
     <ul>
       <li>Für das iPad eignen sich besonders <b>Blöcke</b> – Tippen von Code ist auf der Bildschirmtastatur mühsam.</li>
-      <li>Querformat nutzen: dann stehen Blöcke und Ergebnis nebeneinander.</li>
+      <li>Querformat nutzen: dann stehen Blöcke und Ergebnis nebeneinander. Die Kursgliederung ist auf dem iPad
+        zunächst eingeklappt – mit <span class="btn">☰</span> öffnen, mit <span class="btn">‹</span> / <span class="btn">›</span> blättern.</li>
       <li>Bei der Aufgabe ein <b>Fälligkeitsdatum</b> setzen (siehe Abschnitt 6); optional einen <b>Abgabeschluss</b>,
         danach kann nicht mehr abgegeben werden.</li>
     </ul>
@@ -283,6 +285,13 @@
       <tr><td>Abgegeben</td><td>Wartet auf deine Rückmeldung</td></tr>
       <tr><td>Zurückgegeben</td><td>Du hast eine Rückmeldung gegeben</td></tr>
     </table>
+    <figure>
+      <img src="anleitung-bilder/dashboard.png" alt="Dashboard eines Kurses mit Fortschrittsbalken je Aufgabe, Legende und Knopf Abgaben exportieren">
+      <figcaption>Dashboard: je Aufgabe ein Balken in den Farben der Legende, oben der Knopf zum Export.</figcaption>
+    </figure>
+    <p><b>Alles sichern:</b> Im Dashboard lädt <span class="btn">Abgaben exportieren</span> eine ZIP-Datei mit allen
+      Arbeiten (bei Blöcken zusätzlich als Python-Datei), den Kommentaren, deinen Rückmeldungen und einer Tabelle
+      <code>lernstand.csv</code> für Excel oder Numbers.</p>
     <p>Eine Abgabe öffnen, Code ansehen und ausführen, Kommentar schreiben und zurückgeben. Unter
       <span class="btn">Teilnehmende</span> kannst du einzelne Personen im Dashboard ausblenden (z.&nbsp;B. Kolleginnen und Kollegen
       als Mitarbeitende).</p>
@@ -310,20 +319,25 @@
         neuen IServ-Gruppe verknüpfen.</li>
     </ul>
     <div class="note"><strong>Wichtig</strong>Was von Schülerarbeiten erhalten bleiben soll (z.&nbsp;B. für Leistungsnachweise),
-      vor Ende Juli sichern.</div>
+      vor Ende Juli sichern: im Dashboard des Kurses <span class="btn">Abgaben exportieren</span> (ZIP).</div>
   </section>
 
   <section id="api">
-    <h2><span class="nr">11</span>Für Fortgeschrittene: Lernstand-API</h2>
-    <p>Externe Programme (z.&nbsp;B. der SchulAssistent) können den Lernstand deiner Kurse <b>lesen</b>.</p>
+    <h2><span class="nr">11</span>Für Fortgeschrittene: API für eigene Programme</h2>
+    <p>Externe Programme (z.&nbsp;B. der SchulAssistent oder Claude Code) können über ein Token den Lernstand deiner
+      Kurse <b>lesen</b> und – wenn du es erlaubst – Kurse, Lektionen und Aufgaben <b>anlegen</b>, Abgaben als Python
+      auswerten und <b>Rückmeldungen</b> schreiben. Jede Lehrkraft verwaltet nur ihre eigenen Token; ein Token darf
+      nie mehr als du und wirkt nur in deinen Kursen.</p>
     <ol>
       <li>Oben rechts im Benutzermenü <b>Einstellungen</b> → <b>API-Tokens</b>.</li>
-      <li>Bezeichnung eingeben, Rechte auswählen, <span class="btn">Token anlegen</span>.</li>
+      <li>Bezeichnung eingeben, Rechte auswählen (lesend sind vorausgewählt, die Schreibrechte unter
+        <i>Schreiben</i> musst du bewusst ankreuzen), <span class="btn">Token anlegen</span>.</li>
       <li>Das Token wird <b>nur einmal</b> angezeigt – sofort sicher ablegen. Nicht mehr benötigte Token dort
         <span class="btn">widerrufen</span>.</li>
     </ol>
     <p class="muted">Aufruf: <code>Authorization: Bearer tl_…</code> gegen <code>https://trinket.lernix.site/api/v1/…</code>,
-      z.&nbsp;B. <code>/api/v1/courses</code> oder <code>/api/v1/courses/&lt;id&gt;/lernstand</code>.</p>
+      z.&nbsp;B. <code>/api/v1/courses</code>, <code>/api/v1/courses/&lt;id&gt;/lernstand</code> oder
+      <code>/api/v1/courses/&lt;id&gt;/export.zip</code>.</p>
   </section>
 
   <section id="hilfe">
