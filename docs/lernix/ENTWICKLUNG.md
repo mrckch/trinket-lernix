@@ -108,6 +108,33 @@ docker run --rm --network container:trinket-testdb --volumes-from trinketdev-app
 `trinketdev-app` ist der Container-Name des Dev-Stacks (`COMPOSE_PROJECT_NAME=trinketdev`),
 `trinketdev_internal` sein Netz.
 
+**Ohne Docker Desktop (auf der Docker-VM):** `sh scripts/vm-test.sh` schickt den Arbeitsstand
+(`app.js`, `lib`, `test`, `config`, `serverside`, `public/js`) auf die VM, startet ein MongoDB ohne Auth
+in einem eigenen Netz und führt die Suite im Produktions-Image aus (dort liegen `node_modules` und
+`public/components`, damit laufen auch die Blöcke→Python-Tests). Produktion bleibt unberührt.
+Parallele Läufe brauchen einen eigenen Namenszusatz: `SUFFIX=-api sh scripts/vm-test.sh`.
+
+## Testinstanz mit Test-Login (E2E, iPad)
+
+Für Abläufe mit SuS und Lehrkraft ohne IServ läuft auf der VM eine getrennte Instanz mit
+`AUTH_MODE=dev` (Projekt `trinkete2e`, eigene Datenbank, nur `127.0.0.1:8091`):
+
+```bash
+# auf der VM: /root/trinket-e2e/.env (COMPOSE_PROJECT_NAME=trinkete2e, APP_PORT=8091, APP_BIND=127.0.0.1,
+#   NODE_ENV=development, AUTH_MODE=dev, PUBLIC_BASE_URL=http://localhost:8091, eigene Secrets)
+cd /opt/trinket && docker compose -p trinkete2e -f docker-compose.yml \
+  -f /root/trinket-e2e/docker-compose.e2e.yml --env-file /root/trinket-e2e/.env up -d --no-build app
+# eigenes Image für Teststände (Produktion nutzt :latest):
+docker build -t trinket-lernix/app:e2e /root/trinket-e2e/src
+# vom PC aus erreichbar machen:
+ssh -N -L 8091:127.0.0.1:8091 root@dockervm2-zuhause    # → http://localhost:8091/auth/dev
+```
+
+`docker-compose.e2e.yml` setzt nur `image: trinket-lernix/app:e2e`. Der Test-Login (`/auth/dev`)
+kann IServ-Gruppen simulieren (`act:Name, …`), damit lässt sich die automatische Kursaufnahme
+prüfen. `AUTH_MODE=dev` mit `NODE_ENV=production` verweigert der Entrypoint absichtlich.
+Abbauen: `docker compose -p trinkete2e … down -v`.
+
 ### Was die Suite abdeckt und was bewusst übersprungen ist
 
 - `test/lib/api/auth.js` – Dev-Login, Rollen `student`/`teacher`/`admin`, Sperren im
@@ -116,7 +143,9 @@ docker run --rm --network container:trinket-testdb --volumes-from trinketdev-app
 - `test/lib/api/apiv1.js`, `test/lib/api/apiv1-write.js` – Token-API lesend/schreibend, Token-Trennung
   zwischen Lehrkräften, Rechte (Scope, fremder Kurs, SuS-Token, widerrufen), Gleichlauf mit der Oberfläche.
 - `test/lib/util/blocks.js` – Blöcke → Python, zeichengleich mit dem Editor (`test/data/blocks`); wird
-  übersprungen, wenn `public/components` fehlt.
+  übersprungen, wenn `public/components` fehlt. `test/lib/util/lernix-blocks.js` – eigene Blöcke
+  (Blickrichtung, Stiftdicke).
+- `test/lib/api/kursexport.js` – Kurs-Export als ZIP (Oberfläche und Token-API, Rechte, Dateinamen, CSV).
 - Übersprungen (`describe.skip`/`it.skip`, je mit Begründung im Code): Abo-Rollen aus trinket.io,
   Mail-Funktionen (Mail ist aus), Datei-Upload (S3 aus), Beispielkurs-Fixture, einige Kurs-Tests mit
   veralteter Antwortform – letztere werden in Phase 3 beim API-Ausbau neu geschrieben.
