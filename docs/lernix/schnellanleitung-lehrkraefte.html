@@ -73,6 +73,23 @@
   .grid div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
   .grid b { display: block; }
   .muted { color: var(--muted); }
+  figure { margin: 12px 0; }
+  figure img {
+    display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px;
+    background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+  figcaption { color: var(--muted); font-size: .9rem; margin-top: 5px; }
+  figure img { cursor: zoom-in; }
+  #zoom {
+    position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center;
+    justify-content: center; padding: 16px; cursor: zoom-out; z-index: 10;
+  }
+  #zoom.offen { display: flex; }
+  #zoom img { max-width: 100%; max-height: 100%; border-radius: 6px; background: #fff; }
+  @media print { #zoom { display: none !important; } figure img { cursor: auto; } }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 14px; }
+  .gallery figure { margin: 0; }
+  .gallery h3 { margin: 0 0 6px; }
   footer { max-width: 920px; margin: 0 auto; padding: 0 16px 32px; color: var(--muted); font-size: .9rem; }
   @media (max-width: 640px) {
     nav.toc ol { columns: 1; }
@@ -105,6 +122,8 @@
     <ol>
       <li><a href="#anmelden">Anmelden</a></li>
       <li><a href="#trinket">Ein Trinket schreiben</a></li>
+      <li><a href="#beispiele">Was man damit programmieren kann</a></li>
+      <li><a href="#ipad">Auf dem iPad und als Hausaufgabe</a></li>
       <li><a href="#kurs">Kurs für eine Lerngruppe anlegen</a></li>
       <li><a href="#inhalte">Lektionen, Seiten, Aufgaben</a></li>
       <li><a href="#sus">So arbeiten die Schülerinnen und Schüler</a></li>
@@ -145,8 +164,57 @@
     </div>
   </section>
 
+  <section id="beispiele">
+    <h2><span class="nr">3</span>Was man damit programmieren kann</h2>
+    <p>Alle Beispiele liegen als Trinkets in der Bibliothek und laufen direkt im Browser – links der Code, rechts das Ergebnis.</p>
+    <div class="gallery">
+      <figure>
+        <h3>Blöcke mit Turtle (Klasse 5/6)</h3>
+        <img src="anleitung-bilder/blocks.png" alt="Blöcke-Editor mit verschachtelten Schleifen und gezeichnetem Quadrat-Mandala">
+        <figcaption>Blöcke per Drag &amp; Drop: „wiederhole“, „gehe vorwärts um“, „drehe nach rechts um“. Unter <i>Python-Code</i> sieht man den erzeugten Python-Text.</figcaption>
+      </figure>
+      <figure>
+        <h3>Python mit Turtle-Grafik</h3>
+        <img src="anleitung-bilder/python-turtle.png" alt="Python-Editor mit Turtle-Programm und bunter Spirale">
+        <figcaption>Der Schritt von den Blöcken zum Text: Schleife, Listen, Farben – eine bunte Spirale in elf Zeilen.</figcaption>
+      </figure>
+      <figure>
+        <h3>Python mit Text-Ausgabe</h3>
+        <img src="anleitung-bilder/python-text.png" alt="Python-Programm, das Primzahlen und das Einmaleins ausgibt">
+        <figcaption>Funktionen, Bedingungen und Schleifen: Primzahlen bis 60 und das Einmaleins der 7.</figcaption>
+      </figure>
+      <figure>
+        <h3>HTML, CSS und JavaScript</h3>
+        <img src="anleitung-bilder/html.png" alt="HTML-Editor mit drei Dateien und einer Webseite mit Klick-Zähler">
+        <figcaption>Eine eigene Webseite mit mehreren Dateien; die Vorschau aktualisiert sich automatisch.</figcaption>
+      </figure>
+      <figure>
+        <h3>3D mit Web VPython</h3>
+        <img src="anleitung-bilder/vpython.png" alt="VPython-Programm mit springendem Ball über grünem Boden">
+        <figcaption>Physik zum Anfassen: ein springender Ball mit Schwerkraft und Spur.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="ipad">
+    <h2><span class="nr">4</span>Auf dem iPad und als Hausaufgabe</h2>
+    <p>Trinket läuft im Browser – auch in Safari auf dem iPad, ohne App und ohne Installation. Damit eignen sich
+      Aufgaben auch als <b>Hausaufgabe</b>: Schülerinnen und Schüler melden sich zu Hause mit IServ an, bearbeiten die
+      Aufgabe und geben sie ab.</p>
+    <figure>
+      <img src="anleitung-bilder/ipad-bloecke.png" alt="Blöcke-Editor in iPad-Größe im Querformat">
+      <figcaption>Blöcke-Editor im iPad-Querformat: Blöcke lassen sich mit dem Finger ziehen, „Ausführen“ antippen.</figcaption>
+    </figure>
+    <ul>
+      <li>Für das iPad eignen sich besonders <b>Blöcke</b> – Tippen von Code ist auf der Bildschirmtastatur mühsam.</li>
+      <li>Querformat nutzen: dann stehen Blöcke und Ergebnis nebeneinander.</li>
+      <li>Bei der Aufgabe ein <b>Fälligkeitsdatum</b> setzen (siehe Abschnitt 6); optional einen <b>Abgabeschluss</b>,
+        danach kann nicht mehr abgegeben werden.</li>
+    </ul>
+  </section>
+
   <section id="kurs">
-    <h2><span class="nr">3</span>Kurs für eine Lerngruppe anlegen</h2>
+    <h2><span class="nr">5</span>Kurs für eine Lerngruppe anlegen</h2>
     <ol>
       <li>Auf der Übersicht unter <b>Meine Kurse</b> auf <span class="btn">+ Neuer Kurs</span> klicken.</li>
       <li>Name und Beschreibung eintragen.</li>
@@ -155,6 +223,10 @@
       <li><b>Mit IServ-Gruppe verknüpfen</b> – die Lerngruppe auswählen (z.&nbsp;B. <code>6aIF_06</code>).</li>
       <li><span class="btn">Speichern</span>.</li>
     </ol>
+    <figure>
+      <img src="anleitung-bilder/kurs-anlegen.jpg" alt="Formular Neuen Kurs anlegen mit Auswahl der IServ-Gruppe">
+      <figcaption>Neuer Kurs, privat, verknüpft mit der IServ-Gruppe 6bIF_06.</figcaption>
+    </figure>
     <div class="tip"><strong>Automatisch eingetragen</strong>Mitglieder der verknüpften IServ-Gruppe werden bei ihrer
       <b>nächsten Anmeldung</b> in Trinket als Schülerinnen und Schüler in den Kurs aufgenommen. Du musst niemanden einladen.
       Wer sich noch nie angemeldet hat, erscheint erst danach in der Teilnehmerliste.</div>
@@ -165,25 +237,33 @@
   </section>
 
   <section id="inhalte">
-    <h2><span class="nr">4</span>Lektionen, Seiten und Aufgaben</h2>
+    <h2><span class="nr">6</span>Lektionen, Seiten und Aufgaben</h2>
     <p>Ein Kurs ist gegliedert in <b>Lektionen</b>; jede Lektion enthält <b>Seiten</b> (Erklärungen, Beispiele) und
-      <b>Aufgaben</b> (mit Abgabe).</p>
+      <b>Aufgaben</b> (mit Abgabe). Eine Unterrichtsreihe wird so zu einem Kurs, jede Stunde zu einer Lektion.</p>
+    <figure>
+      <img src="anleitung-bilder/kurs-gliederung.jpg" alt="Kursansicht mit Seitenleiste, Lektion, Aufgabe und Schaltflächen Dashboard, Kurs, Teilnehmende">
+      <figcaption>Links die Gliederung mit <i>+ Seite</i> / <i>+ Aufgabe</i>, oben <i>Dashboard</i>, <i>Kurs</i> und <i>Teilnehmende</i>, unten der Link zum Lernstand.</figcaption>
+    </figure>
     <ol>
       <li>Im Kurs unter <b>Kursgliederung</b> den Namen der neuen Lektion eingeben und mit <kbd>Enter</kbd> bestätigen.</li>
       <li>Links die Seitenleiste öffnen (blaue Schaltfläche <span class="btn">☰</span>) und bei der Lektion
         <span class="btn">+ Seite</span> oder <span class="btn">+ Aufgabe</span> wählen.</li>
       <li>Bei einer Aufgabe: Name, <b>Aufgabenstellung</b> (Markdown) und ein <b>Start-Trinket</b> festlegen –
         entweder ein vorhandenes Trinket suchen oder über <span class="btn">oder leeres Trinket anlegen ▾</span> eine Sprache wählen.</li>
-      <li>Optional unter <b>Termine</b>: Fälligkeitsdatum und Sichtbarkeitszeitraum.</li>
+      <li>Optional unter <b>Termine</b>: Fälligkeitsdatum, Abgabeschluss und Sichtbarkeitszeitraum.</li>
       <li><span class="btn">Aufgabe anlegen</span>. Mit <span class="btn">Trinket bearbeiten</span> schreibst du den Startcode,
         den alle als Vorlage bekommen.</li>
     </ol>
+    <figure>
+      <img src="anleitung-bilder/aufgabe-anlegen.jpg" alt="Dialog Neue Aufgabe mit Aufgabenstellung, leerem Blocks-Trinket und Fälligkeitsdatum">
+      <figcaption>Eine Hausaufgabe: Aufgabenstellung, leeres Blöcke-Trinket als Start, fällig in einer Woche.</figcaption>
+    </figure>
     <div class="note"><strong>Entwurf oder sofort sichtbar?</strong>Unter <span class="btn">Kurs</span> → <i>Kursdaten bearbeiten</i>
       legst du fest, ob neue Seiten und Aufgaben sofort veröffentlicht werden oder zunächst als Entwurf verborgen bleiben.</div>
   </section>
 
   <section id="sus">
-    <h2><span class="nr">5</span>So arbeiten die Schülerinnen und Schüler</h2>
+    <h2><span class="nr">7</span>So arbeiten die Schülerinnen und Schüler</h2>
     <ol>
       <li>Mit IServ anmelden – der Kurs steht auf ihrer Übersicht.</li>
       <li>Aufgabe öffnen, <span class="btn">Aufgabe starten</span> klicken: Sie erhalten eine eigene Kopie des Start-Trinkets.</li>
@@ -193,7 +273,7 @@
   </section>
 
   <section id="lernstand">
-    <h2><span class="nr">6</span>Lernstand und Rückmeldungen</h2>
+    <h2><span class="nr">8</span>Lernstand und Rückmeldungen</h2>
     <p>Im Kurs öffnet <span class="btn">Dashboard</span> die Übersicht über alle Aufgaben. Bei einer einzelnen Aufgabe
       führt <span class="btn">Lernstand: Abgaben ansehen</span> direkt zu den Abgaben.</p>
     <table>
@@ -209,7 +289,7 @@
   </section>
 
   <section id="teilen">
-    <h2><span class="nr">7</span>Teilen und in IServ einbetten</h2>
+    <h2><span class="nr">9</span>Teilen und in IServ einbetten</h2>
     <ul>
       <li>Jedes Trinket hat einen eigenen Link. Über <span class="btn">Teilen</span> gibt es den Link oder einen
         <b>Einbettungscode</b> (<code>&lt;iframe&gt;</code>).</li>
@@ -221,7 +301,7 @@
   </section>
 
   <section id="schuljahr">
-    <h2><span class="nr">8</span>Schuljahresende und Aufbewahrung</h2>
+    <h2><span class="nr">10</span>Schuljahresende und Aufbewahrung</h2>
     <ul>
       <li>Nach dem <b>31.&nbsp;Juli</b> werden mit IServ-Gruppen verknüpfte Kurse automatisch <b>archiviert</b>.</li>
       <li>Trinkets und Abgaben der Schülerinnen und Schüler wandern dann in den Papierkorb und werden
@@ -234,7 +314,7 @@
   </section>
 
   <section id="api">
-    <h2><span class="nr">9</span>Für Fortgeschrittene: Lernstand-API</h2>
+    <h2><span class="nr">11</span>Für Fortgeschrittene: Lernstand-API</h2>
     <p>Externe Programme (z.&nbsp;B. der SchulAssistent) können den Lernstand deiner Kurse <b>lesen</b>.</p>
     <ol>
       <li>Oben rechts im Benutzermenü <b>Einstellungen</b> → <b>API-Tokens</b>.</li>
@@ -247,7 +327,7 @@
   </section>
 
   <section id="hilfe">
-    <h2><span class="nr">10</span>Probleme?</h2>
+    <h2><span class="nr">12</span>Probleme?</h2>
     <table>
       <tr><th>Problem</th><th>Lösung</th></tr>
       <tr><td>Schüler:in sieht den Kurs nicht</td><td>Ist der Kurs mit der richtigen IServ-Gruppe verknüpft? Einmal in Trinket ab- und wieder anmelden. Sonst Zugangscode nutzen.</td></tr>
@@ -259,6 +339,18 @@
   </section>
 </main>
 
-<footer>Trinket Lernix · Stand Oktober 2026 · Programmierumgebung der Schule auf Basis von trinket-oss</footer>
+<div id="zoom" role="dialog" aria-label="Vergrößerte Abbildung"><img alt=""></div>
+<script>
+  // Abbildungen per Klick/Tipp vergrößern
+  (function () {
+    var zoom = document.getElementById('zoom'), bild = zoom.querySelector('img');
+    document.querySelectorAll('figure img').forEach(function (img) {
+      img.addEventListener('click', function () { bild.src = img.src; bild.alt = img.alt; zoom.classList.add('offen'); });
+    });
+    zoom.addEventListener('click', function () { zoom.classList.remove('offen'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') zoom.classList.remove('offen'); });
+  })();
+</script>
+<footer>Trinket Lernix · Stand 9. Oktober 2026 · Programmierumgebung der Schule auf Basis von trinket-oss</footer>
 </body>
 </html>

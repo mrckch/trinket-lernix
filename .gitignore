@@ -59,3 +59,4 @@ public/_published
 
 # Vite-Build (Schriften aus public/vendor/fonts)
 public/assets
+docs/lernix/dist/
