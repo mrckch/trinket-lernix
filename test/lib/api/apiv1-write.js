@@ -21,6 +21,7 @@ var A = 'w-lehrkraft-a@schule.test',
     B = 'w-lehrkraft-b@schule.test',
     C = 'w-lehrkraft-c@schule.test',
     S = 'w-sus@schule.test',
+    S2 = 'w-sus2@schule.test',
     ALL_SCOPES = Object.keys(bearer.SCOPES);
 
 var BLOCKS_DIR = path.join(__dirname, '..', '..', 'data', 'blocks');
@@ -102,7 +103,7 @@ module.exports = function() {
       config.features.trinkets.blocks = previousBlocks;
       config.app.api = previousApi;
       logSpy.restore();
-      var docs = await users().find({ email : { $in : [A, B, C, S] } }).select('_id').lean(),
+      var docs = await users().find({ email : { $in : [A, B, C, S, S2] } }).select('_id').lean(),
           ids  = docs.map(function(d) { return d._id; });
       await Promise.all([
         tokens().deleteMany({ _owner : { $in : ids } }),
@@ -303,8 +304,10 @@ module.exports = function() {
         }), 200);
         res.body.material.assignment.trinketId.should.eql(blocksStarter);
         res.body.material.assignment.starter.code.should.eql(xmlText);
+        should.not.exist(res.body.material.assignment.starter.pythonCode);   // nur auf Wunsch
         if (blocks.isAvailable()) {
-          res.body.material.assignment.starter.pythonCode.should.eql(fs.readFileSync(path.join(BLOCKS_DIR, 'quadrat.py'), 'utf8'));
+          var withPy = expectStatus(await api('get', '/api/v1/courses/' + courseId + '/materials/' + blocksId + '?python=true', tokA.secret), 200);
+          withPy.body.material.assignment.starter.pythonCode.should.eql(fs.readFileSync(path.join(BLOCKS_DIR, 'quadrat.py'), 'utf8'));
         }
 
         // Seite als Entwurf: SuS sehen sie nicht, die Lehrkraft schon
@@ -378,6 +381,48 @@ module.exports = function() {
         expectStatus(await api('post', '/api/v1/courses/' + courseId + '/import', tokA.secret, { lessons : [] }), 400);
       });
 
+      it('importiert nichts, wenn eine Vorlage ungültig ist (kein Halbzustand)', async function() {
+        var before = (await courses().findById(courseId)).lessons.length;
+        var foreign = expectStatus(await api('post', '/api/v1/trinkets', tokB.secret, { lang : 'python', name : 'B-Vorlage' }), 201).body.trinket.id;
+        var cases = [
+          [{ type : 'assignment', name : 'Java', starter : { lang : 'java' } }, 400],
+          [{ type : 'assignment', name : 'XML', starter : { lang : 'blocks', code : '<xml><block' } }, 400],
+          [{ type : 'assignment', name : 'Fremd', starter : { trinketId : foreign } }, 403],
+          [{ type : 'assignment', name : 'Daten', submissionsCutoff : new Date().toISOString() }, 400]
+        ];
+        for (var i = 0; i < cases.length; i++) {
+          var res = await api('post', '/api/v1/courses/' + courseId + '/import', tokA.secret, {
+            lessons : [{ name : 'Gut', materials : [{ type : 'page', name : 'ok' }] }, { name : 'Schlecht', materials : [cases[i][0]] }]
+          });
+          res.statusCode.should.eql(cases[i][1], JSON.stringify(res.body));
+          res.body.message.should.contain('Lektion 2');
+        }
+        (await courses().findById(courseId)).lessons.length.should.eql(before);
+        (await lessons().countDocuments({ name : { $in : ['Gut', 'Schlecht'] } })).should.eql(0);
+      });
+
+      it('findet Lektion, Material und Aufgabe eines anderen eigenen Kurses nicht über diesen Kurs (404)', async function() {
+        var other = expectStatus(await api('post', '/api/v1/courses', tokA.secret, { name : 'API-Kurs Y' }), 201).body.course.id;
+        var yLesson = expectStatus(await api('post', '/api/v1/courses/' + other + '/lessons', tokA.secret, { name : 'Y-Lektion' }), 201).body.lesson.id;
+        var yTask = expectStatus(await api('post', '/api/v1/courses/' + other + '/lessons/' + yLesson + '/materials', tokA.secret, { type : 'assignment', name : 'Y-Aufgabe' }), 201).body.material.id;
+        var x = '/api/v1/courses/' + courseId;
+
+        expectStatus(await api('get', x + '/materials/' + yTask, tokA.secret), 404);
+        expectStatus(await api('patch', x + '/materials/' + yTask, tokA.secret, { name : 'kaputt' }), 404);
+        expectStatus(await api('del', x + '/materials/' + yTask + '?confirm=true', tokA.secret), 404);
+        expectStatus(await api('get', x + '/assignments/' + yTask + '/submissions', tokA.secret), 404);
+        expectStatus(await api('patch', x + '/lessons/' + yLesson, tokA.secret, { name : 'kaputt' }), 404);
+        expectStatus(await api('del', x + '/lessons/' + yLesson + '?confirm=true', tokA.secret), 404);
+        expectStatus(await api('post', x + '/lessons/' + yLesson + '/materials', tokA.secret, { type : 'page', name : 'x' }), 404);
+        var l1 = await lessons().findById(lesson1);
+        expectStatus(await api('put', x + '/lessons/' + lesson1 + '/materials/order', tokA.secret, { materialIds : l1.materials.map(String).concat([yTask]) }), 400);
+        expectStatus(await api('put', x + '/lessons/order', tokA.secret, { lessonIds : (await courses().findById(courseId)).lessons.map(String).concat([yLesson]) }), 400);
+
+        (await materials().findById(yTask)).name.should.eql('Y-Aufgabe');
+        (await lessons().findById(yLesson)).name.should.eql('Y-Lektion');
+        expectStatus(await api('del', '/api/v1/courses/' + other + '?confirm=true', tokA.secret), 204);
+      });
+
       it('kopiert einen eigenen Kurs samt Inhalten', async function() {
         var res = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/copy', tokA.secret, { name : 'API-Kurs 9a (Kopie)' }), 201);
         res.body.course.id.should.not.eql(courseId);
@@ -446,7 +491,9 @@ module.exports = function() {
         if (blocks.isAvailable()) {
           var expected = fs.readFileSync(path.join(BLOCKS_DIR, 'quadrat.py'), 'utf8');
           bmine.trinket.pythonCode.should.eql(expected);
-          var detail = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId, tokA.secret), 200);
+          var plain = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId, tokA.secret), 200);
+          should.not.exist(plain.body.trinket.pythonCode);   // keine Umwandlung ohne Wunsch
+          var detail = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId + '?python=true', tokA.secret), 200);
           detail.body.trinket.pythonCode.should.eql(expected);
           var text = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId + '?format=python', tokA.secret), 200);
           text.headers['content-type'].should.contain('text/x-python');
@@ -495,6 +542,14 @@ module.exports = function() {
         JSON.parse(revision.code).should.eql([{ name : 'main.py', content : 'laenge = 50\n' }]);
         String(revision._parent).should.eql(submissionId);
 
+        // nur den Text ändern: Überarbeitung und includeRevision bleiben
+        var third = expectStatus(await api('post', '/api/v1/trinkets/' + submissionId + '/feedback', tokA.secret, {
+          comment : 'Korrigiert, siehe Überarbeitung.'
+        }), 200);
+        third.body.trinket.feedback.includeRevision.should.be.true;
+        third.body.trinket.feedback.revisionTrinketId.should.eql(revisionId);
+        JSON.parse((await snippets().findById(revisionId)).code).should.eql([{ name : 'main.py', content : 'laenge = 50\n' }]);
+
         // dieselben Daten in der Oberfläche (Dashboard der Aufgabe)
         var ui = expectStatus(await session('wa', 'get', '/api/courses/' + courseId + '/lessons/' + lesson1 + '/materials/' + pyId + '/submissions'), 200);
         var row = ui.body.data.filter(function(u) { return u.userId === idS; })[0];
@@ -542,18 +597,52 @@ module.exports = function() {
         students.body.students.filter(function(s) { return s.id === idS; })[0].onDashboard.should.be.false;
         expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/members/' + idS, tokA.secret, { onDashboard : true }), 200).body.member.onDashboard.should.be.true;
 
-        var added = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : B }), 201);
-        added.body.member.id.should.eql(idB);
+        await devLogin('ws2', { email : S2, fullname : 'W SuS Zwei', role : 'student' });
+        var idS2 = String((await users().findOne({ email : S2 }))._id);
+        var added = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : S2 }), 201);
+        added.body.member.id.should.eql(idS2);
         added.body.member.role.should.eql('student');
-        expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : B }), 200).body.alreadyListed.should.be.true;
-        expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : 'gibt-es-nicht' }), 404);
+        should.not.exist(added.body.member.email);
+        expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : S2 }), 200).body.alreadyListed.should.be.true;
 
+        // unbekannt und Nicht-SuS: dieselbe Antwort
+        var unknown = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : 'gibt-es-nicht' }), 404);
+        var teacher = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/students', tokA.secret, { login : B }), 404);
+        teacher.body.message.should.eql(unknown.body.message);
+
+        // SuS lassen sich nicht befördern, Lehrkräfte schon (B kommt über die Oberfläche in den Kurs)
+        expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/members/' + idS2, tokA.secret, { role : 'collaborator' }), 403);
+        expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/members/' + idS2, tokA.secret, { role : 'admin' }), 403);
+        expectStatus(await session('wa', 'post', '/api/courses/' + courseId + '/userLookup', { user : B }), 200);
         expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/members/' + idB, tokA.secret, { role : 'collaborator' }), 200).body.member.role.should.eql('collaborator');
         expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/members/' + idB, tokA.secret, { role : 'owner' }), 400);
         expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/members/' + idA, tokA.secret, { role : 'student' }), 409);
         expectStatus(await api('del', '/api/v1/courses/' + courseId + '/members/' + idA, tokA.secret), 409);
         expectStatus(await api('del', '/api/v1/courses/' + courseId + '/members/' + idB, tokA.secret), 204);
+        expectStatus(await api('del', '/api/v1/courses/' + courseId + '/members/' + idS2, tokA.secret), 204);
         (await users().findById(idB)).roles.filter(function(r) { return r.context === 'course:' + courseId; }).length.should.eql(0);
+      });
+
+      it('löscht Material/Lektion mit Abgaben nur mit confirm=true', async function() {
+        var lesson = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/lessons', tokA.secret, { name : 'Zum Löschen' }), 201).body.lesson.id;
+        var task = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/lessons/' + lesson + '/materials', tokA.secret, {
+          type : 'assignment', name : 'Wird gelöscht', starter : { lang : 'python' }
+        }), 201).body.material;
+        var other = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/lessons/' + lesson + '/materials', tokA.secret, {
+          type : 'assignment', name : 'Auch weg', starter : { lang : 'python' }
+        }), 201).body.material;
+        expectStatus(await session('ws', 'post', '/api/courses/' + courseId + '/lessons/' + lesson + '/materials/' + task.id + '/startAssignment', { parent : task.assignment.trinketId }), 200);
+
+        var refused = expectStatus(await api('del', '/api/v1/courses/' + courseId + '/materials/' + task.id, tokA.secret), 409);
+        refused.body.message.should.contain('confirm=true');
+        expectStatus(await api('del', '/api/v1/courses/' + courseId + '/lessons/' + lesson, tokA.secret), 409);
+        expectStatus(await api('get', '/api/v1/courses/' + courseId + '/materials/' + task.id, tokA.secret), 200);
+
+        expectStatus(await api('del', '/api/v1/courses/' + courseId + '/lessons/' + lesson + '?confirm=true', tokA.secret), 204);
+        should.not.exist(await materials().findById(task.id));
+        should.not.exist(await materials().findById(other.id));
+        // die verwaiste Vorlage blockiert das Löschen nicht mehr
+        expectStatus(await api('del', '/api/v1/trinkets/' + other.assignment.trinketId, tokA.secret), 204);
       });
     });
 
@@ -576,7 +665,20 @@ module.exports = function() {
           type : 'assignment', name : 'Mit Bibliotheks-Vorlage', starter : { trinketId : libraryId }
         }), 201);
         task.body.material.assignment.trinketId.should.eql(libraryId);
+        var task2 = expectStatus(await api('post', '/api/v1/courses/' + courseId + '/lessons/' + lesson1 + '/materials', tokA.secret, {
+          type : 'assignment', name : 'Zweite Aufgabe, gleiche Vorlage', starter : { trinketId : libraryId }
+        }), 201);
         expectStatus(await api('del', '/api/v1/trinkets/' + libraryId, tokA.secret), 409);
+
+        // Startcode einer gemeinsam genutzten Vorlage ändern → eigene Kopie, Vorlage bleibt
+        var cow = expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/materials/' + task2.body.material.id, tokA.secret, {
+          starter : { code : 'print(3)\n' }
+        }), 200);
+        cow.body.material.assignment.trinketId.should.not.eql(libraryId);
+        cow.body.material.assignment.starter.files[0].content.should.eql('print(3)\n');
+        JSON.parse((await snippets().findById(libraryId)).code)[0].content.should.eql('print(2)\n');
+
+        expectStatus(await api('del', '/api/v1/courses/' + courseId + '/materials/' + task2.body.material.id, tokA.secret), 204);
         expectStatus(await api('del', '/api/v1/courses/' + courseId + '/materials/' + task.body.material.id, tokA.secret), 204);
         expectStatus(await api('del', '/api/v1/trinkets/' + libraryId, tokA.secret), 204);
         expectStatus(await api('get', '/api/v1/trinkets/' + libraryId, tokA.secret), 404);
@@ -591,7 +693,8 @@ module.exports = function() {
         var res = expectStatus(await api('post', '/api/v1/trinkets', tokA.secret, { lang : 'blocks', name : 'Würfel', code : xmlText }), 201);
         res.body.trinket.code.should.eql(xmlText);
         if (blocks.isAvailable()) {
-          res.body.trinket.pythonCode.should.eql(fs.readFileSync(path.join(BLOCKS_DIR, 'gerade-zufall.py'), 'utf8'));
+          var withPy = expectStatus(await api('get', '/api/v1/trinkets/' + res.body.trinket.id + '?python=true', tokA.secret), 200);
+          withPy.body.trinket.pythonCode.should.eql(fs.readFileSync(path.join(BLOCKS_DIR, 'gerade-zufall.py'), 'utf8'));
         }
         expectStatus(await api('post', '/api/v1/trinkets', tokA.secret, { lang : 'blocks', files : [{ name : 'a', content : '' }] }), 400);
       });
@@ -707,13 +810,16 @@ module.exports = function() {
       });
 
       it('bremst zu viele Schreibzugriffe je Token (429)', async function() {
-        config.app.api = { writeLimitPerMinute : 2 };
         var tok = await newToken('wa', 'A-Bremse', ['content:write']);
-        expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/lessons/' + lesson1, tok.secret, { name : 'Lektion 1' }), 200);
-        expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/lessons/' + lesson1, tok.secret, { name : 'Lektion 1' }), 200);
-        var res = expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/lessons/' + lesson1, tok.secret, { name : 'Lektion 1' }), 429);
-        should.exist(res.headers['retry-after']);
-        config.app.api = previousApi;
+        config.app.api = { writeLimitPerMinute : 2 };
+        try {
+          expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/lessons/' + lesson1, tok.secret, { name : 'Lektion 1' }), 200);
+          expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/lessons/' + lesson1, tok.secret, { name : 'Lektion 1' }), 200);
+          var res = expectStatus(await api('patch', '/api/v1/courses/' + courseId + '/lessons/' + lesson1, tok.secret, { name : 'Lektion 1' }), 429);
+          should.exist(res.headers['retry-after']);
+        } finally {
+          config.app.api = previousApi;
+        }
       });
 
       it('begrenzt die Größe von Anfragen', async function() {
