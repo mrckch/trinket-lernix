@@ -31,7 +31,10 @@ angular
     var NAV_HEIGHT = 45;
     var CLASSPAGE_OFFSET = 125;
 
-    $scope.menuOpen = trinketUtil.isLarge() ? true : false;
+    // Lernix (iPad): auf Touch-Geräten startet die Gliederung eingeklappt – sonst bleibt dem
+    // Editor im Querformat zu wenig Breite für die Blöcke
+    var isTouch = window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    $scope.menuOpen = trinketUtil.isLarge() && !isTouch ? true : false;
     $scope.slides = slides;
 
     $scope.courseCopyName = '';
