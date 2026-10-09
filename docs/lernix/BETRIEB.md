@@ -191,6 +191,7 @@ docker compose logs app | grep -i "iserv\|fehler\|error" | tail -50
 | Firewall | keine Änderung, Port 8090 im LAN offen wie die anderen Apps |
 | Notfall-Admin | Adresse und Passwort nur in der `.env` (`grep BREAKGLASS /opt/trinket/.env`); keine IServ-Adresse. Nach Änderung `docker compose up -d` – die App legt das Konto beim Start an bzw. setzt das Passwort neu |
 | Erster Admin | `marc.hoetten-loens@rsstu.de` (IServ, als Lehrkraft erkannt, per `make-admin`) |
+| Anleitung Lehrkräfte | [`schnellanleitung-lehrkraefte.html`](schnellanleitung-lehrkraefte.html), veröffentlicht unter https://pages.lernix.site/p/trinket-lehrkraefte (HTML-Share, Seite 451; Aktualisieren per neuer Version, Link bleibt) |
 
 Live geprüft: Startseite/Login/Hilfe offen, `/python` → Login, `HEAD /` 200, Schriften unter
 `/assets/` ohne Anmeldung, IServ-Login mit Rolle Lehrkraft und 42 IServ-Gruppen in der Session,

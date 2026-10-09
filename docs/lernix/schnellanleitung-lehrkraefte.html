@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trinket Lernix – Schnellanleitung für Lehrkräfte</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #5b6475; --line: #dfe3ea;
+    --accent: #1b75bb; --accent-soft: #e6f0f9; --ok: #2e8540; --warn: #a15c00; --warn-soft: #fff4e0;
+    --code: #eef1f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --card: #1b2029; --text: #e6e9ef; --muted: #a0a9ba; --line: #2c3340;
+      --accent: #5aa9e6; --accent-soft: #1d2d3d; --ok: #6cc17e; --warn: #f0b35a; --warn-soft: #2f2615;
+      --code: #252b36;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  header {
+    background: var(--accent); color: #fff; padding: 28px 16px 24px;
+  }
+  header .wrap { max-width: 920px; margin: 0 auto; }
+  header h1 { margin: 0 0 6px; font-size: 1.7rem; line-height: 1.2; }
+  header p { margin: 0; opacity: .92; }
+  header a { color: #fff; font-weight: 600; }
+  main { max-width: 920px; margin: 0 auto; padding: 20px 16px 48px; }
+  nav.toc {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 20px;
+  }
+  nav.toc strong { display: block; margin-bottom: 6px; }
+  nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  section {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 16px; break-inside: avoid;
+  }
+  h2 { margin: 0 0 10px; font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+  h2 .nr {
+    flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-size: .95rem; display: inline-flex; align-items: center; justify-content: center;
+  }
+  h3 { font-size: 1rem; margin: 14px 0 4px; }
+  p { margin: 6px 0; }
+  ol, ul { margin: 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+  .btn {
+    display: inline-block; padding: 1px 8px; border-radius: 5px; border: 1px solid var(--accent);
+    color: var(--accent); font-weight: 600; font-size: .92em; white-space: nowrap;
+  }
+  code, kbd {
+    background: var(--code); border-radius: 4px; padding: 1px 5px;
+    font: .9em ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  }
+  .tip, .note {
+    border-left: 4px solid var(--accent); background: var(--accent-soft);
+    padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 10px 0;
+  }
+  .note { border-left-color: var(--warn); background: var(--warn-soft); }
+  .tip strong, .note strong { display: block; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: .95rem; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .status { display: inline-block; min-width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 8px 0; }
+  .grid div { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .grid b { display: block; }
+  .muted { color: var(--muted); }
+  footer { max-width: 920px; margin: 0 auto; padding: 0 16px 32px; color: var(--muted); font-size: .9rem; }
+  @media (max-width: 640px) {
+    nav.toc ol { columns: 1; }
+    header h1 { font-size: 1.4rem; }
+    section { padding: 14px 14px; }
+    table { font-size: .9rem; }
+  }
+  @media print {
+    body { background: #fff; color: #000; font-size: 11pt; }
+    header { background: none; color: #000; padding: 0 0 8px; border-bottom: 2px solid #000; }
+    header a { color: #000; }
+    nav.toc { display: none; }
+    section { border: none; padding: 6px 0; margin: 0 0 6px; }
+    h2 .nr { background: #000; }
+    .tip, .note { background: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Trinket Lernix – Schnellanleitung für Lehrkräfte</h1>
+    <p>Programmieren im Browser mit Python, Blöcken, HTML und Web VPython · <a href="https://trinket.lernix.site">trinket.lernix.site</a></p>
+  </div>
+</header>
+
+<main>
+  <nav class="toc" aria-label="Inhalt">
+    <strong>Inhalt</strong>
+    <ol>
+      <li><a href="#anmelden">Anmelden</a></li>
+      <li><a href="#trinket">Ein Trinket schreiben</a></li>
+      <li><a href="#kurs">Kurs für eine Lerngruppe anlegen</a></li>
+      <li><a href="#inhalte">Lektionen, Seiten, Aufgaben</a></li>
+      <li><a href="#sus">So arbeiten die Schülerinnen und Schüler</a></li>
+      <li><a href="#lernstand">Lernstand und Rückmeldungen</a></li>
+      <li><a href="#teilen">Teilen und in IServ einbetten</a></li>
+      <li><a href="#schuljahr">Schuljahresende und Aufbewahrung</a></li>
+      <li><a href="#api">Für Fortgeschrittene: Lernstand-API</a></li>
+      <li><a href="#hilfe">Probleme?</a></li>
+    </ol>
+  </nav>
+
+  <section id="anmelden">
+    <h2><span class="nr">1</span>Anmelden</h2>
+    <ol>
+      <li><a href="https://trinket.lernix.site">trinket.lernix.site</a> öffnen.</li>
+      <li><span class="btn">Mit IServ anmelden</span> klicken und mit dem gewohnten IServ-Konto anmelden.</li>
+      <li>Du landest auf deiner <b>Übersicht</b> mit deinen letzten Trinkets und Kursen.</li>
+    </ol>
+    <p>Ein eigenes Passwort gibt es nicht. Ob du als Lehrkraft oder als Schüler:in eingestuft wirst, übernimmt
+      Trinket aus IServ. Lehrkräfte können Kurse anlegen, Schülerinnen und Schüler nicht.</p>
+    <div class="tip"><strong>Tipp</strong>Ohne Anmeldung ist nur die Startseite erreichbar. Eingebettete Trinkets
+      (z.&nbsp;B. auf einer IServ-Seite) funktionieren aber auch ohne Anmeldung.</div>
+  </section>
+
+  <section id="trinket">
+    <h2><span class="nr">2</span>Ein Trinket schreiben</h2>
+    <p>Ein <b>Trinket</b> ist ein kleines Programm, das direkt im Browser läuft. Installieren muss niemand etwas.</p>
+    <ol>
+      <li>Oben im Menü <span class="btn">Neues Trinket</span> und eine Sprache wählen.</li>
+      <li>Links den Code schreiben, mit <span class="btn">▶ Ausführen</span> starten; rechts erscheint die Ausgabe.</li>
+      <li>Mit <span class="btn">Speichern</span> landet es unter <b>Meine Trinkets</b>.</li>
+    </ol>
+    <div class="grid">
+      <div><b>Python</b><span class="muted">Text-Programmierung, Turtle-Grafik, Eingaben. Python 3 erzwingen mit <code>#!/bin/python3</code> in Zeile 1.</span></div>
+      <div><b>Blocks</b><span class="muted">Blockbasiert (Blockly), gut für den Einstieg in Klasse 5/6.</span></div>
+      <div><b>HTML</b><span class="muted">HTML, CSS und JavaScript mit Live-Vorschau.</span></div>
+      <div><b>Web VPython</b><span class="muted">3D-Animationen und Physik-Simulationen.</span></div>
+    </div>
+  </section>
+
+  <section id="kurs">
+    <h2><span class="nr">3</span>Kurs für eine Lerngruppe anlegen</h2>
+    <ol>
+      <li>Auf der Übersicht unter <b>Meine Kurse</b> auf <span class="btn">+ Neuer Kurs</span> klicken.</li>
+      <li>Name und Beschreibung eintragen.</li>
+      <li><b>Wer darf den Kurs sehen?</b> – für eine Klasse in der Regel
+        <i>Privat – nur du und die eingetragenen Teilnehmenden</i>.</li>
+      <li><b>Mit IServ-Gruppe verknüpfen</b> – die Lerngruppe auswählen (z.&nbsp;B. <code>6aIF_06</code>).</li>
+      <li><span class="btn">Speichern</span>.</li>
+    </ol>
+    <div class="tip"><strong>Automatisch eingetragen</strong>Mitglieder der verknüpften IServ-Gruppe werden bei ihrer
+      <b>nächsten Anmeldung</b> in Trinket als Schülerinnen und Schüler in den Kurs aufgenommen. Du musst niemanden einladen.
+      Wer sich noch nie angemeldet hat, erscheint erst danach in der Teilnehmerliste.</div>
+    <h3>Ohne IServ-Gruppe: Zugangscode</h3>
+    <p>Im Kurs über <span class="btn">Teilnehmende</span> einen <b>Zugangscode</b> erzeugen und weitergeben. Die
+      Schülerinnen und Schüler geben ihn auf ihrer Übersicht bei <span class="btn">Kurs beitreten</span> ein, oder sie
+      öffnen den mitgelieferten Link. Ein neuer Code macht den alten ungültig.</p>
+  </section>
+
+  <section id="inhalte">
+    <h2><span class="nr">4</span>Lektionen, Seiten und Aufgaben</h2>
+    <p>Ein Kurs ist gegliedert in <b>Lektionen</b>; jede Lektion enthält <b>Seiten</b> (Erklärungen, Beispiele) und
+      <b>Aufgaben</b> (mit Abgabe).</p>
+    <ol>
+      <li>Im Kurs unter <b>Kursgliederung</b> den Namen der neuen Lektion eingeben und mit <kbd>Enter</kbd> bestätigen.</li>
+      <li>Links die Seitenleiste öffnen (blaue Schaltfläche <span class="btn">☰</span>) und bei der Lektion
+        <span class="btn">+ Seite</span> oder <span class="btn">+ Aufgabe</span> wählen.</li>
+      <li>Bei einer Aufgabe: Name, <b>Aufgabenstellung</b> (Markdown) und ein <b>Start-Trinket</b> festlegen –
+        entweder ein vorhandenes Trinket suchen oder über <span class="btn">oder leeres Trinket anlegen ▾</span> eine Sprache wählen.</li>
+      <li>Optional unter <b>Termine</b>: Fälligkeitsdatum und Sichtbarkeitszeitraum.</li>
+      <li><span class="btn">Aufgabe anlegen</span>. Mit <span class="btn">Trinket bearbeiten</span> schreibst du den Startcode,
+        den alle als Vorlage bekommen.</li>
+    </ol>
+    <div class="note"><strong>Entwurf oder sofort sichtbar?</strong>Unter <span class="btn">Kurs</span> → <i>Kursdaten bearbeiten</i>
+      legst du fest, ob neue Seiten und Aufgaben sofort veröffentlicht werden oder zunächst als Entwurf verborgen bleiben.</div>
+  </section>
+
+  <section id="sus">
+    <h2><span class="nr">5</span>So arbeiten die Schülerinnen und Schüler</h2>
+    <ol>
+      <li>Mit IServ anmelden – der Kurs steht auf ihrer Übersicht.</li>
+      <li>Aufgabe öffnen, <span class="btn">Aufgabe starten</span> klicken: Sie erhalten eine eigene Kopie des Start-Trinkets.</li>
+      <li>Code bearbeiten und ausführen; die Arbeit wird gespeichert.</li>
+      <li>Mit <span class="btn">Abgeben</span> einreichen. Nach deiner Rückmeldung können sie weiterarbeiten und erneut abgeben.</li>
+    </ol>
+  </section>
+
+  <section id="lernstand">
+    <h2><span class="nr">6</span>Lernstand und Rückmeldungen</h2>
+    <p>Im Kurs öffnet <span class="btn">Dashboard</span> die Übersicht über alle Aufgaben. Bei einer einzelnen Aufgabe
+      führt <span class="btn">Lernstand: Abgaben ansehen</span> direkt zu den Abgaben.</p>
+    <table>
+      <tr><th>Status</th><th>Bedeutung</th></tr>
+      <tr><td>Nicht begonnen</td><td>Aufgabe noch nicht gestartet</td></tr>
+      <tr><td>Begonnen</td><td>Kopie angelegt, noch nicht abgegeben</td></tr>
+      <tr><td>Abgegeben</td><td>Wartet auf deine Rückmeldung</td></tr>
+      <tr><td>Zurückgegeben</td><td>Du hast eine Rückmeldung gegeben</td></tr>
+    </table>
+    <p>Eine Abgabe öffnen, Code ansehen und ausführen, Kommentar schreiben und zurückgeben. Unter
+      <span class="btn">Teilnehmende</span> kannst du einzelne Personen im Dashboard ausblenden (z.&nbsp;B. Kolleginnen und Kollegen
+      als Mitarbeitende).</p>
+  </section>
+
+  <section id="teilen">
+    <h2><span class="nr">7</span>Teilen und in IServ einbetten</h2>
+    <ul>
+      <li>Jedes Trinket hat einen eigenen Link. Über <span class="btn">Teilen</span> gibt es den Link oder einen
+        <b>Einbettungscode</b> (<code>&lt;iframe&gt;</code>).</li>
+      <li>Den Einbettungscode in eine IServ-Seite, ein Etherpad oder eine Lernplattform einfügen: Das Trinket läuft dort
+        direkt und <b>ohne Anmeldung</b>. Gespeichert wird beim Ausprobieren nichts.</li>
+      <li>Kurse kannst du über <span class="btn">Kurs</span> → <i>Kurs kopieren</i> für eine andere Lerngruppe duplizieren.
+        Mit der Sichtbarkeit <i>Offen</i> dürfen andere Lehrkräfte deinen Kurs kopieren.</li>
+    </ul>
+  </section>
+
+  <section id="schuljahr">
+    <h2><span class="nr">8</span>Schuljahresende und Aufbewahrung</h2>
+    <ul>
+      <li>Nach dem <b>31.&nbsp;Juli</b> werden mit IServ-Gruppen verknüpfte Kurse automatisch <b>archiviert</b>.</li>
+      <li>Trinkets und Abgaben der Schülerinnen und Schüler wandern dann in den Papierkorb und werden
+        <b>30 Tage später endgültig gelöscht</b>.</li>
+      <li>Deine eigenen Trinkets und Kursinhalte bleiben erhalten. Für das neue Schuljahr den Kurs kopieren und mit der
+        neuen IServ-Gruppe verknüpfen.</li>
+    </ul>
+    <div class="note"><strong>Wichtig</strong>Was von Schülerarbeiten erhalten bleiben soll (z.&nbsp;B. für Leistungsnachweise),
+      vor Ende Juli sichern.</div>
+  </section>
+
+  <section id="api">
+    <h2><span class="nr">9</span>Für Fortgeschrittene: Lernstand-API</h2>
+    <p>Externe Programme (z.&nbsp;B. der SchulAssistent) können den Lernstand deiner Kurse <b>lesen</b>.</p>
+    <ol>
+      <li>Oben rechts im Benutzermenü <b>Einstellungen</b> → <b>API-Tokens</b>.</li>
+      <li>Bezeichnung eingeben, Rechte auswählen, <span class="btn">Token anlegen</span>.</li>
+      <li>Das Token wird <b>nur einmal</b> angezeigt – sofort sicher ablegen. Nicht mehr benötigte Token dort
+        <span class="btn">widerrufen</span>.</li>
+    </ol>
+    <p class="muted">Aufruf: <code>Authorization: Bearer tl_…</code> gegen <code>https://trinket.lernix.site/api/v1/…</code>,
+      z.&nbsp;B. <code>/api/v1/courses</code> oder <code>/api/v1/courses/&lt;id&gt;/lernstand</code>.</p>
+  </section>
+
+  <section id="hilfe">
+    <h2><span class="nr">10</span>Probleme?</h2>
+    <table>
+      <tr><th>Problem</th><th>Lösung</th></tr>
+      <tr><td>Schüler:in sieht den Kurs nicht</td><td>Ist der Kurs mit der richtigen IServ-Gruppe verknüpft? Einmal in Trinket ab- und wieder anmelden. Sonst Zugangscode nutzen.</td></tr>
+      <tr><td>Ich kann keinen Kurs anlegen</td><td>Du wirst als Schüler:in geführt – bitte an die Administration wenden.</td></tr>
+      <tr><td>Programm hängt in einer Endlosschleife</td><td>Seite neu laden; vorher gespeicherter Code bleibt erhalten.</td></tr>
+      <tr><td>Python 3 statt Python 2</td><td><code>#!/bin/python3</code> in die erste Zeile schreiben.</td></tr>
+    </table>
+    <p>Weitere Hilfe: <a href="https://trinket.lernix.site/help">trinket.lernix.site/help</a> · Ansprechpartner: Marc Hötten-Löns (Informatik)</p>
+  </section>
+</main>
+
+<footer>Trinket Lernix · Stand Oktober 2026 · Programmierumgebung der Schule auf Basis von trinket-oss</footer>
+</body>
+</html>
