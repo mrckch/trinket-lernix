@@ -23,6 +23,31 @@
         , comments        : ""
       };
 
+      // Lernix (ADR 0007): Rückmeldungen werden angehängt; der Entwurf kann per Token vorbereitet sein
+      scope.draftViaToken = false;
+      scope.hasDraft      = false;
+
+      var SOURCE_LABELS = { token : 'per Token gesendet', token_draft : 'per Token vorbereitet' };
+
+      scope.sourceLabel = function(comment) {
+        return SOURCE_LABELS[comment.source] || '';
+      }
+
+      function feedbackOf(submission) {
+        return $filter('filter')(submission.comments || [], { commentType : 'feedback' }, true);
+      }
+
+      function draftOf(submission) {
+        return $filter('filter')(submission.comments || [], { commentType : 'feedback-draft' }, true)[0];
+      }
+
+      function readDraft() {
+        var draft = draftOf(scope.submission);
+        scope.hasDraft      = !!(draft && draft.commentText);
+        scope.draftViaToken = !!(draft && draft.commentText && draft.viaToken);
+        return draft && draft.commentText ? draft.commentText : '';
+      }
+
       scope.previousSubmissions = [];
       scope.showSubmission      = {};
       scope.submissionSrc       = {};
@@ -59,6 +84,7 @@
         scope.canUpdate      = false;
         scope.canAccept      = false;
         scope.revisionIframe = null;
+        scope.previousSubmissions = [];
 
         if (scope.submission && scope.submission.lang && scope.submission.shortCode) {
           url         = scope.submission.lang + "/" + scope.submission.shortCode;
@@ -71,24 +97,21 @@
               scope.feedbackForm[key] = val;
             });
 
-            if (scope.submission.comments.length) {
-              angular.forEach(scope.submission.comments, function(comment) {
-                if (comment.commentType === 'feedback-draft') {
-                  scope.feedbackForm.comments = comment.commentText;
-                }
-              });
-            }
+            scope.feedbackForm.comments = readDraft();
           }
           else if (scope.state === "submittedLate") {
             scope.submissionIframe = $sce.trustAsResourceUrl(trinketConfig.getUrl("/assignment-embed-viewonly/" + url));
           }
           else if (scope.state === "completed") {
-            feedbackComments = $filter('filter')(scope.submission.comments, { commentType : 'feedback' }, true);
+            feedbackComments = feedbackOf(scope.submission);
             scope.submissionIframe = $sce.trustAsResourceUrl(trinketConfig.getUrl("/assignment-embed-viewonly/" + url));
+            readDraft();
 
+            // die Überarbeitung gehört zur letzten Rückmeldung
             if (feedbackComments.length) {
+              var latest = feedbackComments[feedbackComments.length - 1];
               scope.revisionIframe = $sce.trustAsResourceUrl(
-                trinketConfig.getUrl("/assignment-embed-viewonly/" + feedbackComments[0].trinketLang + "/" + feedbackComments[0].trinketShortCode)
+                trinketConfig.getUrl("/assignment-embed-viewonly/" + latest.trinketLang + "/" + latest.trinketShortCode)
               );
             }
           }
@@ -99,14 +122,11 @@
               submissions.reverse();
               angular.forEach(submissions, function(submission) {
                 if (submission.shortCode !== scope.submission.shortCode && submission.submissionState === "completed") {
-                  // find teacher feedback
-                  angular.forEach(submission.comments, function(comment) {
-                    if (comment.commentType === "feedback") {
-                      submission.feedback = comment;
-                    }
-                  });
+                  // find teacher feedback (all of it; the revision belongs to the latest)
+                  submission.feedbackList = feedbackOf(submission);
+                  submission.feedback     = submission.feedbackList[submission.feedbackList.length - 1];
 
-                  if (submission.includeRevision) {
+                  if (submission.includeRevision && submission.feedback) {
                     submission.revisionIframe = $sce.trustAsResourceUrl(
                       trinketConfig.getUrl("/assignment-embed-viewonly/" + submission.feedback.trinketLang + "/" + submission.feedback.trinketShortCode)
                     );
@@ -125,6 +145,11 @@
         scope.canAccept       = false;
         scope.sendingFeedback = true;
 
+        // ein noch wartendes Speichern des Entwurfs darf nicht nach dem Senden ankommen
+        if (scope.autosaveComments.cancel) {
+          scope.autosaveComments.cancel();
+        }
+
         trinketSubmissions.sendFeedback(scope.material, scope.submission.id, scope.api.serialize(), scope.feedbackForm)
           .then(function(result) {
             $timeout(function() {
@@ -137,10 +162,12 @@
                 , includeRevision : result.includeRevision
               };
 
-              feedbackComments = $filter('filter')(scope.submission.comments, { commentType : 'feedback' }, true);
+              feedbackComments = feedbackOf(scope.submission);
+              scope.feedbackForm.comments = readDraft();   // der Entwurf ist verbraucht
 
               if (feedbackComments.length) {
-                scope.revisionIframe = $sce.trustAsResourceUrl(trinketConfig.getUrl("/assignment-embed-viewonly/" + feedbackComments[0].trinketLang + "/" + feedbackComments[0].trinketShortCode));
+                var latest = feedbackComments[feedbackComments.length - 1];
+                scope.revisionIframe = $sce.trustAsResourceUrl(trinketConfig.getUrl("/assignment-embed-viewonly/" + latest.trinketLang + "/" + latest.trinketShortCode));
               }
 
               scope.sendingFeedback  = false;
@@ -183,8 +210,32 @@
         trinketSubmissions.autosaveSubmissionOpt(scope.submission.id, field, scope.feedbackForm[field]);
       }
 
+      // Der Entwurf wird beim Tippen gespeichert. Der Editor meldet auch das Vorbelegen als
+      // Änderung; gespeichert wird nur, was sich vom zuletzt gespeicherten Entwurf unterscheidet.
       scope.autosaveComments = _.debounce(function(e) {
-        trinketSubmissions.autosaveFeedbackComments(scope.submission.id, scope.feedbackForm.comments);
+        var text  = scope.feedbackForm.comments || ''
+          , draft = draftOf(scope.submission);
+
+        if (scope.sendingFeedback || text === (draft ? draft.commentText || '' : '')) {
+          return;
+        }
+
+        trinketSubmissions.autosaveFeedbackComments(scope.submission.id, text)
+          .then(function() {
+            if (scope.sendingFeedback) {
+              return;
+            }
+            if (draft) {
+              draft.commentText = text;
+            }
+            else {
+              scope.submission.comments.push({ commentType : 'feedback-draft', commentText : text });
+            }
+            scope.hasDraft = !!text;
+            if (!text) {
+              scope.draftViaToken = false;
+            }
+          });
       }, 500);
 
       scope.displayFeedback = function(commentText) {
@@ -197,20 +248,22 @@
         scope.feedbackForm.includeRevision = scope.submission.submissionOpts.includeRevision;
         scope.feedbackForm.allowResubmit   = scope.submission.submissionOpts.allowResubmit;
 
-        var comment = $filter('filter')(scope.submission.comments, { "commentType" : "feedback" }, true);
+        // Eine weitere Rückmeldung (ADR 0007): Gesendete bleiben stehen, das Formular beginnt mit
+        // dem Entwurf oder leer. Die Überarbeitung der letzten Rückmeldung lässt sich weiterführen.
+        var comment = feedbackOf(scope.submission);
+        var latest  = comment[comment.length - 1];
         var revisionUrl;
 
-        scope.revisionIframe = null;
+        scope.revisionIframe        = null;
+        scope.feedbackForm.comments = readDraft();
 
-        if (comment && comment[0]) {
+        if (latest && latest.trinketShortCode) {
           scope.revisionMade          = true;
-          scope.feedbackForm.comments = comment[0].commentText;
-          revisionUrl                 = comment[0].trinketLang + "/" + comment[0].trinketShortCode;
-          scope.revisionId            = comment[0].trinketId;
+          revisionUrl                 = latest.trinketLang + "/" + latest.trinketShortCode;
+          scope.revisionId            = latest.trinketId;
         }
         else {
           scope.revisionMade          = false;
-          scope.feedbackForm.comments = "";
           revisionUrl                 = scope.submission.lang + "/" + scope.submission.shortCode;
           scope.revisionId            = scope.submission.trinketId;
         }

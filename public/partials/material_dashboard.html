@@ -50,6 +50,7 @@
         <div class="small-6 columns" ng-click="toggleStudent(user)">
           <img class="avatar" ng-src="{{ user.avatar }}" /> <span class="student-name">{{ user.displayName }}</span>
           <span ng-if="user.deleted" class="secondary-label label round" title="Dieses Konto wurde gelöscht.">gelöscht</span>
+          <span ng-if="(user.comments | filter:{commentType:'feedback-draft'}:true)[0].commentText" class="label secondary round" title="Ein Entwurf einer Rückmeldung wartet darauf, dass du ihn prüfst und sendest."><i class="fa fa-pencil"></i> Entwurf</span>
         </div>
         <div class="small-5 columns" ng-click="toggleStudent(user)">
           <i ng-class="stateDisplay[user.state].icon" class="fa fa-fw"></i>
@@ -88,6 +89,7 @@
                 <div class="small-6 columns" ng-click="toggleStudent(user)">
                   <img class="avatar" ng-src="{{ user.avatar }}" /> <span class="student-name">{{ user.displayName }}</span>
                   <span ng-if="user.deleted" class="secondary-label label round" title="Dieses Konto wurde gelöscht.">gelöscht</span>
+                  <span ng-if="(user.comments | filter:{commentType:'feedback-draft'}:true)[0].commentText" class="label secondary round" title="Ein Entwurf einer Rückmeldung wartet darauf, dass du ihn prüfst und sendest."><i class="fa fa-pencil"></i> Entwurf</span>
                 </div>
                 <div class="small-6 columns" ng-click="toggleStudent(user)">
                   <i ng-class="stateDisplay[user.state].icon" class="fa fa-fw"></i>

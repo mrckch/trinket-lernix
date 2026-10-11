@@ -34,7 +34,7 @@ tags:
   - { name: Inhalte, description: "Lektionen, Seiten, Aufgaben (content:write)" }
   - { name: Teilnehmende, description: "Mitglieder lesen (courses:read) und verwalten (students:manage)" }
   - { name: Abgaben, description: "Lernstand und Abgaben lesen (submissions:read)" }
-  - { name: Rückmeldungen, description: "Abgaben zurückgeben (submissions:write)" }
+  - { name: Rückmeldungen, description: "Rückmeldungen senden und als Entwurf vorbereiten (submissions:write, ADR 0007)" }
   - { name: Trinkets, description: "Code lesen (trinkets:read), eigene Bibliothek (trinkets:write)" }
 components:
   securitySchemes:
@@ -210,8 +210,20 @@ components:
         text: { type: string, nullable: true, description: zuletzt gesendete Rückmeldung (Markdown) }
         at: { type: string, format: date-time, nullable: true }
         author: { type: string, nullable: true }
-        revisionTrinketId: { type: string, nullable: true, description: Überarbeitung der Lehrkraft }
-        draft: { type: string, nullable: true, description: Entwurf (füllt das Formular in der Oberfläche) }
+        source: { type: string, nullable: true, enum: [manual, token, token_draft, null], description: "Herkunft der zuletzt gesendeten Rückmeldung: in der Oberfläche geschrieben, per Token gesendet, per Token vorbereitet und von der Lehrkraft gesendet" }
+        history:
+          type: array
+          description: alle gesendeten Rückmeldungen in Reihenfolge (gesendete werden nie geändert)
+          items:
+            type: object
+            properties:
+              text: { type: string }
+              at: { type: string, format: date-time, nullable: true }
+              author: { type: string, nullable: true }
+              source: { type: string, enum: [manual, token, token_draft] }
+        revisionTrinketId: { type: string, nullable: true, description: Überarbeitung der Lehrkraft (zur letzten Rückmeldung) }
+        draft: { type: string, nullable: true, description: Entwurf (füllt das Formular in der Oberfläche; SuS sehen ihn nie) }
+        draftViaToken: { type: boolean, description: der Entwurf wurde per Token angelegt }
         studentComment: { type: string, nullable: true }
         includeRevision: { type: boolean }
         allowResubmit: { type: boolean }
@@ -232,7 +244,8 @@ components:
         submittedOn: { type: string, format: date-time, nullable: true }
         created: { type: string, format: date-time }
         lastUpdated: { type: string, format: date-time }
-        feedbackCount: { type: integer }
+        feedbackCount: { type: integer, description: Zahl der gesendeten Rückmeldungen }
+        hasFeedbackDraft: { type: boolean, description: ein Entwurf wartet auf das Senden }
     Trinket:
       allOf:
         - $ref: '#/components/schemas/TrinketSummary'
@@ -251,6 +264,8 @@ components:
                   type: { type: string, nullable: true, enum: [student, feedback, feedback-draft, null] }
                   text: { type: string }
                   at: { type: string, format: date-time, nullable: true }
+                  source: { type: string, enum: [manual, token, token_draft], description: nur bei type=feedback }
+                  viaToken: { type: boolean, description: nur bei type=feedback-draft }
                   revisionTrinketId: { type: string }
                   revisionShortCode: { type: string }
     LibraryTrinket:
@@ -1012,15 +1027,17 @@ paths:
     parameters: [{ $ref: '#/components/parameters/trinketId' }]
     post:
       tags: [Rückmeldungen]
-      summary: Abgabe mit Rückmeldung zurückgeben – wie „Rückmeldung senden“ (submissions:write)
+      summary: Rückmeldung senden – wie „Rückmeldung senden“ in der Oberfläche (submissions:write)
       description: |
-        Nur für abgegebene (`submitted`) oder schon zurückgegebene (`completed`) Abgaben; erneutes
-        Senden ändert die bestehende Rückmeldung. Danach Zustand `completed`. Mit `revision` sehen SuS
-        die Überarbeitung (außer `includeRevision: false`). Ohne `revision` bleiben eine vorhandene
-        Überarbeitung und `includeRevision` unverändert (`includeRevision` lässt sich dann nur
-        umschalten); beim ersten Senden ohne `revision` wird der Code der Abgabe abgelegt und
-        `includeRevision` ist `false`. `allowResubmit` erlaubt eine neue Abgabe (Default: bisheriger
-        Wert, sonst `false`).
+        Nur für abgegebene (`submitted`) oder schon zurückgegebene (`completed`) Abgaben. Jede
+        Rückmeldung wird angehängt; gesendete lassen sich nicht ändern (ADR 0007). Senden löscht den
+        Entwurf. Danach Zustand `completed`; die Herkunft ist `token`. Mit `revision` sehen SuS die
+        Überarbeitung (außer `includeRevision: false`); eine geänderte Überarbeitung wird als neues
+        Trinket abgelegt. Ohne `revision` bleiben eine vorhandene Überarbeitung und
+        `includeRevision` unverändert (`includeRevision` lässt sich dann nur umschalten); beim ersten
+        Senden ohne `revision` wird der Code der Abgabe abgelegt und `includeRevision` ist `false`.
+        `allowResubmit` („Noch einmal bearbeiten lassen“) erlaubt eine neue Abgabe (Default:
+        bisheriger Wert, sonst `false`).
       requestBody:
         required: true
         content:
@@ -1045,6 +1062,10 @@ paths:
     put:
       tags: [Rückmeldungen]
       summary: Entwurf der Rückmeldung speichern – erscheint vorausgefüllt im Dashboard (submissions:write)
+      description: |
+        Ein Entwurf je Abgabe; ein neuer ersetzt den alten, ein leerer `comment` löscht ihn. Das
+        Dashboard der Aufgabe markiert die Abgabe („Entwurf“), die Lehrkraft prüft, ergänzt und
+        sendet – die Rückmeldung bekommt dann die Herkunft `token_draft`. SuS sehen Entwürfe nie.
       requestBody:
         required: true
         content:

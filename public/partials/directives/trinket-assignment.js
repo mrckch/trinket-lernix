@@ -243,12 +243,15 @@
                         feedbackComments = $filter('filter')(submission.comments, { commentType : 'feedback' }, true);
 
                         if (feedbackComments.length) {
+                          // Lernix (ADR 0007): alle Rückmeldungen anzeigen; die Überarbeitung gehört zur letzten
+                          var latest = feedbackComments[feedbackComments.length - 1];
+                          submission.feedbackList = feedbackComments;
                           submission.feedback = {
-                              id              : feedbackComments[0]._id
-                            , lang            : feedbackComments[0].trinketLang
-                            , shortCode       : feedbackComments[0].trinketShortCode
-                            , comment         : feedbackComments[0]
-                            , lastUpdated     : feedbackComments[0].commented
+                              id              : latest._id
+                            , lang            : latest.trinketLang
+                            , shortCode       : latest.trinketShortCode
+                            , comment         : latest
+                            , lastUpdated     : latest.commented
                             , submissionState : "feedback"
                             , includeRevision : submission.includeRevision || false
                           };

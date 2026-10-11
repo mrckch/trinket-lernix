@@ -296,6 +296,19 @@ Token-API die Gruppen nicht. Danach: passende MCP-Werkzeuge im SchulAssistent.
   Lehrkraft holt die Abgabe als Python und gibt Rückmeldung → SuS sieht sie. Bestanden.
 - Security-Review der Schreib-API (u. a. Absturz durch präpariertes Blöcke-XML) vor dem Deploy behoben.
 
+### Phase 8 – Rückmeldungen wie in Hamster Lernix — **umgesetzt 2026-10-11, noch nicht ausgerollt** (ADR 0007)
+
+- Gemeinsames Zielbild für beide Apps: Rückmeldungen werden angehängt statt geändert, ein Entwurf
+  je Abgabe (auch per Token vorbereitet), Herkunft `manual`/`token`/`token_draft` nur für
+  Lehrkräfte, gleiche Routen und Begriffe („Noch einmal bearbeiten lassen“, „Weitere Rückmeldung“).
+- SuS bekommen den Entwurf der Lehrkraft nicht mehr ausgeliefert (vorher in der Antwort von
+  `GET /api/submissions/{materialId}` enthalten, nur nicht angezeigt).
+- Token-API: `feedbackCount` zählt nur gesendete Rückmeldungen; neu `hasFeedbackDraft`,
+  `feedback.source`, `feedback.history`, `feedback.draftViaToken`.
+- Geprüft: Testsuite auf der VM (227 bestanden). **Offen:** Oberfläche (Dashboard der Aufgabe,
+  SuS-Ansicht) in der Testinstanz durchklicken, dann ausrollen; SchulAssistent-Werkzeug
+  `trinket_rueckmeldung_senden` darauf einstellen, dass erneutes Senden anhängt.
+
 ## 8. Entscheidungen zu den Rückfragen (Marc, 2026-10-09)
 
 1. **Kein Einrichtungsassistent.** Konfiguration nur per `.env`, Verwaltung über

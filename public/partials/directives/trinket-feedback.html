@@ -47,9 +47,10 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" ng-repeat="comment in submission.feedbackList">
             <div class="small-12 columns">
-              <strong>Rückmeldung:</strong><br />{{ submission.feedback.commentText }}
+              <strong>Rückmeldung</strong> <span class="submission-commented">{{ comment.commented | formatDate }}<span ng-if="sourceLabel(comment)"> · {{ sourceLabel(comment) }}</span></span>
+              <div ng-bind-html="displayFeedback(comment.commentText)"></div>
             </div>
           </div>
 
@@ -96,12 +97,15 @@
                ng-model="feedbackForm.allowResubmit"
                id="allowResubmit"
                ng-change="submissionOptChange('allowResubmit')" />
-        <label for="allowResubmit">Erneute Abgabe erlauben</label>
+        <label for="allowResubmit">Noch einmal bearbeiten lassen</label>
       </div>
     </div>
     <div class="row">
       <div class="small-12 columns">
-        <label>Rückmeldung an die Schülerin / den Schüler</label>
+        <label>Rückmeldung an die Schülerin / den Schüler
+          <span ng-if="hasDraft" class="label secondary round"><i class="fa fa-pencil"></i> Entwurf<span ng-if="draftViaToken"> – per Token vorbereitet</span></span>
+        </label>
+        <p ng-if="draftViaToken" class="feedback-draft-hint">Dieser Entwurf wurde über die Schnittstelle vorbereitet. Prüfe und ergänze ihn, bevor du ihn sendest.</p>
       </div>
     </div>
     <div class="row">
@@ -128,17 +132,18 @@
     </div>
     <hr />
     <div class="row">
-      <div class="small-11 columns">
+      <div class="small-9 columns">
         <p>
           <span ng-if="submission.submissionOpts.includeRevision"><i class="fa fa-check"></i> Überarbeitung für Schüler:in sichtbar.</span>
           <span ng-if="!submission.submissionOpts.includeRevision"><i class="fa fa-ban"></i> Keine Überarbeitung freigegeben.</span>
 
-          <span ng-if="submission.submissionOpts.allowResubmit"><i class="fa fa-check"></i> Erneute Abgabe erlaubt.</span>
-          <span ng-if="!submission.submissionOpts.allowResubmit"><i class="fa fa-ban"></i> Keine erneute Abgabe.</span>
+          <span ng-if="submission.submissionOpts.allowResubmit"><i class="fa fa-check"></i> Darf noch einmal bearbeiten.</span>
+          <span ng-if="!submission.submissionOpts.allowResubmit"><i class="fa fa-ban"></i> Kein erneutes Bearbeiten.</span>
+          <span ng-if="hasDraft" class="label secondary round"><i class="fa fa-pencil"></i> Entwurf wartet<span ng-if="draftViaToken"> – per Token vorbereitet</span></span>
         </p>
       </div>
-      <div class="small-1 columns">
-        <a class="right" ng-if="canSendFeedback()" ng-click="editCompleted()"><i class="fa fa-pencil"></i> Bearbeiten</a>
+      <div class="small-3 columns">
+        <a class="right" ng-if="canSendFeedback()" ng-click="editCompleted()"><i class="fa fa-plus"></i> Weitere Rückmeldung</a>
       </div>
     </div>
     <div ng-if="submission.submissionOpts.includeRevision" class="row">
@@ -151,6 +156,7 @@
       <div class="small-4 comment-info columns">
         <img class="avatar" ng-src="{{ comment.avatar }}" /> {{ comment.displayName }}<br />
         <span class="submission-commented">{{ comment.commented | formatDate }}</span>
+        <span class="submission-commented" ng-if="sourceLabel(comment)"><br />{{ sourceLabel(comment) }}</span>
       </div>
       <div class="small-8 columns" ng-bind-html="displayFeedback(comment.commentText)"></div>
     </div>
@@ -175,7 +181,7 @@
                name="allowResubmit"
                ng-model="feedbackForm.allowResubmit"
                id="allowResubmit" />
-        <label for="allowResubmit">Erneute Abgabe erlauben</label>
+        <label for="allowResubmit">Noch einmal bearbeiten lassen</label>
       </div>
     </div>
     <div class="row">
@@ -186,12 +192,15 @@
     </div>
     <div class="row">
       <div class="small-12 columns">
-        <label>Rückmeldung an die Schülerin / den Schüler</label>
+        <label>Rückmeldung an die Schülerin / den Schüler
+          <span ng-if="hasDraft" class="label secondary round"><i class="fa fa-pencil"></i> Entwurf<span ng-if="draftViaToken"> – per Token vorbereitet</span></span>
+        </label>
+        <p ng-if="draftViaToken" class="feedback-draft-hint">Dieser Entwurf wurde über die Schnittstelle vorbereitet. Prüfe und ergänze ihn, bevor du ihn sendest.</p>
       </div>
     </div>
     <div class="row">
       <div class="small-6 columns">
-        <div ui-ace="{ useWrapMode : true }" class="feedback-editor" ng-model="feedbackForm.comments"></div>
+        <div ui-ace="{ useWrapMode : true, onChange : autosaveComments }" class="feedback-editor" ng-model="feedbackForm.comments"></div>
       </div>
       <div class="small-6 columns" ng-bind-html="displayFeedback(feedbackForm.comments)"></div>
     </div>
@@ -199,7 +208,7 @@
       <div class="small-12 columns">
         <a ng-click="sendFeedback()"
            ng-class="{disabled:!canUpdate}"
-           class="button small secondary"><i class="fa" ng-class="sendingFeedback ? 'fa-circle-o-notch fa-spin' : 'fa-reply'"></i> Rückmeldung aktualisieren</a>
+           class="button small secondary"><i class="fa" ng-class="sendingFeedback ? 'fa-circle-o-notch fa-spin' : 'fa-reply'"></i> Rückmeldung senden</a>
         <a ng-click="cancelEdit()" class="button small caution">Abbrechen</a>
       </div>
     </div>

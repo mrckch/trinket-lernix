@@ -105,15 +105,22 @@ nur mit einer Turtle-Attrappe.
 
 | Schritt | Aufruf | Scope |
 |---|---|---|
-| Entwurf vorbereiten | `PUT /trinkets/{tid}/feedback-draft { comment }` – erscheint vorausgefüllt im Dashboard, die Lehrkraft schickt ab | submissions:write |
-| direkt zurückgeben | `POST /trinkets/{tid}/feedback { comment, allowResubmit?, revision?: { code \| files } }` → `completed` | submissions:write |
+| Entwurf vorbereiten | `PUT /trinkets/{tid}/feedback-draft { comment }` – erscheint vorausgefüllt im Dashboard (Markierung „Entwurf“), die Lehrkraft prüft, ergänzt und schickt ab; leerer `comment` löscht den Entwurf | submissions:write |
+| direkt senden | `POST /trinkets/{tid}/feedback { comment, allowResubmit?, revision?: { code \| files } }` → `completed` | submissions:write |
 | verspätete Abgabe annehmen | `POST /trinkets/{tid}/accept` (erst danach Rückmeldung) | submissions:write |
 
-- `tid` ist das `trinket.id` aus der Abgaben-Übersicht. Rückmeldung nur zu `submitted`/`completed`;
-  erneutes Senden ändert die bestehende Rückmeldung (kein Duplikat); ohne `revision` bleibt eine
-  vorhandene Überarbeitung samt `includeRevision` erhalten.
+- `tid` ist das `trinket.id` aus der Abgaben-Übersicht. Rückmeldung nur zu `submitted`/`completed`.
+- **Jedes Senden hängt eine weitere Rückmeldung an** (ADR 0007); gesendete lassen sich nicht
+  ändern. Deshalb vor dem Senden prüfen, ob schon eine da ist: `feedbackCount`,
+  `hasFeedbackDraft` und `feedback.history` in der Abgaben-Übersicht bzw. im Trinket. Ohne
+  `revision` bleibt eine vorhandene Überarbeitung samt `includeRevision` erhalten.
+- Herkunft je Rückmeldung (`feedback.source`, `history[].source`): `manual`, `token` (direkt per
+  Token gesendet) oder `token_draft` (per Token vorbereitet, von der Lehrkraft gesendet). SuS
+  sehen weder Herkunft noch Entwurf.
+- Dieselben zwei Routen gibt es in Hamster Lernix (`POST /submissions/{id}/feedback`,
+  `PUT /submissions/{id}/feedback-draft`; dort heißt das Feld `allow_resubmit`).
 - `revision` = korrigierte Fassung, die SuS sehen (`includeRevision` sonst `false`).
-  `allowResubmit: true` erlaubt eine neue Abgabe.
+  `allowResubmit: true` („Noch einmal bearbeiten lassen“) erlaubt eine neue Abgabe.
 - Es gibt keine Noten/Punkte im Datenmodell – bei Bedarf in den Kommentartext.
 - Empfehlung für den SchulAssistent: standardmäßig nur **Entwürfe** schreiben; direktes Zurückgeben
   erst nach ausdrücklicher Bestätigung der Lehrkraft.

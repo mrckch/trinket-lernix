@@ -139,6 +139,7 @@ module.exports = function() {
       info.should.contain('Status:       zurückgegeben');
       info.should.contain('Fertig!');
       info.should.contain('Gut gemacht');
+      info.should.contain('per Token gesendet');
 
       // „/“ und „?“ im Aufgabennamen werden zu „-“
       var bl = names.filter(function(n) { return /02 Blöcke- Quadrat - Haus-\/bloecke\.xml$/.test(n); })[0];

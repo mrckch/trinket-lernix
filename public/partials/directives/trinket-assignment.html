@@ -112,13 +112,13 @@
               </div>
             </div>
 
-            <div ng-if="submission.feedback" class="row">
+            <div ng-repeat="comment in submission.feedbackList" class="row">
               <div class="small-4 comment-info columns">
-                <img class="avatar" ng-src="{{ submission.feedback.comment.avatar }}" /> {{ submission.feedback.comment.displayName }}<br />
-                <span class="submission-commented" title="{{ submission.feedback.lastUpdated | localDate }}">{{ submission.feedback.comment.commented | formatDate }}</span>
+                <img class="avatar" ng-src="{{ comment.avatar }}" /> {{ comment.displayName }}<br />
+                <span class="submission-commented" title="{{ comment.commented | localDate }}">{{ comment.commented | formatDate }}</span>
               </div>
               <div class="small-8 columns">
-                <p tabindex="0" aria-label="Rückmeldung der Lehrkraft" ng-bind-html="displayFeedback(submission.feedback.comment.commentText)"></p>
+                <p tabindex="0" aria-label="Rückmeldung der Lehrkraft" ng-bind-html="displayFeedback(comment.commentText)"></p>
               </div>
             </div>
 

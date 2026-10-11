@@ -516,7 +516,26 @@ module.exports = function() {
 
         var ui = expectStatus(await session('wa', 'get', '/api/courses/' + courseId + '/lessons/' + lesson1 + '/materials/' + pyId + '/submissions'), 200);
         var row = ui.body.data.filter(function(u) { return u.userId === idS; })[0];
-        row.comments.filter(function(c) { return c.commentType === 'feedback-draft'; })[0].commentText.should.eql('Entwurf 2');
+        var draft = row.comments.filter(function(c) { return c.commentType === 'feedback-draft'; })[0];
+        draft.commentText.should.eql('Entwurf 2');
+        draft.viaToken.should.be.true;
+
+        var detail = expectStatus(await api('get', '/api/v1/trinkets/' + submissionId, tokA.secret), 200).body.trinket;
+        detail.hasFeedbackDraft.should.be.true;
+        detail.feedbackCount.should.eql(0);
+        detail.feedback.draftViaToken.should.be.true;
+
+        // SuS bekommen den Entwurf nie (ADR 0007)
+        var own = expectStatus(await session('ws', 'get', '/api/submissions/' + pyId), 200);
+        JSON.stringify(own.body).should.not.contain('Entwurf 2');
+        own.body.data.filter(function(t) { return t.id === submissionId; })[0].comments
+          .filter(function(c) { return c.commentType === 'feedback-draft'; }).length.should.eql(0);
+
+        // ein leerer Entwurf löscht ihn; danach wieder anlegen
+        expectStatus(await api('put', '/api/v1/trinkets/' + submissionId + '/feedback-draft', tokA.secret, { comment : '' }), 200)
+          .body.trinket.hasFeedbackDraft.should.be.false;
+        expectStatus(await api('put', '/api/v1/trinkets/' + submissionId + '/feedback-draft', tokA.secret, { comment : 'Entwurf 3' }), 200)
+          .body.trinket.feedback.draft.should.eql('Entwurf 3');
       });
 
       it('gibt eine Abgabe mit Rückmeldung zurück (wie „Rückmeldung senden“)', async function() {
@@ -529,25 +548,38 @@ module.exports = function() {
         res.body.trinket.feedback.includeRevision.should.be.false;
         var revisionId = res.body.trinket.feedback.revisionTrinketId;
         should.exist(revisionId);
+        // per Token gesendet; der Entwurf ist verbraucht
+        res.body.trinket.feedback.source.should.eql('token');
+        should.not.exist(res.body.trinket.feedback.draft);
+        res.body.trinket.hasFeedbackDraft.should.be.false;
+        res.body.trinket.feedbackCount.should.eql(1);
+        var firstCode = (await snippets().findById(revisionId)).code;
 
-        // erneut senden ändert dieselbe Rückmeldung, jetzt mit Überarbeitung
+        // erneut senden hängt eine weitere Rückmeldung an (ADR 0007), jetzt mit Überarbeitung
         var again = expectStatus(await api('post', '/api/v1/trinkets/' + submissionId + '/feedback', tokA.secret, {
           comment : 'Korrigiert, siehe Überarbeitung.', revision : { code : 'laenge = 50\n' }
         }), 200);
-        again.body.trinket.comments.filter(function(c) { return c.type === 'feedback'; }).length.should.eql(1);
-        again.body.trinket.feedback.revisionTrinketId.should.eql(revisionId);
+        again.body.trinket.comments.filter(function(c) { return c.type === 'feedback'; }).length.should.eql(2);
+        again.body.trinket.feedback.history.map(function(h) { return h.text; })
+          .should.eql(['Sehr schön! Nutze noch eine Variable für die Länge.', 'Korrigiert, siehe Überarbeitung.']);
         again.body.trinket.feedback.includeRevision.should.be.true;
         again.body.trinket.feedback.allowResubmit.should.be.true;
+        // die geänderte Überarbeitung ist ein neues Trinket, die alte bleibt, wie sie war
+        var firstRevisionId = revisionId;
+        revisionId = again.body.trinket.feedback.revisionTrinketId;
+        revisionId.should.not.eql(firstRevisionId);
+        (await snippets().findById(firstRevisionId)).code.should.eql(firstCode);
         var revision = await snippets().findById(revisionId);
         JSON.parse(revision.code).should.eql([{ name : 'main.py', content : 'laenge = 50\n' }]);
         String(revision._parent).should.eql(submissionId);
 
-        // nur den Text ändern: Überarbeitung und includeRevision bleiben
+        // nur Text: Überarbeitung und includeRevision bleiben
         var third = expectStatus(await api('post', '/api/v1/trinkets/' + submissionId + '/feedback', tokA.secret, {
           comment : 'Korrigiert, siehe Überarbeitung.'
         }), 200);
         third.body.trinket.feedback.includeRevision.should.be.true;
         third.body.trinket.feedback.revisionTrinketId.should.eql(revisionId);
+        third.body.trinket.feedbackCount.should.eql(3);
         JSON.parse((await snippets().findById(revisionId)).code).should.eql([{ name : 'main.py', content : 'laenge = 50\n' }]);
 
         // dieselben Daten in der Oberfläche (Dashboard der Aufgabe)
@@ -555,11 +587,18 @@ module.exports = function() {
         var row = ui.body.data.filter(function(u) { return u.userId === idS; })[0];
         row.state.should.eql('completed');
         row.allowResubmit.should.be.true;
-        row.comments.filter(function(c) { return c.commentType === 'feedback'; })[0].commentText.should.eql('Korrigiert, siehe Überarbeitung.');
+        var shown = row.comments.filter(function(c) { return c.commentType === 'feedback'; });
+        shown.length.should.eql(3);
+        shown[2].commentText.should.eql('Korrigiert, siehe Überarbeitung.');
+        shown[2].source.should.eql('token');
 
-        // SuS sieht die Rückmeldung bei ihren Abgaben
+        // SuS sieht alle Rückmeldungen bei ihren Abgaben, aber nicht ihre Herkunft
         var own = expectStatus(await session('ws', 'get', '/api/submissions/' + pyId), 200);
-        own.body.data.filter(function(t) { return t.id === submissionId; })[0].submissionState.should.eql('completed');
+        var mine = own.body.data.filter(function(t) { return t.id === submissionId; })[0];
+        mine.submissionState.should.eql('completed');
+        var seen = mine.comments.filter(function(c) { return c.commentType === 'feedback'; });
+        seen.length.should.eql(3);
+        seen.forEach(function(c) { should.not.exist(c.source); });
       });
 
       it('Rückmeldung über die Oberfläche läuft weiter (gemeinsamer Service)', async function() {
@@ -570,6 +609,21 @@ module.exports = function() {
         res.body.data.includeRevision.should.be.true;
         var detail = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId, tokA.secret), 200);
         detail.body.trinket.feedback.text.should.eql('Aus der Oberfläche');
+        detail.body.trinket.feedback.source.should.eql('manual');
+
+        // Entwurf per Token, in der Oberfläche bearbeitet und gesendet: „token_draft“
+        expectStatus(await api('put', '/api/v1/trinkets/' + blocksSubmissionId + '/feedback-draft', tokA.secret, { comment : 'Vorschlag' }), 200);
+        expectStatus(await session('wa', 'post', '/api/feedback-comments/' + blocksSubmissionId, { comments : 'Vorschlag, ergänzt' }), 200);
+        var edited = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId, tokA.secret), 200).body.trinket.feedback;
+        edited.draft.should.eql('Vorschlag, ergänzt');
+        edited.draftViaToken.should.be.true;
+        expectStatus(await session('wa', 'post', '/api/courses/' + courseId + '/lessons/' + lesson2 + '/materials/' + blocksId + '/feedback', {
+          code : { code : '<xml></xml>' }, trinketId : blocksSubmissionId, comments : 'Vorschlag, ergänzt', includeRevision : true, allowResubmit : false
+        }), 200);
+        var after = expectStatus(await api('get', '/api/v1/trinkets/' + blocksSubmissionId, tokA.secret), 200).body.trinket.feedback;
+        after.history.map(function(h) { return h.source; }).should.eql(['manual', 'token_draft']);
+        should.not.exist(after.draft);
+        after.draftViaToken.should.be.false;
       });
 
       it('nimmt eine verspätete Abgabe an und gibt sie dann zurück', async function() {
