@@ -156,7 +156,7 @@
       <div class="small-4 comment-info columns">
         <img class="avatar" ng-src="{{ comment.avatar }}" /> {{ comment.displayName }}<br />
         <span class="submission-commented">{{ comment.commented | formatDate }}</span>
-        <span class="submission-commented" ng-if="sourceLabel(comment)"><br />{{ sourceLabel(comment) }}</span>
+        <span class="submission-commented" ng-if="sourceLabel(comment)">{{ sourceLabel(comment) }}</span>
       </div>
       <div class="small-8 columns" ng-bind-html="displayFeedback(comment.commentText)"></div>
     </div>

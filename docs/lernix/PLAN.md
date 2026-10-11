@@ -305,9 +305,11 @@ Token-API die Gruppen nicht. Danach: passende MCP-Werkzeuge im SchulAssistent.
   `GET /api/submissions/{materialId}` enthalten, nur nicht angezeigt).
 - Token-API: `feedbackCount` zählt nur gesendete Rückmeldungen; neu `hasFeedbackDraft`,
   `feedback.source`, `feedback.history`, `feedback.draftViaToken`.
-- Geprüft: Testsuite auf der VM (227 bestanden). **Offen:** Oberfläche (Dashboard der Aufgabe,
-  SuS-Ansicht) in der Testinstanz durchklicken, dann ausrollen; SchulAssistent-Werkzeug
-  `trinket_rueckmeldung_senden` darauf einstellen, dass erneutes Senden anhängt.
+- Geprüft: Testsuite auf der VM (227 bestanden); in der Testinstanz durchgespielt: Entwurf per
+  Token → Markierung im Dashboard der Aufgabe → Lehrkraft ergänzt und sendet (`token_draft`) →
+  weitere Rückmeldung (`manual`) → SuS sieht beide, ohne Herkunft und ohne Entwurf.
+- **Offen:** ausrollen; SchulAssistent-Werkzeug `trinket_rueckmeldung_senden` darauf einstellen,
+  dass erneutes Senden anhängt.
 
 ## 8. Entscheidungen zu den Rückfragen (Marc, 2026-10-09)
 

@@ -80,5 +80,5 @@ gibt es nur hier. Der Text darf hier 20 000 Zeichen lang sein, im Hamster 4000.
   Senden eine Rückmeldung korrigiert hat, erzeugt jetzt eine weitere.
 - Neue Abhängigkeiten: keine. Bestehende Daten bleiben gültig.
 - Tests: `test/lib/api/apiv1-write.js` (Verlauf, Entwurf, Herkunft, Sicht der SuS),
-  `test/lib/api/kursexport.js` (Herkunft in `info.txt`). Die Oberfläche ist noch in der
-  Testinstanz zu prüfen.
+  `test/lib/api/kursexport.js` (Herkunft in `info.txt`). Die Oberfläche wurde in der Testinstanz
+  durchgespielt (Lehrkraft und SuS).
