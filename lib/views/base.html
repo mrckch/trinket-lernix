@@ -173,6 +173,7 @@
                   <li><a href="/account"><i class="fa fa-gear"></i> Einstellungen</a></li>
                   {% if user.hasRole("teacher") or user.hasRole("admin") %}
                   <li><a href="/account/tokens"><i class="fa fa-key"></i> API-Tokens</a></li>
+                  <li><a href="https://pages.lernix.site/p/trinket-lehrkraefte" target="_blank" rel="noopener"><i class="fa fa-book"></i> Anleitung für Lehrkräfte</a></li>
                   {% endif %}
                   {% if user.hasRole("admin") or user.loggedInAs() %}
                   <li><a href="/admin"><i class="fa fa-lock"></i> Admin</a></li>
