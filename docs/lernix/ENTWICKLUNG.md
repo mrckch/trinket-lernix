@@ -146,6 +146,8 @@ Abbauen: `docker compose -p trinkete2e … down -v`.
   übersprungen, wenn `public/components` fehlt. `test/lib/util/lernix-blocks.js` – eigene Blöcke
   (Blickrichtung, Stiftdicke).
 - `test/lib/api/kursexport.js` – Kurs-Export als ZIP (Oberfläche und Token-API, Rechte, Dateinamen, CSV).
+- `test/lib/util/auswertung.js` – anonyme Auswertung (ADR 0008): Zuordnung gleicher Aufgaben,
+  Schuljahr, Kennzahlen, Mindestgrößen, Bericht; zuletzt einmal mit Laden aus MongoDB.
 - Übersprungen (`describe.skip`/`it.skip`, je mit Begründung im Code): Abo-Rollen aus trinket.io,
   Mail-Funktionen (Mail ist aus), Datei-Upload (S3 aus), Beispielkurs-Fixture, einige Kurs-Tests mit
   veralteter Antwortform – letztere werden in Phase 3 beim API-Ausbau neu geschrieben.

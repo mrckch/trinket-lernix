@@ -312,6 +312,29 @@ Token-API die Gruppen nicht. Danach: passende MCP-Werkzeuge im SchulAssistent.
   auf der VM), Anleitung als Version 4 hochgeladen. Der SchulAssistent nennt in der Vorschau, wie
   viele Rückmeldungen eine Abgabe schon hat.
 
+### Phase 9 – Anonyme Auswertung der Kursaufgaben — **gebaut 2026-11-23, nicht ausgerollt** (ADR 0008)
+
+Vorbild ist Hamster Lernix, ADR 0011, Stufe 1. Marc hat die ADR am 2026-11-23 angenommen („Ja, so
+bauen“).
+
+- `lib/services/auswertung.js` rechnet je Aufgabe, nie je Person oder Kurs. Als gleiche Aufgabe gilt
+  eine mit gleichem Namen, gleicher Sprache und gleichem Startcode. Ausgewertet wird nur, wenn Kinder
+  aus mindestens 2 Kursen die Aufgabe bearbeitet haben. Jede Zahl braucht mindestens 5 Kinder. Ein
+  Kind in zwei Kursen zählt einmal.
+- Kennzahlen: bearbeitet, abgegeben, Läufe bis zur Abgabe (Median / oberes Viertel), Minuten
+  (aus den Läufen geschätzt), Überarbeitung verlangt, nachgebessert, ausgestiegen (14 Tage).
+- Befehl `docker compose exec app node scripts/auswertung.js [--schuljahr 2026/27]` gibt Markdown aus
+  (BETRIEB.md, Abschnitt 9). Keine neuen Daten, keine Modelländerung, keine Route, kein Token-Zugriff.
+- Tests: `test/lib/util/auswertung.js`.
+
+Offen:
+- Ausrollen nach Marcs Freigabe, dann einmal auf den echten Daten laufen lassen. Dabei prüfen, ob
+  Kursaufgaben Läufe melden (`Interaction` mit `action: 'runs'` und dem Kind als `_actor`). Laut Code
+  tun sie das, an echten Daten geprüft ist es noch nicht.
+- Vor dem ersten Einsatz mit der oder dem Datenschutzbeauftragten der Schule absprechen, zusammen mit
+  Hamster Lernix (ADR 0011).
+- Stufe 2 (anonyme Zähler, etwa für Python-Fehlertypen) nur mit eigener ADR.
+
 ## 8. Entscheidungen zu den Rückfragen (Marc, 2026-10-09)
 
 1. **Kein Einrichtungsassistent.** Konfiguration nur per `.env`, Verwaltung über

@@ -158,6 +158,29 @@ Vorher ansehen, was passieren würde:
 docker compose exec app node scripts/maintenance.js --dry-run
 ```
 
+### Anonyme Auswertung der Kursaufgaben (ADR 0008)
+
+Nur für Admins mit Zugang zur VM. Es gibt keine Route, keine Seite und keinen Token-Zugriff. Der
+Befehl rechnet beim Aufruf aus vorhandenen Daten und speichert nichts:
+
+```bash
+docker compose exec app node scripts/auswertung.js                       # aktuelles Schuljahr
+docker compose exec app node scripts/auswertung.js --schuljahr 2026/27 > auswertung-2026-27.md
+```
+
+Die Ausgabe ist Markdown: eine Tabelle je Sprache, eine Zeile je Aufgabe mit den Spalten
+bearbeitet, abgegeben, Läufe, Minuten, Überarbeitung verlangt, nachgebessert und ausgestiegen.
+Gleiche Aufgaben in mehreren Kursen gelten als eine (gleicher Name, gleiche Sprache, gleicher
+Startcode). Ausgewertet wird eine Aufgabe nur, wenn Kinder aus mindestens 2 Kursen sie bearbeitet
+haben. Jede Zahl steht für mindestens 5 Kinder, sonst steht dort „zu wenige“.
+
+- Ein Schuljahr lässt sich nur bis zu seinem Ende auswerten. Danach legt die Wartung die
+  SuS-Trinkets in den Papierkorb, und der zählt nicht mit. Die Auswertung also im Juli laufen
+  lassen und die Ausgabe aufheben.
+- Die Ausgabe ist anonym und darf weitergegeben werden, zum Beispiel an die Fachkonferenz. Vorher
+  prüfen, ob irgendwo „zu wenige“ hätte stehen müssen und ob ein Aufgabenname etwas über eine
+  Person verrät.
+
 ## 10. Logs und Fehlersuche
 
 ```bash

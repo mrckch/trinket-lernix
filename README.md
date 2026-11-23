@@ -35,7 +35,7 @@ Test-Anmeldung ohne IServ unter `/auth/dev`. Tests, Vendor-Bibliotheken und Stol
 | Datei | Inhalt |
 |---|---|
 | [docs/lernix/PLAN.md](docs/lernix/PLAN.md) | Umbauplan, Entscheidungen, Stand der Phasen |
-| [docs/lernix/adr/](docs/lernix/adr/) | Architekturentscheidungen (Konfiguration, Anmeldung, Gruppen und Aufbewahrung, Lernstand-API, Login-Pflicht/Deutsch/Vendor) |
+| [docs/lernix/adr/](docs/lernix/adr/) | Architekturentscheidungen (Konfiguration, Anmeldung, Gruppen und Aufbewahrung, Lernstand-API, Login-Pflicht/Deutsch/Vendor, Schreib-API, Rückmeldungen, anonyme Auswertung) |
 | [docs/lernix/openapi.yaml](docs/lernix/openapi.yaml) | Lernstand-API (`/api/v1`, Bearer-Token) |
 | [docs/lernix/BETRIEB.md](docs/lernix/BETRIEB.md) | Betrieb auf der Docker-VM |
 | [deploy/npm/](deploy/npm/) | Proxy-Host und Advanced-Snippet für den NPM |
