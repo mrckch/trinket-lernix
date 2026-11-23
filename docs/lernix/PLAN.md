@@ -312,7 +312,7 @@ Token-API die Gruppen nicht. Danach: passende MCP-Werkzeuge im SchulAssistent.
   auf der VM), Anleitung als Version 4 hochgeladen. Der SchulAssistent nennt in der Vorschau, wie
   viele Rückmeldungen eine Abgabe schon hat.
 
-### Phase 9 – Anonyme Auswertung der Kursaufgaben — **gebaut 2026-11-23, nicht ausgerollt** (ADR 0008)
+### Phase 9 – Anonyme Auswertung der Kursaufgaben — **live 2026-11-23** (ADR 0008)
 
 Vorbild ist Hamster Lernix, ADR 0011, Stufe 1. Marc hat die ADR am 2026-11-23 angenommen („Ja, so
 bauen“).
@@ -325,12 +325,16 @@ bauen“).
   (aus den Läufen geschätzt), Überarbeitung verlangt, nachgebessert, ausgestiegen (14 Tage).
 - Befehl `docker compose exec app node scripts/auswertung.js [--schuljahr 2026/27]` gibt Markdown aus
   (BETRIEB.md, Abschnitt 9). Keine neuen Daten, keine Modelländerung, keine Route, kein Token-Zugriff.
-- Tests: `test/lib/util/auswertung.js`.
+- Tests: `test/lib/util/auswertung.js` (Suite auf der VM: 239 bestanden, 42 übersprungen).
+- Ausgerollt am 2026-11-23 nach Marcs Freigabe (Sicherung vorher:
+  `/root/trinket-vor-auswertung-2026-11-23-1103.archive.gz` auf der VM). Der Befehl läuft live und
+  meldet „Keine Aufgabe erfüllt die Bedingungen“: In der Produktion gibt es noch keine Trinkets von
+  SuS zu Kursaufgaben.
 
 Offen:
-- Ausrollen nach Marcs Freigabe, dann einmal auf den echten Daten laufen lassen. Dabei prüfen, ob
-  Kursaufgaben Läufe melden (`Interaction` mit `action: 'runs'` und dem Kind als `_actor`). Laut Code
-  tun sie das, an echten Daten geprüft ist es noch nicht.
+- Sobald Kurse mit Aufgaben laufen, einmal prüfen, ob Kursaufgaben Läufe melden (`Interaction` mit
+  `action: 'runs'` und dem Kind als `_actor`). Laut Code tun sie das, an echten Daten geprüft ist es
+  noch nicht.
 - Vor dem ersten Einsatz mit der oder dem Datenschutzbeauftragten der Schule absprechen, zusammen mit
   Hamster Lernix (ADR 0011).
 - Stufe 2 (anonyme Zähler, etwa für Python-Fehlertypen) nur mit eigener ADR.
